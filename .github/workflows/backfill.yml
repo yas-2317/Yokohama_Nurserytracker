@@ -1,78 +1,51 @@
-name: Backfill last N months
+name: Backfill
 
 on:
   workflow_dispatch:
     inputs:
-      ward:
-        description: "対象の区（例：港北区）。空なら全市（注意：重い）"
-        required: true
-        default: "港北区"
       months_back:
-        description: "何か月分さかのぼるか（例：24）"
+        description: "How many months back to generate (e.g. 24)"
         required: true
         default: "24"
       force:
-        description: "既存の月次JSONがあっても上書きする（1=上書き / 0=スキップ）"
+        description: "Force overwrite existing month json (1=yes,0=no)"
         required: true
-        default: "0"
+        default: "1"
 
 permissions:
   contents: write
 
-concurrency:
-  group: backfill-main
-  cancel-in-progress: true
-
 jobs:
   backfill:
     runs-on: ubuntu-latest
-
+    env:
+      WARD_FILTER: 港北区
+      MONTHS_BACK: ${{ inputs.months_back }}
+      FORCE_BACKFILL: ${{ inputs.force }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
+      - run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 openpyxl
 
-      - name: Run backfill
-        env:
-          WARD_FILTER: ${{ inputs.ward }}
-          MONTHS_BACK: ${{ inputs.months_back }}
-          FORCE_BACKFILL: ${{ inputs.force }}
-        run: |
-          set -e
-          echo "WARD_FILTER=$WARD_FILTER"
-          echo "MONTHS_BACK=$MONTHS_BACK"
-          echo "FORCE_BACKFILL=$FORCE_BACKFILL"
+      - run: |
           python -u scripts/backfill_last_year.py
-          echo "---- data directory ----"
-          ls -la data || true
+          ls -la data | head -n 50
 
-      - name: Commit & push (if changed)
-        run: |
-          set -e
+      - run: |
+          set -euxo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add data/*.json data/months.json data/master_facilities.csv || true
+          git add data/*.json data/months.json || true
+          git commit -m "Backfill nursery data" || echo "No changes"
 
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-
-          git commit -m "Backfill nursery data (last ${{ inputs.months_back }} months)"
-
-          # push拒否対策：リモートを取り込んでからpush
-          git fetch origin main
           git pull --rebase origin main
-          git push origin HEAD:main
+          git push
