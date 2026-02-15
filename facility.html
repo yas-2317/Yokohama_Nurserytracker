@@ -4,52 +4,53 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>園の詳細</title>
-  <link rel="stylesheet" href="site/styles.css?v=20260215">
+  <link rel="stylesheet" href="styles.css?v=20260215a"/>
 </head>
 <body>
 <header>
   <div class="container">
+    <div class="topbar">
+      <a class="backlink" href="./">← 一覧に戻る</a>
+    </div>
     <h1 id="title">園の詳細</h1>
-    <div class="sub"><a href="index.html">← 一覧に戻る</a></div>
+    <div class="sub" id="subtitle">-</div>
   </div>
 </header>
 
 <main class="container">
   <div class="card" id="basic"></div>
+
   <div class="card tablewrap">
+    <h2 class="h2">月次履歴</h2>
     <table id="hist">
       <thead>
         <tr>
-          <th>月</th>
+          <th style="min-width:130px;">月</th>
           <th>受入可能（合計）</th>
           <th>入所待ち（合計）</th>
-          <th>0歳 受入</th><th>0歳 待ち</th>
-          <th>1歳 受入</th><th>1歳 待ち</th>
-          <th>2歳 受入</th><th>2歳 待ち</th>
-          <th>3〜5歳 受入</th><th>3〜5歳 待ち</th>
+          <th class="agecol">0歳 受入</th><th class="agecol">0歳 待ち</th>
+          <th class="agecol">1歳 受入</th><th class="agecol">1歳 待ち</th>
+          <th class="agecol">2歳 受入</th><th class="agecol">2歳 待ち</th>
+          <th class="agecol">3〜5歳 受入</th><th class="agecol">3〜5歳 待ち</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
   </div>
-  <div class="footer small">※ 月次データが増えると、ここに履歴が溜まります。</div>
 </main>
 
 <script src="common.js"></script>
 <script>
-function getParam(name){
-  const u = new URL(location.href);
-  return u.searchParams.get(name);
-}
-
 function getGroups(f){
   if(f.age_groups) return f.age_groups;
   const ages = f.ages || f.ages_0_5 || {};
   function v(k, field){ return ages[k]?.[field]; }
   function sum3(field){
+    const a = Number(v('3',field) ?? 0);
+    const b = Number(v('4',field) ?? 0);
+    const c = Number(v('5',field) ?? 0);
     const hasAny = (v('3',field)!=null) || (v('4',field)!=null) || (v('5',field)!=null);
-    if(!hasAny) return null;
-    return Number(v('3',field) ?? 0) + Number(v('4',field) ?? 0) + Number(v('5',field) ?? 0);
+    return hasAny ? (a+b+c) : null;
   }
   return {
     "0": {accept: v('0','accept'), wait: v('0','wait')},
@@ -59,19 +60,18 @@ function getGroups(f){
   };
 }
 
-function row(m,f){
+function histRow(month, f){
   const g = getGroups(f);
   function acc(k){ return fmt(g?.[k]?.accept); }
   function wai(k){ return fmt(g?.[k]?.wait); }
-
   return `<tr>
-    <td>${m}</td>
+    <td>${safeStr(month)}</td>
     <td>${fmt(f.totals?.accept)}</td>
     <td>${fmt(f.totals?.wait)}</td>
-    <td>${acc('0')}</td><td>${wai('0')}</td>
-    <td>${acc('1')}</td><td>${wai('1')}</td>
-    <td>${acc('2')}</td><td>${wai('2')}</td>
-    <td>${acc('3-5')}</td><td>${wai('3-5')}</td>
+    <td class="agecol">${acc('0')}</td><td class="agecol">${wai('0')}</td>
+    <td class="agecol">${acc('1')}</td><td class="agecol">${wai('1')}</td>
+    <td class="agecol">${acc('2')}</td><td class="agecol">${wai('2')}</td>
+    <td class="agecol">${acc('3-5')}</td><td class="agecol">${wai('3-5')}</td>
   </tr>`;
 }
 
@@ -79,102 +79,66 @@ async function main(){
   const id = getParam('id');
   if(!id) throw new Error('idが指定されていません');
 
-  // root公開前提：data/...
   const months = await loadJSON('data/months.json');
   const ms = (months.months||[]).slice().sort().reverse(); // newest first
-  if(!ms.length) throw new Error('months.json が空です');
 
-  let latest = null, prev = null;
-  let latestMonth = null, prevMonth = null;
+  let latest = null;
+  let latestMonth = null;
 
-  const rowsHtml = [];
-
+  const rows = [];
   for(const m of ms){
     const d = await loadJSON(`data/${m}.json`);
     const f = (d.facilities||[]).find(x => String(x.id) === String(id));
     if(!f) continue;
-
-    // 履歴テーブル行は全部積む
-    rowsHtml.push(row(m, f));
-
-    // latest/prev を確実に拾う
     if(!latest){
-      latest = f; latestMonth = m;
-    }else if(!prev){
-      prev = f; prevMonth = m;
-      // prev まで取れたら差分計算できるが、履歴は全月積みたいならbreakしない
-      // 履歴を軽くしたいなら break; にしてOK
+      latest = f;
+      latestMonth = m;
     }
+    rows.push(histRow(m, f));
   }
 
-  if(!latest) throw new Error('対象施設が見つかりませんでした（ID一致しない可能性）');
+  if(!latest) throw new Error('対象施設が見つかりませんでした');
 
   document.getElementById('title').textContent = latest.name;
   document.title = latest.name + ' | 園の詳細';
+  document.getElementById('subtitle').textContent = `施設番号：${safeStr(latest.id)} / 区：${safeStr(latest.ward)} / 最新：${safeStr(latestMonth)}`;
 
   const addr = safeStr(latest.address||'');
   const map = safeStr(latest.map_url||'');
   const link = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map</a>` : '';
 
-  function sign(n){
-    if (n == null) return "—";
-    if (n > 0) return `+${n}`;
-    return `${n}`;
-  }
-
-  const latestWait = Number(latest.totals?.wait ?? 0);
-  const latestAcc  = Number(latest.totals?.accept ?? 0);
-
-  const prevWait = prev ? Number(prev.totals?.wait ?? 0) : null;
-  const prevAcc  = prev ? Number(prev.totals?.accept ?? 0) : null;
-
-  const dWait = (prevWait == null) ? null : (latestWait - prevWait);
-  const dAcc  = (prevAcc  == null) ? null : (latestAcc  - prevAcc);
-
-  const deltaHtml = prev ? `
-    <div class="kpi" style="margin-top:8px">
-      <div class="pill">前年差分（${safeStr(prevMonth)} → ${safeStr(latestMonth)}）</div>
-      <div class="pill">入所待ち：${sign(dWait)}</div>
-      <div class="pill">受入可能：${sign(dAcc)}</div>
-    </div>
-  ` : `<div class="small" style="margin-top:8px">※ 前月データが無いため差分は表示できません。</div>`;
+  const g = getGroups(latest);
+  const a0 = fmt(g?.["0"]?.accept), w0 = fmt(g?.["0"]?.wait);
+  const a1 = fmt(g?.["1"]?.accept), w1 = fmt(g?.["1"]?.wait);
+  const a2 = fmt(g?.["2"]?.accept), w2 = fmt(g?.["2"]?.wait);
+  const a35 = fmt(g?.["3-5"]?.accept), w35 = fmt(g?.["3-5"]?.wait);
 
   document.getElementById('basic').innerHTML = `
     <div class="kpi">
-      <div class="pill">施設番号：${safeStr(latest.id)}</div>
-      <div class="pill">区：${safeStr(latest.ward)}</div>
-      <div class="pill">最新月：${safeStr(latestMonth)}</div>
-      <div class="pill">最新 入所待ち：${latestWait}</div>
-      <div class="pill">最新 受入可能：${latestAcc}</div>
+      <div class="pill">最新 受入可能（合計）：${fmt(latest.totals?.accept)}</div>
+      <div class="pill">最新 入所待ち（合計）：${fmt(latest.totals?.wait)}</div>
+      <div class="pill">0歳：受入 ${a0} / 待ち ${w0}</div>
+      <div class="pill">1歳：受入 ${a1} / 待ち ${w1}</div>
+      <div class="pill">2歳：受入 ${a2} / 待ち ${w2}</div>
+      <div class="pill">3〜5歳：受入 ${a35} / 待ち ${w35}</div>
     </div>
-    ${deltaHtml}
-    <div style="margin-top:10px">
-      <div><b>住所</b>：${addr || '（未設定）'}</div>
-      <div><b>地図</b>：${link || '（未設定）'}</div>
+    <div class="detailgrid">
+      <div><b>住所</b><br>${addr || '（未設定）'}</div>
+      <div><b>地図</b><br>${link || '（未設定）'}</div>
     </div>
   `;
 
-  document.querySelector('#hist tbody').innerHTML = rowsHtml.join('');
+  document.querySelector('#hist tbody').innerHTML = rows.join('');
 }
 
-
-async function boot(){
-  try{
-    await main();
-  }catch(err){
+function boot(){
+  main().catch(err=>{
     alert(err.message);
     console.error(err);
-  }
+  });
 }
-
-// 通常ロード
 document.addEventListener('DOMContentLoaded', boot);
-
-// iOSのbfcache復元（リンク遷移/戻る進むでJSが再実行されない対策）
-window.addEventListener('pageshow', (e) => {
-  if (e.persisted) boot();
-});
-
+window.addEventListener('pageshow', (e)=>{ if(e.persisted) boot(); });
 </script>
 </body>
 </html>
