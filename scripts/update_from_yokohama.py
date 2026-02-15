@@ -180,13 +180,16 @@ def scrape_csv_urls() -> Dict[str, str]:
 def load_master() -> Dict[str, Dict[str, str]]:
     """
     data/master_facilities.csv があれば参照して住所/緯度経度/地図URLなどを補完
+    追加：nearest_station, walk_minutes も補完
+    キーは facility_id / id のどちらでもOK（両対応）
     """
     if not MASTER_CSV.exists():
         return {}
     out: Dict[str, Dict[str, str]] = {}
     with MASTER_CSV.open("r", encoding="utf-8-sig", newline="") as f:
-        for row in csv.DictReader(f):
-            fid = (row.get("facility_id") or "").strip()
+        reader = csv.DictReader(f)
+        for row in reader:
+            fid = (row.get("facility_id") or row.get("id") or "").strip()
             if fid:
                 out[fid] = row
     return out
@@ -270,18 +273,15 @@ def get_total(row: Dict[str, str]) -> Optional[int]:
 
 def get_age_value(row: Dict[str, str], age: int) -> Optional[int]:
     """
-    0-5歳の列名揺れ吸収：
-    例）0歳/０歳/0歳児/０歳児/… + 末尾に注記が付く場合
+    0-5歳の列名揺れ吸収
     """
     if not row:
         return None
     z = "０１２３４５"
     pats = [f"{age}歳児", f"{age}歳", z[age] + "歳児", z[age] + "歳"]
-    # まずは完全一致
     for p in pats:
         if p in row and str(row.get(p, "")).strip() != "":
             return to_int(row.get(p))
-    # 部分一致（"0歳児_受入可能" みたいな列名への保険）
     for k in row.keys():
         if any(p in k for p in pats) and str(row.get(k, "")).strip() != "":
             return to_int(row.get(k))
@@ -297,11 +297,9 @@ def build_map_url(name: str, ward: str, address: str = "", lat: str = "", lng: s
 
 
 def pick_ward_key(row: Dict[str, str]) -> Optional[str]:
-    # まずは “所在区” 系があれば優先
     for k in ("施設所在区", "所在区", "区名"):
         if k in row:
             return k
-    # 次点：区を含む列
     for k in row.keys():
         if "区" in k:
             return k
@@ -309,11 +307,9 @@ def pick_ward_key(row: Dict[str, str]) -> Optional[str]:
 
 
 def pick_name_key(row: Dict[str, str]) -> Optional[str]:
-    # “施設名” 系があれば優先
     for k in ("施設名", "施設・事業名", "施設・事業所名", "事業名"):
         if k in row:
             return k
-    # 次点：施設を含む列
     for k in row.keys():
         if "施設" in k and "区" not in k:
             return k
@@ -344,7 +340,6 @@ def main() -> None:
     W = index_by_key(wait_rows, fid_key) if wait_rows and fid_key in wait_rows[0] else {}
     E = index_by_key(enrolled_rows, fid_key) if enrolled_rows and fid_key in enrolled_rows[0] else {}
 
-    # 施設名/区の列推定
     ward_key = pick_ward_key(accept_rows[0]) if accept_rows else None
     name_key = pick_name_key(accept_rows[0]) if accept_rows else None
     print("DEBUG: fid_key =", fid_key, "ward_key =", ward_key, "name_key =", name_key)
@@ -367,10 +362,21 @@ def main() -> None:
         name = str(ar.get(name_key, "")).strip() if name_key else ""
 
         m = master.get(fid, {})
+
+        # master補完（既存）
         address = (m.get("address") or "").strip()
         lat = (m.get("lat") or "").strip()
         lng = (m.get("lng") or "").strip()
         map_url = (m.get("map_url") or "").strip() or build_map_url(name, ward, address, lat, lng)
+
+        # ★ 追加：最寄り駅・徒歩
+        nearest_station = (m.get("nearest_station") or "").strip()
+        walk_minutes_raw = (m.get("walk_minutes") or "").strip()
+
+        # 表示に困らないよう、数字っぽければ int 化、それ以外は文字のまま
+        walk_minutes: Any
+        wm_int = to_int(walk_minutes_raw) if walk_minutes_raw != "" else None
+        walk_minutes = wm_int if wm_int is not None else walk_minutes_raw
 
         # totals（合計）
         tot_accept = get_total(ar)
@@ -381,7 +387,7 @@ def main() -> None:
         tot_capacity_est = (tot_enrolled + tot_accept) if (tot_enrolled is not None and tot_accept is not None) else None
         tot_wait_per_capacity_est = ratio_opt(tot_wait, tot_capacity_est)
 
-        # 0〜5歳を作る（内部用）
+        # 0〜5歳（内部用）
         ages_0_5: Dict[str, Dict[str, Any]] = {}
         for i in range(6):
             a = get_age_value(ar, i)
@@ -425,22 +431,24 @@ def main() -> None:
                 "id": fid,
                 "name": name,
                 "ward": ward,
+
+                # master由来
                 "address": address,
                 "map_url": map_url,
+                "nearest_station": nearest_station,
+                "walk_minutes": walk_minutes,
+
                 "updated": month,
-                # HPで使うのは基本これ
+
                 "totals": {
                     "accept": tot_accept,
                     "wait": tot_wait,
-                    # enrolled が取れた月だけ入る（取れない月は null）
                     "enrolled": tot_enrolled,
-                    # “定員”ではなく参考値（入所児童+空き）
                     "capacity_est": tot_capacity_est,
                     "wait_per_capacity_est": tot_wait_per_capacity_est,
                 },
-                # ★ 4区分（0,1,2,3-5）…ここをHPで表示するのが簡単
+
                 "age_groups": age_groups,
-                # 0〜5歳の生データも残す（将来拡張用。不要なら消してOK）
                 "ages_0_5": ages_0_5,
             }
         )
