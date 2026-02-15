@@ -126,27 +126,78 @@ def guess_key(row: Dict[str, str], candidates: List[str], contains: Optional[str
 
 
 def index_by_facility_id(rows: List[Dict[str, str]]) -> Dict[str, Dict[str, str]]:
+    """
+    施設ID列を「列名候補」→「列名パターン」→「中身（数値っぽさ）」の順で推定して index 化する。
+    """
     if not rows:
         raise RuntimeError("CSVが空です")
 
-    fid_key = None
-    for k in ("施設番号", "施設・事業所番号", "施設事業所番号", "事業所番号"):
+    header = list(rows[0].keys())
+    print("DEBUG: header columns =", header)
+
+    # 1) まずは明示候補
+    candidates = [
+        "施設番号",
+        "施設・事業所番号",
+        "施設事業所番号",
+        "事業所番号",
+        "施設ID",
+        "施設ＩＤ",
+        "施設ID（共通）",
+        "施設・事業所ID",
+        "施設・事業所ＩＤ",
+        "施設・事業所No",
+        "施設・事業所Ｎｏ",
+        "施設No",
+        "施設Ｎｏ",
+    ]
+    for k in candidates:
         if k in rows[0]:
             fid_key = k
             break
-    if not fid_key:
-        for k in rows[0].keys():
-            if "番号" in k:
+    else:
+        fid_key = None
+
+    # 2) 列名パターン（番号/ID/No を含む）
+    if fid_key is None:
+        patterns = ("番号", "ID", "ＩＤ", "No", "Ｎｏ", "NO", "ＮＯ")
+        for k in header:
+            if any(p in k for p in patterns) and ("施設" in k or "事業所" in k):
                 fid_key = k
                 break
-    if not fid_key:
-        raise RuntimeError("施設番号列が見つかりません")
 
+    # 3) 中身で推定（先頭N行で「数字だけ」が多い列を選ぶ）
+    if fid_key is None:
+        N = min(200, len(rows))
+        best_key = None
+        best_score = -1
+        digit_re = re.compile(r"^\d{4,}$")  # だいたい4桁以上の数字列を想定
+        for k in header:
+            score = 0
+            for i in range(N):
+                v = str(rows[i].get(k, "")).strip()
+                if digit_re.match(v):
+                    score += 1
+            if score > best_score:
+                best_score = score
+                best_key = k
+        # 閾値：200行見て 30%以上が数字列なら採用（少なすぎると誤検出）
+        if best_key and best_score >= max(10, int(N * 0.30)):
+            fid_key = best_key
+            print(f"DEBUG: guessed facility id column by content: {fid_key} (score={best_score}/{N})")
+
+    if fid_key is None:
+        raise RuntimeError("施設番号列が見つかりません（列名・中身推定ともに失敗）")
+
+    # index 化
     out: Dict[str, Dict[str, str]] = {}
     for r in rows:
         fid = str(r.get(fid_key, "")).strip()
         if fid:
             out[fid] = r
+
+    # 念のため件数もログ
+    print("DEBUG: facility id key =", fid_key, "indexed =", len(out))
     return out
 
 
