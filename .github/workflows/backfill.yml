@@ -1,14 +1,32 @@
-name: Backfill last year data
+name: Backfill last N months
 
 on:
   workflow_dispatch:
+    inputs:
+      ward:
+        description: "対象の区（例：港北区）。空なら全市（注意：重い）"
+        required: true
+        default: "港北区"
+      months_back:
+        description: "何か月分さかのぼるか（例：12）"
+        required: true
+        default: "24"
+      force:
+        description: "既存の月次JSONがあっても上書きする（1=上書き / 0=スキップ）"
+        required: true
+        default: "1"
 
 permissions:
   contents: write
 
+concurrency:
+  group: backfill-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   backfill:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,25 +38,37 @@ jobs:
 
       - name: Install dependencies
         run: |
-          set -e
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 openpyxl
 
       - name: Run backfill
         env:
-          WARD_FILTER: "港北区"
-          MONTHS_BACK: "12"
-          FORCE_BACKFILL: "0"
+          WARD_FILTER: ${{ inputs.ward }}
+          MONTHS_BACK: ${{ inputs.months_back }}
+          FORCE_BACKFILL: ${{ inputs.force }}
         run: |
           set -e
+          echo "WARD_FILTER=$WARD_FILTER"
+          echo "MONTHS_BACK=$MONTHS_BACK"
+          echo "FORCE_BACKFILL=$FORCE_BACKFILL"
           python -u scripts/backfill_last_year.py
-          ls -la data | sed -n '1,200p'
+          echo "---- data directory ----"
+          ls -la data || true
 
-      - name: Commit and push
+      - name: Commit & push (if changed)
         run: |
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data
-          git commit -m "Backfill last year nursery data" || exit 0
+
+          # data 配下の変更を取り込む
+          git add data/*.json data/months.json data/master_facilities.csv || true
+
+          # 変更がなければ何もしない（失敗扱いにしない）
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Backfill nursery data (last ${{ inputs.months_back }} months)"
           git push
