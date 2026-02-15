@@ -15,6 +15,10 @@
       <select id="monthSelect"></select>
       <input id="q" placeholder="園名で検索（例：日吉）" />
       <select id="sort">
+        <option value="wait0_desc">0歳 入所待ち 多い順</option>
+        <option value="wait1_desc">1歳 入所待ち 多い順</option>
+        <option value="wait2_desc">2歳 入所待ち 多い順</option>
+        <option value="wait35_desc">3〜5歳 入所待ち 多い順</option>
         <option value="wait_desc">合計入所待ち 多い順</option>
         <option value="accept_desc">合計受入可能 多い順</option>
         <option value="name_asc">園名（あいうえお）</option>
@@ -114,10 +118,29 @@ function rowHTML(f){
 
 function sortFacilities(arr, mode){
   const a=[...arr];
+
+  // 年齢グループを新旧どちらでも取れるように
+  function groups(f){
+    return getGroups(f); // すでにindex.html内にある関数を利用
+  }
+  function gwait(f, key){
+    const g = groups(f);
+    const v = g?.[key]?.wait;
+    return Number(v ?? 0);
+  }
+
   if(mode==='wait_desc'){
     a.sort((x,y)=>(Number(y.totals?.wait||0)-Number(x.totals?.wait||0)));
   } else if(mode==='accept_desc'){
     a.sort((x,y)=>(Number(y.totals?.accept||0)-Number(x.totals?.accept||0)));
+  } else if(mode==='wait0_desc'){
+    a.sort((x,y)=>gwait(y,"0")-gwait(x,"0"));
+  } else if(mode==='wait1_desc'){
+    a.sort((x,y)=>gwait(y,"1")-gwait(x,"1"));
+  } else if(mode==='wait2_desc'){
+    a.sort((x,y)=>gwait(y,"2")-gwait(x,"2"));
+  } else if(mode==='wait35_desc'){
+    a.sort((x,y)=>gwait(y,"3-5")-gwait(x,"3-5"));
   } else if(mode==='name_asc'){
     a.sort((x,y)=>safeStr(x.name).localeCompare(safeStr(y.name),'ja'));
   }
