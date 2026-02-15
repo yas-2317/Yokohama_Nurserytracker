@@ -29,6 +29,16 @@ jobs:
         run: |
           python -u scripts/update_from_yokohama.py
           ls -la data || true
+          
+      - name: Debug git ignore
+        run: |
+          set -euxo pipefail
+          echo "=== ls -la data ==="
+          ls -la data || true
+          echo "=== git status --porcelain ==="
+          git status --porcelain
+          echo "=== git check-ignore ==="
+          git check-ignore -v data/* || true
 
       - name: Commit changes
         run: |
