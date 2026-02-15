@@ -22,14 +22,16 @@ MASTER_CSV = DATA_DIR / "master_facilities.csv"
 OUT_CSV = DATA_DIR / "master_facilities.csv"  # 上書き
 CACHE_JSON = DATA_DIR / "geocode_cache.json"
 
-WARD_HINT = os.getenv("WARD_FILTER", "港北区").strip() or "港北区"
-GOOGLE_API_KEY = (os.getenv("GOOGLE_API_KEY") or "").strip()
+WARD_HINT = (os.getenv("WARD_FILTER", "港北区") or "").strip() or "港北区"
 
 # 徒歩分の換算（m/分）
 WALK_SPEED_M_PER_MIN = float(os.getenv("WALK_SPEED_M_PER_MIN", "80"))
+# Nominatim レート制限対策（秒）
+SLEEP_SEC = float(os.getenv("NOMINATIM_SLEEP_SEC", "1.1"))
+# 失敗を減らすための試行回数
+RETRY = int(os.getenv("NOMINATIM_RETRY", "3"))
 
-# ---- 港北区周辺 主要駅（必要なら追加/修正） ----
-# ざっくりでも「最寄り駅」の初期値として十分効く
+# ---- 港北区周辺 主要駅（必要なら追加） ----
 STATIONS: List[Dict[str, Any]] = [
     {"name": "日吉駅", "lat": 35.5533, "lng": 139.6467},
     {"name": "綱島駅", "lat": 35.5366, "lng": 139.6340},
@@ -43,7 +45,6 @@ STATIONS: List[Dict[str, Any]] = [
     {"name": "北新横浜駅", "lat": 35.5186, "lng": 139.6091},
     {"name": "高田駅", "lat": 35.5484, "lng": 139.6146},
     {"name": "日吉本町駅", "lat": 35.5557, "lng": 139.6318},
-    {"name": "大倉山駅", "lat": 35.5228, "lng": 139.6296},
     {"name": "岸根公園駅", "lat": 35.4937, "lng": 139.6123},
 ]
 
@@ -89,84 +90,91 @@ def guess_nearest_station(lat: float, lng: float) -> Tuple[str, int]:
     walk_min = int(math.ceil(best_m / WALK_SPEED_M_PER_MIN))
     return best_name, walk_min
 
-# ---------------- geocoding ----------------
-def google_places_lookup(name: str, ward: str, address_hint: str = "") -> Optional[Dict[str, Any]]:
-    """
-    Google Places Text Search -> Place Details（住所/電話/website/latlng）
-    """
-    if not GOOGLE_API_KEY:
-        return None
+def build_map_url(lat: float, lng: float) -> str:
+    return f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
 
-    q = " ".join([name, address_hint, f"横浜市{ward}"]).strip()
-    q = re.sub(r"\s+", " ", q)
-
-    # Text Search
-    url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-    r = requests.get(url, params={"query": q, "key": GOOGLE_API_KEY, "language": "ja"}, timeout=30)
-    r.raise_for_status()
-    js = r.json()
-    results = js.get("results", [])
-    if not results:
-        return None
-
-    place_id = results[0].get("place_id")
-    if not place_id:
-        return None
-
-    # Details
-    url2 = "https://maps.googleapis.com/maps/api/place/details/json"
-    fields = "name,formatted_address,geometry,international_phone_number,formatted_phone_number,website,url"
-    r2 = requests.get(url2, params={"place_id": place_id, "fields": fields, "key": GOOGLE_API_KEY, "language": "ja"}, timeout=30)
-    r2.raise_for_status()
-    d = r2.json().get("result", {})
-
-    loc = (d.get("geometry") or {}).get("location") or {}
-    return {
-        "address": d.get("formatted_address", ""),
-        "lat": loc.get("lat"),
-        "lng": loc.get("lng"),
-        "phone": d.get("formatted_phone_number") or d.get("international_phone_number") or "",
-        "website": d.get("website") or "",
-        "map_url": d.get("url") or "",
+# ---------------- nominatim ----------------
+def nominatim_search(q: str) -> Optional[Dict[str, Any]]:
+    url = "https://nominatim.openstreetmap.org/search"
+    headers = {
+        # ここは必ず入れる（User-Agent必須）
+        "User-Agent": "NurseryAvailabilityBot/1.0 (non-commercial; github actions)",
+        "Accept-Language": "ja",
+    }
+    params = {
+        "q": q,
+        "format": "json",
+        "limit": 1,
+        "addressdetails": 1,
     }
 
-def nominatim_lookup(name: str, ward: str, address_hint: str = "") -> Optional[Dict[str, Any]]:
-    """
-    OpenStreetMap Nominatim（無料）: 住所/latlng
-    ※レート制限があるのでキャッシュ必須。1秒スリープも入れる。
-    """
-    q = " ".join([name, address_hint, f"横浜市{ward}", "日本"]).strip()
-    q = re.sub(r"\s+", " ", q)
+    last_err = None
+    for t in range(RETRY):
+        try:
+            r = requests.get(url, params=params, headers=headers, timeout=40)
+            # Nominatimは429が出ることがあるので少し待ってリトライ
+            if r.status_code == 429:
+                time.sleep(max(SLEEP_SEC, 2.0) * (t + 1))
+                continue
+            r.raise_for_status()
+            arr = r.json()
+            if not arr:
+                return None
+            return arr[0]
+        except Exception as e:
+            last_err = e
+            time.sleep(SLEEP_SEC * (t + 1))
+    if last_err:
+        print("WARN nominatim failed:", last_err)
+    return None
 
-    url = "https://nominatim.openstreetmap.org/search"
-    headers = {"User-Agent": "NurseryAvailabilityBot/1.0 (non-commercial; contact: github)"}
-    r = requests.get(url, params={"q": q, "format": "json", "limit": 1, "addressdetails": 1}, headers=headers, timeout=30)
-    r.raise_for_status()
-    arr = r.json()
-    if not arr:
-        return None
-    hit = arr[0]
-    lat = float(hit["lat"])
-    lng = float(hit["lon"])
-    disp = hit.get("display_name") or ""
-    # display_name は長いので、最低限だけ残す（必要なら加工してOK）
-    return {"address": disp, "lat": lat, "lng": lng, "phone": "", "website": "", "map_url": ""}
-
-def lookup_any(name: str, ward: str, address_hint: str, cache: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def lookup_nominatim(name: str, ward: str, address_hint: str, cache: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    # キャッシュキーは “ward::name”
     key = f"{ward}::{name}"
     if key in cache:
         return cache[key]
 
-    out = google_places_lookup(name, ward, address_hint)
-    if out is None:
-        out = nominatim_lookup(name, ward, address_hint)
+    # クエリは段階的に試す（取りこぼしを減らす）
+    # 住所が空なら園名＋横浜市＋区、住所があるなら住所も足す
+    queries = []
+    if address_hint:
+        queries.append(f"{name} {address_hint} 横浜市{ward} 日本")
+    queries.append(f"{name} 横浜市{ward} 日本")
+    # “保育園” の別表記がある園もいるので保険
+    if "保育園" not in name:
+        queries.append(f"{name} 保育園 横浜市{ward} 日本")
 
-    if out is not None:
-        cache[key] = out
-        save_cache(cache)
+    hit = None
+    used_q = ""
+    for q in queries:
+        q = re.sub(r"\s+", " ", q).strip()
+        used_q = q
+        hit = nominatim_search(q)
+        # 失敗してもレートのため少し待つ
+        time.sleep(SLEEP_SEC)
+        if hit:
+            break
+
+    if not hit:
+        return None
+
+    lat = float(hit["lat"])
+    lng = float(hit["lon"])
+    disp = hit.get("display_name") or ""
+
+    out = {
+        "address": disp,  # 長い場合があるが、まずはそのまま。必要なら後で整形。
+        "lat": lat,
+        "lng": lng,
+        "map_url": build_map_url(lat, lng),
+        "q": used_q,
+    }
+
+    cache[key] = out
+    save_cache(cache)
     return out
 
-# ---------------- main ----------------
+# ---------------- csv i/o ----------------
 def read_csv(path: Path) -> List[Dict[str, str]]:
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         return list(csv.DictReader(f))
@@ -178,6 +186,17 @@ def write_csv(path: Path, rows: List[Dict[str, str]], fieldnames: List[str]) -> 
         for r in rows:
             w.writerow({k: r.get(k, "") for k in fieldnames})
 
+def ensure_columns(fieldnames: List[str]) -> List[str]:
+    needed = [
+        "facility_id","name","ward","address","lat","lng",
+        "facility_type","phone","website","notes",
+        "nearest_station","walk_minutes","map_url"
+    ]
+    for k in needed:
+        if k not in fieldnames:
+            fieldnames.append(k)
+    return fieldnames
+
 def main() -> None:
     if not MASTER_CSV.exists():
         raise FileNotFoundError(f"not found: {MASTER_CSV}")
@@ -186,16 +205,11 @@ def main() -> None:
     if not rows:
         raise RuntimeError("master_facilities.csv is empty")
 
-    # 既存ヘッダ＋必要列が無ければ追加
-    fieldnames = list(rows[0].keys())
-    needed = ["nearest_station", "walk_minutes", "phone", "website", "facility_type", "map_url", "lat", "lng", "address", "ward", "name", "facility_id"]
-    for k in needed:
-        if k not in fieldnames:
-            fieldnames.append(k)
-
+    fieldnames = ensure_columns(list(rows[0].keys()))
     cache = load_cache()
 
     updated = 0
+    geocoded = 0
     for i, r in enumerate(rows, 1):
         name = norm(r.get("name"))
         if not name:
@@ -204,40 +218,27 @@ def main() -> None:
         ward = norm(r.get("ward")) or WARD_HINT
         address_hint = norm(r.get("address"))
 
-        # 取得したいもの：住所 or latlng が無い場合にlookup
-        need_lookup = (
+        # address/lat/lng/map_url のうち、どれか欠けてたらジオコード
+        need_geo = (
             is_blank(r.get("address")) or
             is_blank(r.get("lat")) or is_blank(r.get("lng")) or
-            is_blank(r.get("map_url")) or
-            is_blank(r.get("phone")) or
-            is_blank(r.get("website"))
+            is_blank(r.get("map_url"))
         )
 
-        if need_lookup:
-            out = lookup_any(name, ward, address_hint, cache)
+        if need_geo:
+            out = lookup_nominatim(name, ward, address_hint, cache)
             if out:
-                # address
                 if is_blank(r.get("address")) and out.get("address"):
                     r["address"] = str(out["address"])
-                # lat/lng
                 if (is_blank(r.get("lat")) or is_blank(r.get("lng"))) and out.get("lat") is not None and out.get("lng") is not None:
                     r["lat"] = str(out["lat"])
                     r["lng"] = str(out["lng"])
-                # phone/website/map_url
-                if is_blank(r.get("phone")) and out.get("phone"):
-                    r["phone"] = str(out["phone"])
-                if is_blank(r.get("website")) and out.get("website"):
-                    r["website"] = str(out["website"])
                 if is_blank(r.get("map_url")) and out.get("map_url"):
                     r["map_url"] = str(out["map_url"])
-
+                geocoded += 1
                 updated += 1
 
-            # 無料フォールバック時は連続アクセス抑制
-            if not GOOGLE_API_KEY:
-                time.sleep(1.0)
-
-        # 最寄り駅・徒歩分（latlngが揃ったら推定）
+        # 最寄り駅・徒歩分（lat/lngが揃ったら推定）
         try:
             lat = float(r.get("lat") or 0)
             lng = float(r.get("lng") or 0)
@@ -246,17 +247,20 @@ def main() -> None:
                     st, wm = guess_nearest_station(lat, lng)
                     if is_blank(r.get("nearest_station")):
                         r["nearest_station"] = st
+                        updated += 1
                     if is_blank(r.get("walk_minutes")):
                         r["walk_minutes"] = str(wm)
+                        updated += 1
         except Exception:
             pass
 
         if i % 50 == 0:
-            print(f"processed {i}/{len(rows)} ... updated={updated}")
+            print(f"processed {i}/{len(rows)} ... geocoded={geocoded} updated={updated}")
 
     write_csv(OUT_CSV, rows, fieldnames)
     print("DONE. wrote:", OUT_CSV)
-    print("updated rows:", updated)
+    print("geocoded rows:", geocoded)
+    print("updated cells:", updated)
 
 if __name__ == "__main__":
     main()
