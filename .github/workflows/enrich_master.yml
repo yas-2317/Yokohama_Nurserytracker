@@ -1,0 +1,42 @@
+name: Enrich master facilities (address/station)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 1 * *"  # 毎月1日 11:00 JST（UTC 02:00）
+
+permissions:
+  contents: write
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Enrich master_facilities.csv
+        env:
+          WARD_FILTER: 港北区
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          WALK_SPEED_M_PER_MIN: "80"
+        run: |
+          python -u scripts/enrich_master_facilities.py
+          ls -la data | sed -n '1,120p'
+
+      - name: Commit and push
+        run: |
+          set -euxo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/master_facilities.csv data/geocode_cache.json || true
+          git commit -m "Enrich master facilities" || echo "No changes"
+          git push
