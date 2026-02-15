@@ -173,33 +173,10 @@ def build_map_url(name: str, ward: str, address: str = "") -> str:
 def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
     """
     戻り値: {kind: [(url, ry_hint), ...]}
-    ry_hint: リンクテキストに「令和6年度」等がある場合に 6 を返す
+    ry_hint: 「令和6年度」などが周辺テキストにある場合 6 を返す
     """
     html = requests.get(CITY_PAGE, timeout=30).text
     soup = BeautifulSoup(html, "html.parser")
-
-    found: List[Tuple[str, str]] = []
-    for a in soup.select("a[href]"):
-        href = (a.get("href") or "").strip()
-        if not href:
-            continue
-        href_abs = href if href.startswith("http") else requests.compat.urljoin(CITY_PAGE, href)
-        hl = href_abs.lower()
-        if (".xlsx" in hl) or (".xlsm" in hl) or (".xls" in hl):
-            text = (a.get_text() or "").strip()
-            found.append((href_abs, text))
-
-    # 念のため本文からも拾う
-    for u in re.findall(r"https?://[^\s\"']+\.(?:xlsx|xlsm|xls)(?:\?[^\s\"']*)?", html, flags=re.I):
-        found.append((u, ""))
-
-    # unique preserve order
-    seen = set()
-    uniq: List[Tuple[str, str]] = []
-    for u, t in found:
-        if u not in seen:
-            seen.add(u)
-            uniq.append((u, t))
 
     def ry_from_text(t: str) -> Optional[int]:
         if not t:
@@ -210,11 +187,44 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
             return int(m.group(1))
         return None
 
+    found: List[Tuple[str, str, Optional[int]]] = []
+
+    for a in soup.select("a[href]"):
+        href = (a.get("href") or "").strip()
+        if not href:
+            continue
+
+        href_abs = href if href.startswith("http") else requests.compat.urljoin(CITY_PAGE, href)
+        hl = href_abs.lower()
+        if not ((".xlsx" in hl) or (".xlsm" in hl) or (".xls" in hl)):
+            continue
+
+        # aタグ自身のテキスト
+        t_a = (a.get_text() or "").strip()
+
+        # ★重要：親要素（tr/ul/li/div等）から年度を拾う
+        parent = a.find_parent(["tr", "li", "div", "p", "section", "table"])
+        t_ctx = (parent.get_text(" ", strip=True) if parent else t_a)
+        ry = ry_from_text(t_ctx) or ry_from_text(t_a)
+
+        found.append((href_abs, t_a, ry))
+
+    # 念のため、本文からも拾う（年度ヒント無し）
+    for u in re.findall(r"https?://[^\s\"']+\.(?:xlsx|xlsm|xls)(?:\?[^\s\"']*)?", html, flags=re.I):
+        found.append((u, "", None))
+
+    # unique preserve order
+    seen = set()
+    uniq: List[Tuple[str, str, Optional[int]]] = []
+    for u, t, ry in found:
+        if u not in seen:
+            seen.add(u)
+            uniq.append((u, t, ry))
+
     urls: Dict[str, List[Tuple[str, Optional[int]]]] = {"accept": [], "wait": [], "enrolled": []}
 
-    # テキスト分類
-    for u, t in uniq:
-        ry = ry_from_text(t)
+    # テキスト分類（優先）
+    for u, t, ry in uniq:
         if "入所児童" in t:
             urls["enrolled"].append((u, ry))
         elif "受入可能" in t:
@@ -222,30 +232,31 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
         elif ("入所待ち" in t) or ("待ち人数" in t):
             urls["wait"].append((u, ry))
 
-    # 保険：URL分類（ヒント無し）
+    # 保険：URL分類（テキストが取れない場合）
     def push_if_empty(kind: str, pred) -> None:
         if urls[kind]:
             return
-        for u, _ in uniq:
+        for u, _, ry in uniq:
             ul = u.lower()
             if pred(ul):
-                urls[kind].append((u, None))
+                urls[kind].append((u, ry))
 
-    push_if_empty("accept", lambda ul: ("0932_" in ul) or ("受入" in ul) or ("ukire" in ul))
+    push_if_empty("accept", lambda ul: ("0932_" in ul) or ("0928_" in ul) or ("受入" in ul) or ("ukire" in ul))
     push_if_empty("wait", lambda ul: ("0933_" in ul) or ("0929_" in ul) or ("待ち" in ul) or ("mati" in ul))
     push_if_empty("enrolled", lambda ul: ("0934_" in ul) or ("0923_" in ul) or ("児童" in ul) or ("jido" in ul))
 
     if not urls["accept"] or not urls["wait"]:
-        sample = [u for u, _ in uniq][:15]
+        sample = [u for u, _, _ in uniq][:15]
         raise RuntimeError(f"Excelリンクが拾えません（候補={len(uniq)}件、例={sample}）")
 
+    # デバッグ表示（どのURLに年度ヒントが付いたか）
     print("XLS links found:", {k: len(v) for k, v in urls.items()})
     for k in ("accept", "wait", "enrolled"):
         print(" ", k)
         for u, ry in urls[k]:
             print("   -", u, "ry_hint=", ry)
-    return urls
 
+    return urls
 
 # ---------- Excel parsing ----------
 def sheet_to_rows(ws) -> List[List[Any]]:
