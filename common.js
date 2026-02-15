@@ -21,20 +21,82 @@ function fmt(x){
 
 // very small csv parser (no quoted commas support; master_facilities.csv はシンプル前提)
 function parseCSV(text){
-  const lines = text.replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n").filter(l=>l.trim()!=="");
-  if(lines.length===0) return [];
-  const header = lines[0].split(",").map(s=>s.trim());
+  // RFC4180-ish parser (supports quoted fields with commas/newlines)
   const rows = [];
-  for(let i=1;i<lines.length;i++){
-    const cols = lines[i].split(",");
-    const obj = {};
-    for(let j=0;j<header.length;j++){
-      obj[header[j]] = (cols[j] ?? "").trim();
+  let row = [];
+  let field = "";
+  let i = 0;
+  let inQuotes = false;
+
+  // normalize newlines
+  text = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
+  while(i < text.length){
+    const c = text[i];
+
+    if(inQuotes){
+      if(c === '"'){
+        // escaped quote
+        if(text[i+1] === '"'){
+          field += '"';
+          i += 2;
+          continue;
+        } else {
+          inQuotes = false;
+          i += 1;
+          continue;
+        }
+      } else {
+        field += c;
+        i += 1;
+        continue;
+      }
+    } else {
+      if(c === '"'){
+        inQuotes = true;
+        i += 1;
+        continue;
+      }
+      if(c === ","){
+        row.push(field);
+        field = "";
+        i += 1;
+        continue;
+      }
+      if(c === "\n"){
+        row.push(field);
+        field = "";
+        // skip empty tail rows
+        if(row.some(v => String(v).trim() !== "")) rows.push(row);
+        row = [];
+        i += 1;
+        continue;
+      }
+      field += c;
+      i += 1;
     }
-    rows.push(obj);
   }
-  return rows;
+
+  // last field
+  row.push(field);
+  if(row.some(v => String(v).trim() !== "")) rows.push(row);
+
+  if(rows.length === 0) return [];
+
+  // header
+  const header = rows[0].map(s => String(s).trim());
+  const out = [];
+  for(let r=1; r<rows.length; r++){
+    const cols = rows[r];
+    const obj = {};
+    for(let c=0; c<header.length; c++){
+      obj[header[c]] = (cols[c] ?? "").toString().trim();
+    }
+    out.push(obj);
+  }
+  return out;
 }
+
 
 async function loadMaster(){
   try{
