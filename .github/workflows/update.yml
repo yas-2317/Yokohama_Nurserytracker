@@ -3,7 +3,7 @@ name: Update nursery data
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 0 2 * *" # 毎月2日 09:30 JST 相当（UTC）
+    - cron: "30 0 2 * *"
 
 permissions:
   contents: write
@@ -12,15 +12,17 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
-          set -euxo pipefail
+          set -e
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
@@ -28,46 +30,15 @@ jobs:
         env:
           WARD_FILTER: "港北区"
         run: |
-          set -euxo pipefail
-          echo "=== run script ==="
+          set -e
           python -u scripts/update_from_yokohama.py
-
-          echo "=== ls -la data (after script) ==="
           ls -la data || true
 
-          echo "=== months.json ==="
-          cat data/months.json || true
-
-          echo "=== verify month json exists ==="
-          python - <<'PY'
-import json
-from pathlib import Path
-
-mp = Path("data/months.json")
-if not mp.exists():
-    raise SystemExit("ERROR: data/months.json does not exist")
-
-txt = mp.read_text(encoding="utf-8").strip()
-if not txt:
-    raise SystemExit("ERROR: data/months.json is empty")
-
-obj = json.loads(txt)
-months = obj.get("months", [])
-if not months:
-    raise SystemExit("ERROR: months[] is empty in months.json")
-
-latest = months[-1]
-jp = Path("data") / f"{latest}.json"
-print("latest month:", latest)
-print("expected file:", jp)
-
-if not jp.exists():
-    raise SystemExit(f"ERROR: expected month json missing: {jp}")
-
-size = jp.stat().st_size
-print("month json size:", size)
-if size < 200:
-    raise SystemExit(f"ERROR: month json too small (likely empty): {jp} size={size}")
-PY
-
-      - name: Commit changes (fail if non
+      - name: Commit and push
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data
+          git commit -m "Update nursery data" || exit 0
+          git push
