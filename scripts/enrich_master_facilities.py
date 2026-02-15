@@ -25,10 +25,13 @@ MISSES_CSV = DATA_DIR / "geocode_misses.csv"
 
 WARD_HINT = (os.getenv("WARD_FILTER", "港北区") or "").strip() or "港北区"
 
-WALK_SPEED_M_PER_MIN = float(os.getenv("WALK_SPEED_M_PER_MIN", "80"))
-SLEEP_SEC = float(os.getenv("NOMINATIM_SLEEP_SEC", "1.1"))
-RETRY = int(os.getenv("NOMINATIM_RETRY", "4"))
+# ★ここが重要：Nominatimは連絡先が必要なことがある
+NOMINATIM_EMAIL = (os.getenv("NOMINATIM_EMAIL") or "").strip()  # 例: yourname@example.com
+NOMINATIM_SLEEP_SEC = float(os.getenv("NOMINATIM_SLEEP_SEC", "1.1"))
+NOMINATIM_RETRY = int(os.getenv("NOMINATIM_RETRY", "5"))
 MAX_CANDIDATES = int(os.getenv("NOMINATIM_MAX_CANDIDATES", "5"))
+
+WALK_SPEED_M_PER_MIN = float(os.getenv("WALK_SPEED_M_PER_MIN", "80"))
 
 # ---- 港北区周辺 主要駅（必要なら追加） ----
 STATIONS: List[Dict[str, Any]] = [
@@ -37,8 +40,6 @@ STATIONS: List[Dict[str, Any]] = [
     {"name": "大倉山駅", "lat": 35.5228, "lng": 139.6296},
     {"name": "菊名駅", "lat": 35.5096, "lng": 139.6305},
     {"name": "新横浜駅", "lat": 35.5069, "lng": 139.6170},
-    {"name": "妙蓮寺駅", "lat": 35.4978, "lng": 139.6346},
-    {"name": "白楽駅", "lat": 35.4868, "lng": 139.6250},
     {"name": "小机駅", "lat": 35.5153, "lng": 139.5978},
     {"name": "新羽駅", "lat": 35.5270, "lng": 139.6119},
     {"name": "北新横浜駅", "lat": 35.5186, "lng": 139.6091},
@@ -60,16 +61,28 @@ def is_blank(s: Any) -> bool:
 
 def normalize_name(name: str) -> str:
     """
-    ヒット率向上用の正規化：
-    - 全角スペース→半角
-    - 連続スペース削減
-    - カッコ内注記を除去（例：〇〇保育園（分園））
-    - 記号ゆれを軽減
+    ヒット率向上用の正規化
+    - カッコ内注記削除
+    - スペース正規化
     """
     x = norm(name)
     x = re.sub(r"[（\(].*?[）\)]", "", x).strip()
-    x = x.replace("・", "").replace("　", " ")
     x = re.sub(r"\s+", " ", x).strip()
+    return x
+
+def strip_brand_prefix(name: str) -> str:
+    """
+    ブランド名が先頭にあるとヒットしないことがあるので保険で落とす
+    （完全一致でなくても効くケースがある）
+    """
+    x = normalize_name(name)
+    # よくあるプレフィックス（必要なら追加）
+    prefixes = ["ベネッセ", "アスク", "岩崎学園", "にじいろ", "太陽の子", "ポピンズ", "グローバルキッズ"]
+    for p in prefixes:
+        if x.startswith(p + " "):
+            return x[len(p) + 1 :]
+        if x.startswith(p):
+            return x[len(p) :].lstrip()
     return x
 
 def haversine_m(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
@@ -107,9 +120,6 @@ def build_map_url(lat: float, lng: float) -> str:
     return f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
 
 def score_candidate(hit: Dict[str, Any], ward: str) -> int:
-    """
-    Nominatim候補を “横浜市 + 港北区” に寄せて選ぶスコア。
-    """
     s = 0
     disp = (hit.get("display_name") or "")
     addr = (hit.get("address") or {})
@@ -119,7 +129,6 @@ def score_candidate(hit: Dict[str, Any], ward: str) -> int:
     if ward and ward in disp:
         s += 40
 
-    # addressdetails からも加点
     city = str(addr.get("city") or addr.get("town") or addr.get("municipality") or "")
     county = str(addr.get("county") or "")
     suburb = str(addr.get("suburb") or addr.get("city_district") or "")
@@ -129,17 +138,22 @@ def score_candidate(hit: Dict[str, Any], ward: str) -> int:
     if ward and (ward in county or ward in suburb):
         s += 30
 
-    # 日本であること（country）
     if str(addr.get("country") or "") in ("日本", "Japan"):
         s += 10
 
     return s
 
 # ---------------- nominatim ----------------
-def nominatim_search(q: str) -> List[Dict[str, Any]]:
+def nominatim_search(q: str) -> Tuple[List[Dict[str, Any]], str]:
+    """
+    returns: (hits, error_tag)
+    error_tag: "" | "HTTP403" | "HTTP429" | "HTTPxxx" | "EXC"
+    """
     url = "https://nominatim.openstreetmap.org/search"
     headers = {
-        "User-Agent": "NurseryAvailabilityBot/1.0 (non-commercial; github actions)",
+        # ★連絡先が分かるUAが推奨（無いと403になるケースがある）
+        "User-Agent": f"NurseryAvailabilityBot/1.0 ({os.getenv('GITHUB_REPOSITORY','local')}; contact={NOMINATIM_EMAIL or 'MISSING_EMAIL'})",
+        "Accept": "application/json",
         "Accept-Language": "ja",
     }
     params = {
@@ -148,61 +162,86 @@ def nominatim_search(q: str) -> List[Dict[str, Any]]:
         "limit": MAX_CANDIDATES,
         "addressdetails": 1,
     }
+    # ★emailパラメータが効くケースあり
+    if NOMINATIM_EMAIL:
+        params["email"] = NOMINATIM_EMAIL
 
-    for t in range(RETRY):
+    for t in range(NOMINATIM_RETRY):
         try:
             r = requests.get(url, params=params, headers=headers, timeout=40)
             if r.status_code == 429:
-                # レート制限：指数バックオフ
-                time.sleep(max(SLEEP_SEC, 2.0) * (t + 1))
+                print("WARN Nominatim HTTP 429 (rate limited). backing off...", "try", t+1)
+                time.sleep(max(NOMINATIM_SLEEP_SEC, 2.0) * (t + 1))
                 continue
-            r.raise_for_status()
-            arr = r.json()
-            return arr if isinstance(arr, list) else []
-        except Exception as e:
-            print("WARN nominatim error:", e)
-            time.sleep(SLEEP_SEC * (t + 1))
-    return []
 
-def lookup_nominatim(facility_id: str, name: str, ward: str, address_hint: str, cache: Dict[str, Any]) -> Tuple[Optional[Dict[str, Any]], str]:
+            if r.status_code == 403:
+                # 典型：UA/Referer/Email不足など
+                print("ERROR Nominatim HTTP 403. Likely blocked by usage policy (User-Agent/contact).")
+                snippet = (r.text or "")[:200].replace("\n", " ")
+                print("403 body snippet:", snippet)
+                return [], "HTTP403"
+
+            if r.status_code >= 400:
+                print(f"WARN Nominatim HTTP {r.status_code}")
+                snippet = (r.text or "")[:200].replace("\n", " ")
+                print("body snippet:", snippet)
+                time.sleep(NOMINATIM_SLEEP_SEC * (t + 1))
+                continue
+
+            arr = r.json()
+            return (arr if isinstance(arr, list) else []), ""
+
+        except Exception as e:
+            print("WARN nominatim exception:", repr(e))
+            time.sleep(NOMINATIM_SLEEP_SEC * (t + 1))
+
+    return [], "EXC"
+
+def lookup_nominatim(facility_id: str, name: str, ward: str, address_hint: str, cache: Dict[str, Any]) -> Tuple[Optional[Dict[str, Any]], str, str]:
     """
-    戻り値: (out or None, used_query)
-    キャッシュキーは facility_id 優先（園名ゆれに強い）
+    returns: (out_or_none, used_query, err_tag)
     """
     fid = norm(facility_id)
     key = f"fid::{fid}" if fid else f"{ward}::{name}"
     if key in cache:
-        return cache[key], cache[key].get("q", "")
+        return cache[key], cache[key].get("q", ""), ""
 
     nm = normalize_name(name)
+    nm2 = strip_brand_prefix(name)
+
     queries: List[str] = []
 
-    # 住所ヒントがある場合は最優先
+    # 住所ヒントがあるなら最優先
     if address_hint:
         queries.append(f"{nm} {address_hint} 横浜市{ward} 日本")
 
-    # 基本クエリ（園名 + 区 + 横浜市）
+    # ★基本（保育園を優先）
+    queries.append(f"{nm} 保育園 横浜市{ward} 日本")
     queries.append(f"{nm} 横浜市{ward} 日本")
 
-    # “保育園/保育所/こども園” のゆれを保険で追加
-    if "保育" not in nm:
-        queries.append(f"{nm} 保育園 横浜市{ward} 日本")
-        queries.append(f"{nm} 保育所 横浜市{ward} 日本")
+    # ★ブランド落とし版（効くことがある）
+    if nm2 and nm2 != nm:
+        queries.append(f"{nm2} 保育園 横浜市{ward} 日本")
+        queries.append(f"{nm2} 横浜市{ward} 日本")
+
+    # 最後の保険（保育所/こども園）
+    queries.append(f"{nm} 保育所 横浜市{ward} 日本")
     queries.append(f"{nm} 認定こども園 横浜市{ward} 日本")
 
     used_q = ""
     for q in queries:
         q = re.sub(r"\s+", " ", q).strip()
         used_q = q
-        hits = nominatim_search(q)
-        time.sleep(SLEEP_SEC)
+        hits, err_tag = nominatim_search(q)
+        time.sleep(NOMINATIM_SLEEP_SEC)
+
+        if err_tag == "HTTP403":
+            return None, used_q, err_tag
 
         if not hits:
             continue
 
-        # スコア最大の候補を選ぶ
         best = max(hits, key=lambda h: score_candidate(h, ward))
-
         lat = float(best["lat"])
         lng = float(best["lon"])
         disp = best.get("display_name") or ""
@@ -216,9 +255,9 @@ def lookup_nominatim(facility_id: str, name: str, ward: str, address_hint: str, 
         }
         cache[key] = out
         save_cache(cache)
-        return out, used_q
+        return out, used_q, ""
 
-    return None, used_q
+    return None, used_q, ""
 
 # ---------------- csv i/o ----------------
 def read_csv_file(path: Path) -> List[Dict[str, str]]:
@@ -244,12 +283,8 @@ def ensure_columns(fieldnames: List[str]) -> List[str]:
     return fieldnames
 
 def write_misses(misses: List[Dict[str, str]]) -> None:
-    if not misses:
-        # 以前のファイルが残ると紛らわしいので空でも書き換える
-        MISSES_CSV.write_text("facility_id,name,ward,query_tried\n", encoding="utf-8")
-        return
     with MISSES_CSV.open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["facility_id","name","ward","query_tried"])
+        w = csv.DictWriter(f, fieldnames=["facility_id","name","ward","query_tried","error"])
         w.writeheader()
         for r in misses:
             w.writerow(r)
@@ -257,6 +292,9 @@ def write_misses(misses: List[Dict[str, str]]) -> None:
 def main() -> None:
     if not MASTER_CSV.exists():
         raise FileNotFoundError(f"not found: {MASTER_CSV}")
+
+    if not NOMINATIM_EMAIL:
+        print("WARN: NOMINATIM_EMAIL is not set. You may get HTTP 403 from nominatim.openstreetmap.org.")
 
     rows = read_csv_file(MASTER_CSV)
     if not rows:
@@ -285,8 +323,14 @@ def main() -> None:
             is_blank(r.get("map_url"))
         )
 
+        last_q = ""
+        last_err = ""
+
         if need_geo:
-            out, used_q = lookup_nominatim(fid, name, ward, address_hint, cache)
+            out, used_q, err = lookup_nominatim(fid, name, ward, address_hint, cache)
+            last_q = used_q
+            last_err = err
+
             if out:
                 if is_blank(r.get("address")) and out.get("address"):
                     r["address"] = str(out["address"]); updated_cells += 1
@@ -296,7 +340,12 @@ def main() -> None:
                     r["map_url"] = str(out["map_url"]); updated_cells += 1
                 geocoded += 1
             else:
-                misses.append({"facility_id": fid, "name": name, "ward": ward, "query_tried": used_q})
+                misses.append({"facility_id": fid, "name": name, "ward": ward, "query_tried": last_q, "error": last_err or ""})
+
+                # 403は全滅のサインなので早めに止める（無駄に叩いて悪化させない）
+                if last_err == "HTTP403":
+                    print("STOP: got HTTP403. Aborting further requests to avoid worsening block.")
+                    break
 
         # nearest station / walk minutes
         try:
@@ -312,7 +361,7 @@ def main() -> None:
         except Exception:
             pass
 
-        if i % 50 == 0:
+        if i % 25 == 0:
             print(f"processed {i}/{total} ... geocoded={geocoded} misses={len(misses)} updated_cells={updated_cells}")
 
     write_csv_file(OUT_CSV, rows, fieldnames)
