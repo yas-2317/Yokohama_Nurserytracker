@@ -79,7 +79,7 @@ def iso(d: date) -> str:
 
 
 def sanitize_header(header: List[str]) -> List[str]:
-    out = []
+    out: List[str] = []
     seen: Dict[str, int] = {}
     for i, h in enumerate(header):
         h2 = (h or "").strip()
@@ -99,24 +99,25 @@ def extract_month_from_text(text: str) -> Optional[str]:
     例:
       '【令和８年２月１日時点】' → 2026-02-01
       'R6.4.1' → 2024-04-01
+      '令和6年4月1日' → 2024-04-01
+      '2025年4月1日' → 2025-04-01
     """
     if not text:
         return None
     t = str(text)
 
-    # 全角→半角
     z2h = str.maketrans("０１２３４５６７８９", "0123456789")
     t2 = t.translate(z2h)
 
-    # 1) シート名の "R6.4.1" 形式
+    # R6.4.1 形式
     m = re.search(r"\bR\s*([0-9]{1,2})\s*\.\s*([0-9]{1,2})\s*\.\s*1\b", t2, flags=re.I)
     if m:
         ry = int(m.group(1))
         mm = int(m.group(2))
-        y = 2018 + ry  # Reiwa 1=2019
+        y = 2018 + ry
         return date(y, mm, 1).isoformat()
 
-    # 2) "令和6年4月1日" 形式
+    # 令和◯年◯月1日
     m = re.search(r"令和\s*([0-9]+)\s*年\s*([0-9]+)\s*月\s*1\s*日", t2)
     if m:
         ry = int(m.group(1))
@@ -124,7 +125,7 @@ def extract_month_from_text(text: str) -> Optional[str]:
         y = 2018 + ry
         return date(y, mm, 1).isoformat()
 
-    # 3) "2025年4月1日" 形式
+    # YYYY年M月1日
     m = re.search(r"([0-9]{4})\s*年\s*([0-9]{1,2})\s*月\s*1\s*日", t2)
     if m:
         y = int(m.group(1))
@@ -172,7 +173,7 @@ def build_map_url(name: str, ward: str, address: str = "") -> str:
 def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
     """
     戻り値: {kind: [(url, ry_hint), ...]}
-    ry_hint は '令和6年度' のような年度表記がリンクテキストにある場合に整数で返す（例: 6）
+    ry_hint: リンクテキストに「令和6年度」等がある場合に 6 を返す
     """
     html = requests.get(CITY_PAGE, timeout=30).text
     soup = BeautifulSoup(html, "html.parser")
@@ -188,6 +189,7 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
             text = (a.get_text() or "").strip()
             found.append((href_abs, text))
 
+    # 念のため本文からも拾う
     for u in re.findall(r"https?://[^\s\"']+\.(?:xlsx|xlsm|xls)(?:\?[^\s\"']*)?", html, flags=re.I):
         found.append((u, ""))
 
@@ -210,7 +212,7 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
 
     urls: Dict[str, List[Tuple[str, Optional[int]]]] = {"accept": [], "wait": [], "enrolled": []}
 
-    # テキスト分類（最優先）
+    # テキスト分類
     for u, t in uniq:
         ry = ry_from_text(t)
         if "入所児童" in t:
@@ -220,8 +222,8 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
         elif ("入所待ち" in t) or ("待ち人数" in t):
             urls["wait"].append((u, ry))
 
-    # 保険：URL文字列で拾う（ただしヒントは無し）
-    def push_if_empty(kind: str, pred):
+    # 保険：URL分類（ヒント無し）
+    def push_if_empty(kind: str, pred) -> None:
         if urls[kind]:
             return
         for u, _ in uniq:
@@ -229,8 +231,8 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
             if pred(ul):
                 urls[kind].append((u, None))
 
-    push_if_empty("accept",   lambda ul: ("0932_" in ul) or ("受入" in ul) or ("ukire" in ul))
-    push_if_empty("wait",     lambda ul: ("0933_" in ul) or ("0929_" in ul) or ("待ち" in ul) or ("mati" in ul))
+    push_if_empty("accept", lambda ul: ("0932_" in ul) or ("受入" in ul) or ("ukire" in ul))
+    push_if_empty("wait", lambda ul: ("0933_" in ul) or ("0929_" in ul) or ("待ち" in ul) or ("mati" in ul))
     push_if_empty("enrolled", lambda ul: ("0934_" in ul) or ("0923_" in ul) or ("児童" in ul) or ("jido" in ul))
 
     if not urls["accept"] or not urls["wait"]:
@@ -243,7 +245,6 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
         for u, ry in urls[k]:
             print("   -", u, "ry_hint=", ry)
     return urls
-
 
 
 # ---------- Excel parsing ----------
@@ -261,7 +262,8 @@ def sheet_to_rows(ws) -> List[List[Any]]:
 
 def find_header_index(rows: List[List[Any]]) -> Optional[int]:
     keywords = ("施設", "区", "合計", "0歳", "０歳", "1歳", "１歳", "受入", "待ち", "児童")
-    best_i, best_score = None, -1
+    best_i: Optional[int] = None
+    best_score = -1
     for i, row in enumerate(rows[:150]):
         cells = ["" if v is None else str(v) for v in row]
         nonempty = sum(1 for c in cells if c.strip() != "")
@@ -275,7 +277,6 @@ def find_header_index(rows: List[List[Any]]) -> Optional[int]:
 def parse_sheet(ws, ry_hint: Optional[int] = None) -> Tuple[Optional[str], List[Dict[str, str]]]:
     rows = sheet_to_rows(ws)
 
-    # 月を探す（シート名/先頭セル）
     month = extract_month_from_text(ws.title)
     if month is None:
         for r in rows[:30]:
@@ -304,20 +305,20 @@ def parse_sheet(ws, ry_hint: Optional[int] = None) -> Tuple[Optional[str], List[
         empty_streak = 0
         out.append({header[i]: vals[i] if i < len(vals) else "" for i in range(len(header))})
 
-    # rows内の更新日で上書き
     m2 = detect_month_from_rows(out)
     if m2:
         month = m2
 
-    # ★ 最後の保険：年なし（"4月" 等）を年度ヒントで復元
+    # 年が書かれていない「4月」等を年度ヒントで復元
     if month is None and ry_hint is not None:
-        t = str(ws.title).translate(str.maketrans("０１２３４５６７８９", "0123456789"))
-        m = re.search(r"([0-9]{1,2})\s*月", t)
-        if not m:
-            # 先頭セルにも月だけあるケース
+        z2h = str.maketrans("０１２３４５６７８９", "0123456789")
+        title = str(ws.title).translate(z2h)
+
+        m = re.search(r"([0-9]{1,2})\s*月", title)
+        if m is None:
             for r in rows[:10]:
                 for v in r[:10]:
-                    tt = ("" if v is None else str(v)).translate(str.maketrans("０１２３４５６７８９", "0123456789"))
+                    tt = ("" if v is None else str(v)).translate(z2h)
                     m = re.search(r"([0-9]{1,2})\s*月", tt)
                     if m:
                         break
@@ -327,7 +328,7 @@ def parse_sheet(ws, ry_hint: Optional[int] = None) -> Tuple[Optional[str], List[
         if m:
             mm = int(m.group(1))
             base_year = 2018 + ry_hint  # 令和6年度 -> 2024年度
-            y = base_year if mm >= 4 else (base_year + 1)  # 4-12は当年、1-3は翌年（ただし3月は元々公開なし）
+            y = base_year if mm >= 4 else (base_year + 1)
             month = date(y, mm, 1).isoformat()
 
     return month, out
@@ -344,9 +345,14 @@ def read_xlsx(url: str, ry_hint: Optional[int] = None) -> Dict[str, List[Dict[st
         month, rows = parse_sheet(ws, ry_hint=ry_hint)
         if month and rows:
             mp[month] = rows
-    print("  parsed months:", len(mp), "range:",
-          (min(mp.keys()), max(mp.keys())) if mp else None)
+
+    if mp:
+        ks = sorted(mp.keys())
+        print("  parsed months:", len(mp), "range:", (ks[0], ks[-1]))
+    else:
+        print("  parsed months: 0")
     return mp
+
 
 # ---------- column guessing / metrics ----------
 def guess_facility_id_key(rows: List[Dict[str, str]]) -> str:
@@ -366,10 +372,10 @@ def guess_facility_id_key(rows: List[Dict[str, str]]) -> str:
         if any(p in k for p in patterns) and ("施設" in k or "事業所" in k):
             return k
 
-    # content-based
     N = min(200, len(rows))
     digit_re = re.compile(r"^\d{4,}$")
-    best_key, best_score = None, -1
+    best_key: Optional[str] = None
+    best_score = -1
     for k in header:
         score = 0
         for i in range(N):
@@ -487,28 +493,29 @@ def main() -> None:
     wai_by_month: Dict[str, List[Dict[str, str]]] = {}
     enr_by_month: Dict[str, List[Dict[str, str]]] = {}
 
-   for u, ry in urls["accept"]:
-    try:
-        acc_by_month.update(read_xlsx(u, ry_hint=ry))
-    except Exception as e:
-        print("WARN accept xlsx failed:", u, e)
+    for u, ry in urls["accept"]:
+        try:
+            acc_by_month.update(read_xlsx(u, ry_hint=ry))
+        except Exception as e:
+            print("WARN accept xlsx failed:", u, e)
 
-for u, ry in urls["wait"]:
-    try:
-        wai_by_month.update(read_xlsx(u, ry_hint=ry))
-    except Exception as e:
-        print("WARN wait xlsx failed:", u, e)
+    for u, ry in urls["wait"]:
+        try:
+            wai_by_month.update(read_xlsx(u, ry_hint=ry))
+        except Exception as e:
+            print("WARN wait xlsx failed:", u, e)
 
-for u, ry in urls["enrolled"]:
-    try:
-        enr_by_month.update(read_xlsx(u, ry_hint=ry))
-    except Exception as e:
-        print("WARN enrolled xlsx failed:", u, e)
+    for u, ry in urls["enrolled"]:
+        try:
+            enr_by_month.update(read_xlsx(u, ry_hint=ry))
+        except Exception as e:
+            print("WARN enrolled xlsx failed:", u, e)
 
     if not acc_by_month:
         raise RuntimeError("受入可能数の月次が1つも取れませんでした")
 
-    print("DEBUG months in accept:", len(acc_by_month), "range:", (min(acc_by_month.keys()), max(acc_by_month.keys())))
+    ks_acc = sorted(acc_by_month.keys())
+    print("DEBUG months in accept:", len(ks_acc), "range:", (ks_acc[0], ks_acc[-1]))
 
     end = month_floor(date.today())
     start = add_months(end, -(MONTHS_BACK - 1))
@@ -518,12 +525,11 @@ for u, ry in urls["enrolled"]:
         want.append(iso(cur))
         cur = add_months(cur, 1)
 
-    # ※横浜市は毎年3/1時点の公開が無いので “want” のうち3月は基本 missing になる
     available = [m for m in want if m in acc_by_month]
     missing = [m for m in want if m not in acc_by_month]
     print("want months:", len(want), "available:", len(available))
     if missing:
-        print("missing (first 20):", missing[:20])
+        print("missing (first 24):", missing[:24])
 
     months_path = DATA_DIR / "months.json"
     existing_months: List[str] = []
@@ -546,7 +552,7 @@ for u, ry in urls["enrolled"]:
         fid_a = guess_facility_id_key(accept_rows)
         A = index_by_key(accept_rows, fid_a)
 
-        W = {}
+        W: Dict[str, Dict[str, str]] = {}
         if wait_rows:
             try:
                 fid_w = guess_facility_id_key(wait_rows)
@@ -554,7 +560,7 @@ for u, ry in urls["enrolled"]:
             except Exception:
                 W = {}
 
-        E = {}
+        E: Dict[str, Dict[str, str]] = {}
         if enrolled_rows:
             try:
                 fid_e = guess_facility_id_key(enrolled_rows)
@@ -577,7 +583,7 @@ for u, ry in urls["enrolled"]:
 
             name = str(ar.get(name_key, "")).strip() if name_key else ""
 
-            mm = master.get(fid, {})
+            mm = master.get(str(fid), {})
             address = (mm.get("address") or "").strip()
             map_url = (mm.get("map_url") or "").strip() or build_map_url(name, ward, address)
 
@@ -588,28 +594,33 @@ for u, ry in urls["enrolled"]:
 
             age_groups, ages_0_5 = build_age_groups(ar, wr, er)
 
-            facilities.append({
-                "id": str(fid),
-                "name": name,
-                "ward": ward,
-                "address": address,
-                "map_url": map_url,
-                "updated": m,
-                "totals": {
-                    "accept": tot_accept,
-                    "wait": tot_wait,
-                    "enrolled": tot_enrolled,
-                    "capacity_est": cap_est,
-                    "wait_per_capacity_est": ratio_opt(tot_wait, cap_est),
-                },
-                "age_groups": age_groups,
-                "ages_0_5": ages_0_5,
-            })
+            facilities.append(
+                {
+                    "id": str(fid),
+                    "name": name,
+                    "ward": ward,
+                    "address": address,
+                    "map_url": map_url,
+                    "updated": m,
+                    "totals": {
+                        "accept": tot_accept,
+                        "wait": tot_wait,
+                        "enrolled": tot_enrolled,
+                        "capacity_est": cap_est,
+                        "wait_per_capacity_est": ratio_opt(tot_wait, cap_est),
+                    },
+                    "age_groups": age_groups,
+                    "ages_0_5": ages_0_5,
+                }
+            )
 
         out_path.write_text(
-            json.dumps({"month": m, "ward": (WARD_FILTER or "横浜市"), "facilities": facilities},
-                       ensure_ascii=False, indent=2),
-            encoding="utf-8"
+            json.dumps(
+                {"month": m, "ward": (WARD_FILTER or "横浜市"), "facilities": facilities},
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
         )
         print("wrote:", out_path.name, "facilities:", len(facilities))
 
@@ -618,6 +629,7 @@ for u, ry in urls["enrolled"]:
         p = DATA_DIR / f"{m}.json"
         if p.exists() and p.stat().st_size > 200:
             ms.add(m)
+
     months_path.write_text(json.dumps({"months": sorted(ms)}, ensure_ascii=False, indent=2), encoding="utf-8")
     print("updated months.json:", len(ms))
 
