@@ -38,6 +38,6 @@ jobs:
           set -euxo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/master_facilities.csv data/geocode_cache.json || true
+          git add data/master_facilities.csv data/geocode_cache.json data/geocode_misses.csv || true
           git commit -m "Enrich master facilities (no API)" || echo "No changes"
           git push
