@@ -169,10 +169,10 @@ def build_map_url(name: str, ward: str, address: str = "") -> str:
 
 
 # ---------- scraping ----------
-def scrape_excel_urls() -> Dict[str, List[str]]:
+def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
     """
-    CITY_PAGE から Excel リンクを拾う。
-    月次(小さいxlsx) + 過去年度まとめ(大きいxlsx) を両方取るのが重要。
+    戻り値: {kind: [(url, ry_hint), ...]}
+    ry_hint は '令和6年度' のような年度表記がリンクテキストにある場合に整数で返す（例: 6）
     """
     html = requests.get(CITY_PAGE, timeout=30).text
     soup = BeautifulSoup(html, "html.parser")
@@ -183,16 +183,15 @@ def scrape_excel_urls() -> Dict[str, List[str]]:
         if not href:
             continue
         href_abs = href if href.startswith("http") else requests.compat.urljoin(CITY_PAGE, href)
-        href_l = href_abs.lower()
-        if (".xlsx" in href_l) or (".xlsm" in href_l) or (".xls" in href_l):
+        hl = href_abs.lower()
+        if (".xlsx" in hl) or (".xlsm" in hl) or (".xls" in hl):
             text = (a.get_text() or "").strip()
             found.append((href_abs, text))
 
-    # 念のため本文からも拾う
     for u in re.findall(r"https?://[^\s\"']+\.(?:xlsx|xlsm|xls)(?:\?[^\s\"']*)?", html, flags=re.I):
         found.append((u, ""))
 
-    # 重複除去（順序維持）
+    # unique preserve order
     seen = set()
     uniq: List[Tuple[str, str]] = []
     for u, t in found:
@@ -200,50 +199,39 @@ def scrape_excel_urls() -> Dict[str, List[str]]:
             seen.add(u)
             uniq.append((u, t))
 
-    urls: Dict[str, List[str]] = {"accept": [], "wait": [], "enrolled": []}
-
-    def kind_by_text(t: str) -> Optional[str]:
+    def ry_from_text(t: str) -> Optional[int]:
         if not t:
             return None
-        if "入所児童" in t:
-            return "enrolled"
-        if "受入可能" in t:
-            return "accept"
-        if ("入所待ち" in t) or ("待ち人数" in t):
-            return "wait"
+        t2 = t.translate(str.maketrans("０１２３４５６７８９", "0123456789"))
+        m = re.search(r"令和\s*([0-9]+)\s*年度", t2)
+        if m:
+            return int(m.group(1))
         return None
 
-    # まずリンクテキストで分類（確度高）
-    for u, t in uniq:
-        k = kind_by_text(t)
-        if k:
-            urls[k].append(u)
+    urls: Dict[str, List[Tuple[str, Optional[int]]]] = {"accept": [], "wait": [], "enrolled": []}
 
-    # テキストが空/揺れる場合の保険：URLに入る典型IDで分類
-    # 月次: 0932=受入 0933=待ち 0934=児童
-    # 年度まとめ: 0783/0784 のような番号になることがある（ページ更新で変わっても拾えるように “受入/待ち/児童” 文字も見る）
-    def push_by_url(kind: str, pred):
+    # テキスト分類（最優先）
+    for u, t in uniq:
+        ry = ry_from_text(t)
+        if "入所児童" in t:
+            urls["enrolled"].append((u, ry))
+        elif "受入可能" in t:
+            urls["accept"].append((u, ry))
+        elif ("入所待ち" in t) or ("待ち人数" in t):
+            urls["wait"].append((u, ry))
+
+    # 保険：URL文字列で拾う（ただしヒントは無し）
+    def push_if_empty(kind: str, pred):
+        if urls[kind]:
+            return
         for u, _ in uniq:
             ul = u.lower()
             if pred(ul):
-                urls[kind].append(u)
+                urls[kind].append((u, None))
 
-    if not urls["accept"]:
-        push_by_url("accept", lambda ul: ("0932_" in ul) or ("受入" in ul) or ("ukire" in ul))
-    if not urls["wait"]:
-        push_by_url("wait", lambda ul: ("0933_" in ul) or ("0929_" in ul) or ("待ち" in ul) or ("mati" in ul))
-    if not urls["enrolled"]:
-        push_by_url("enrolled", lambda ul: ("0934_" in ul) or ("0923_" in ul) or ("児童" in ul) or ("jido" in ul))
-
-    # 最後に重複除去（順序維持）
-    for k in list(urls.keys()):
-        s = set()
-        out = []
-        for u in urls[k]:
-            if u not in s:
-                s.add(u)
-                out.append(u)
-        urls[k] = out
+    push_if_empty("accept",   lambda ul: ("0932_" in ul) or ("受入" in ul) or ("ukire" in ul))
+    push_if_empty("wait",     lambda ul: ("0933_" in ul) or ("0929_" in ul) or ("待ち" in ul) or ("mati" in ul))
+    push_if_empty("enrolled", lambda ul: ("0934_" in ul) or ("0923_" in ul) or ("児童" in ul) or ("jido" in ul))
 
     if not urls["accept"] or not urls["wait"]:
         sample = [u for u, _ in uniq][:15]
@@ -251,10 +239,11 @@ def scrape_excel_urls() -> Dict[str, List[str]]:
 
     print("XLS links found:", {k: len(v) for k, v in urls.items()})
     for k in ("accept", "wait", "enrolled"):
-        print("  ", k, "=>")
-        for u in urls[k]:
-            print("    -", u)
+        print(" ", k)
+        for u, ry in urls[k]:
+            print("   -", u, "ry_hint=", ry)
     return urls
+
 
 
 # ---------- Excel parsing ----------
@@ -283,14 +272,14 @@ def find_header_index(rows: List[List[Any]]) -> Optional[int]:
     return best_i
 
 
-def parse_sheet(ws) -> Tuple[Optional[str], List[Dict[str, str]]]:
+def parse_sheet(ws, ry_hint: Optional[int] = None) -> Tuple[Optional[str], List[Dict[str, str]]]:
     rows = sheet_to_rows(ws)
 
-    # 月をまず探す（シート名 or 先頭セル群）
+    # 月を探す（シート名/先頭セル）
     month = extract_month_from_text(ws.title)
     if month is None:
-        for r in rows[:25]:
-            for v in r[:12]:
+        for r in rows[:30]:
+            for v in r[:15]:
                 month = extract_month_from_text("" if v is None else str(v))
                 if month:
                     break
@@ -305,7 +294,7 @@ def parse_sheet(ws) -> Tuple[Optional[str], List[Dict[str, str]]]:
     out: List[Dict[str, str]] = []
 
     empty_streak = 0
-    for r in rows[hidx + 1 :]:
+    for r in rows[hidx + 1:]:
         vals = [("" if v is None else str(v)) for v in r]
         if all(v.strip() == "" for v in vals):
             empty_streak += 1
@@ -313,34 +302,51 @@ def parse_sheet(ws) -> Tuple[Optional[str], List[Dict[str, str]]]:
                 break
             continue
         empty_streak = 0
-        d = {header[i]: vals[i] if i < len(vals) else "" for i in range(len(header))}
-        out.append(d)
+        out.append({header[i]: vals[i] if i < len(vals) else "" for i in range(len(header))})
 
+    # rows内の更新日で上書き
     m2 = detect_month_from_rows(out)
     if m2:
         month = m2
 
+    # ★ 最後の保険：年なし（"4月" 等）を年度ヒントで復元
+    if month is None and ry_hint is not None:
+        t = str(ws.title).translate(str.maketrans("０１２３４５６７８９", "0123456789"))
+        m = re.search(r"([0-9]{1,2})\s*月", t)
+        if not m:
+            # 先頭セルにも月だけあるケース
+            for r in rows[:10]:
+                for v in r[:10]:
+                    tt = ("" if v is None else str(v)).translate(str.maketrans("０１２３４５６７８９", "0123456789"))
+                    m = re.search(r"([0-9]{1,2})\s*月", tt)
+                    if m:
+                        break
+                if m:
+                    break
+
+        if m:
+            mm = int(m.group(1))
+            base_year = 2018 + ry_hint  # 令和6年度 -> 2024年度
+            y = base_year if mm >= 4 else (base_year + 1)  # 4-12は当年、1-3は翌年（ただし3月は元々公開なし）
+            month = date(y, mm, 1).isoformat()
+
     return month, out
 
 
-def read_xlsx(url: str) -> Dict[str, List[Dict[str, str]]]:
-    """
-    xlsx 1ファイル → {month: rows} を返す
-    """
-    print("download:", url)
+def read_xlsx(url: str, ry_hint: Optional[int] = None) -> Dict[str, List[Dict[str, str]]]:
+    print("download:", url, "ry_hint=", ry_hint)
     r = requests.get(url, timeout=180)
     r.raise_for_status()
     wb = load_workbook(io.BytesIO(r.content), data_only=True)
 
     mp: Dict[str, List[Dict[str, str]]] = {}
     for ws in wb.worksheets:
-        month, rows = parse_sheet(ws)
+        month, rows = parse_sheet(ws, ry_hint=ry_hint)
         if month and rows:
             mp[month] = rows
-
-    print("  parsed months:", len(mp), "=>", sorted(mp.keys())[:5], "...", sorted(mp.keys())[-5:])
+    print("  parsed months:", len(mp), "range:",
+          (min(mp.keys()), max(mp.keys())) if mp else None)
     return mp
-
 
 # ---------- column guessing / metrics ----------
 def guess_facility_id_key(rows: List[Dict[str, str]]) -> str:
@@ -481,24 +487,23 @@ def main() -> None:
     wai_by_month: Dict[str, List[Dict[str, str]]] = {}
     enr_by_month: Dict[str, List[Dict[str, str]]] = {}
 
-    # ここが「過去年度まとめ」も含めて読めているかが肝
-    for u in urls["accept"]:
-        try:
-            acc_by_month.update(read_xlsx(u))
-        except Exception as e:
-            print("WARN accept xlsx failed:", u, e)
+   for u, ry in urls["accept"]:
+    try:
+        acc_by_month.update(read_xlsx(u, ry_hint=ry))
+    except Exception as e:
+        print("WARN accept xlsx failed:", u, e)
 
-    for u in urls["wait"]:
-        try:
-            wai_by_month.update(read_xlsx(u))
-        except Exception as e:
-            print("WARN wait xlsx failed:", u, e)
+for u, ry in urls["wait"]:
+    try:
+        wai_by_month.update(read_xlsx(u, ry_hint=ry))
+    except Exception as e:
+        print("WARN wait xlsx failed:", u, e)
 
-    for u in urls["enrolled"]:
-        try:
-            enr_by_month.update(read_xlsx(u))
-        except Exception as e:
-            print("WARN enrolled xlsx failed:", u, e)
+for u, ry in urls["enrolled"]:
+    try:
+        enr_by_month.update(read_xlsx(u, ry_hint=ry))
+    except Exception as e:
+        print("WARN enrolled xlsx failed:", u, e)
 
     if not acc_by_month:
         raise RuntimeError("受入可能数の月次が1つも取れませんでした")
