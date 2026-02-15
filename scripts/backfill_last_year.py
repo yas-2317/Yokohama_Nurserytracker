@@ -94,45 +94,64 @@ def sanitize_header(header: List[str]) -> List[str]:
     return out
 
 
+# ---------- month parsing ----------
 def extract_month_from_text(text: str) -> Optional[str]:
     """
     例:
       '【令和８年２月１日時点】' → 2026-02-01
-      'R6.4.1' → 2024-04-01
       '令和6年4月1日' → 2024-04-01
       '2025年4月1日' → 2025-04-01
+      '4月' / '４月' → '__M04__' （年なし月だけプレースホルダ）
     """
     if not text:
         return None
     t = str(text)
-
     z2h = str.maketrans("０１２３４５６７８９", "0123456789")
-    t2 = t.translate(z2h)
+    t = t.translate(z2h)
 
-    # R6.4.1 形式
-    m = re.search(r"\bR\s*([0-9]{1,2})\s*\.\s*([0-9]{1,2})\s*\.\s*1\b", t2, flags=re.I)
+    # Reiwa
+    m = re.search(r"令和\s*([0-9]+)\s*年\s*([0-9]+)\s*月\s*1\s*日", t)
     if m:
         ry = int(m.group(1))
         mm = int(m.group(2))
-        y = 2018 + ry
+        y = 2018 + ry  # Reiwa 1 = 2019
         return date(y, mm, 1).isoformat()
 
-    # 令和◯年◯月1日
-    m = re.search(r"令和\s*([0-9]+)\s*年\s*([0-9]+)\s*月\s*1\s*日", t2)
-    if m:
-        ry = int(m.group(1))
-        mm = int(m.group(2))
-        y = 2018 + ry
-        return date(y, mm, 1).isoformat()
-
-    # YYYY年M月1日
-    m = re.search(r"([0-9]{4})\s*年\s*([0-9]{1,2})\s*月\s*1\s*日", t2)
+    # Gregorian
+    m = re.search(r"([0-9]{4})\s*年\s*([0-9]{1,2})\s*月\s*1\s*日", t)
     if m:
         y = int(m.group(1))
         mm = int(m.group(2))
         return date(y, mm, 1).isoformat()
 
+    # month only
+    m = re.search(r"(^|\s)([0-9]{1,2})\s*月(\s|$)", t)
+    if m:
+        mm = int(m.group(2))
+        if 1 <= mm <= 12:
+            return f"__M{mm:02d}__"
+
     return None
+
+
+def resolve_month_placeholder(m: Optional[str], ry_hint: Optional[int]) -> Optional[str]:
+    """
+    m が '__M04__' のようなプレースホルダなら、令和◯年度(ry_hint)から西暦に復元する。
+    fiscal year: 4月〜翌年3月
+      ry=6 → 2024年度 → 2024-04 ... 2025-03
+    """
+    if not m:
+        return None
+    if not (m.startswith("__M") and m.endswith("__")):
+        return m  # already iso
+
+    if ry_hint is None:
+        return None
+
+    mm = int(m.replace("__M", "").replace("__", ""))
+    base_year = 2018 + ry_hint
+    y = base_year if mm >= 4 else (base_year + 1)
+    return date(y, mm, 1).isoformat()
 
 
 def detect_month_from_rows(rows: List[Dict[str, str]]) -> Optional[str]:
@@ -173,7 +192,7 @@ def build_map_url(name: str, ward: str, address: str = "") -> str:
 def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
     """
     戻り値: {kind: [(url, ry_hint), ...]}
-    ry_hint: 「令和6年度」などが周辺テキストにある場合 6 を返す
+    ry_hint: 「令和6年度」などが “リンク周辺テキスト” にある場合 6 を返す
     """
     html = requests.get(CITY_PAGE, timeout=30).text
     soup = BeautifulSoup(html, "html.parser")
@@ -199,17 +218,17 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
         if not ((".xlsx" in hl) or (".xlsm" in hl) or (".xls" in hl)):
             continue
 
-        # aタグ自身のテキスト
         t_a = (a.get_text() or "").strip()
 
-        # ★重要：親要素（tr/ul/li/div等）から年度を拾う
+        # ★親要素の文脈（令和◯年度がリンクテキスト以外にあるケース対策）
         parent = a.find_parent(["tr", "li", "div", "p", "section", "table"])
-        t_ctx = (parent.get_text(" ", strip=True) if parent else t_a)
+        t_ctx = parent.get_text(" ", strip=True) if parent else t_a
+
         ry = ry_from_text(t_ctx) or ry_from_text(t_a)
 
         found.append((href_abs, t_a, ry))
 
-    # 念のため、本文からも拾う（年度ヒント無し）
+    # 念のため本文からURLだけ拾う（年度ヒント無し）
     for u in re.findall(r"https?://[^\s\"']+\.(?:xlsx|xlsm|xls)(?:\?[^\s\"']*)?", html, flags=re.I):
         found.append((u, "", None))
 
@@ -232,7 +251,7 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
         elif ("入所待ち" in t) or ("待ち人数" in t):
             urls["wait"].append((u, ry))
 
-    # 保険：URL分類（テキストが取れない場合）
+    # 保険：URL分類（テキストが空の場合）
     def push_if_empty(kind: str, pred) -> None:
         if urls[kind]:
             return
@@ -249,14 +268,13 @@ def scrape_excel_urls() -> Dict[str, List[Tuple[str, Optional[int]]]]:
         sample = [u for u, _, _ in uniq][:15]
         raise RuntimeError(f"Excelリンクが拾えません（候補={len(uniq)}件、例={sample}）")
 
-    # デバッグ表示（どのURLに年度ヒントが付いたか）
     print("XLS links found:", {k: len(v) for k, v in urls.items()})
     for k in ("accept", "wait", "enrolled"):
         print(" ", k)
         for u, ry in urls[k]:
             print("   -", u, "ry_hint=", ry)
-
     return urls
+
 
 # ---------- Excel parsing ----------
 def sheet_to_rows(ws) -> List[List[Any]]:
@@ -285,9 +303,10 @@ def find_header_index(rows: List[List[Any]]) -> Optional[int]:
     return best_i
 
 
-def parse_sheet(ws, ry_hint: Optional[int] = None) -> Tuple[Optional[str], List[Dict[str, str]]]:
+def parse_sheet(ws, ry_hint: Optional[int]) -> Tuple[Optional[str], List[Dict[str, str]]]:
     rows = sheet_to_rows(ws)
 
+    # 月を探す（シート名→先頭セル）
     month = extract_month_from_text(ws.title)
     if month is None:
         for r in rows[:30]:
@@ -300,6 +319,8 @@ def parse_sheet(ws, ry_hint: Optional[int] = None) -> Tuple[Optional[str], List[
 
     hidx = find_header_index(rows)
     if hidx is None:
+        # ヘッダ見つからないが month だけ取れてる場合に備える
+        month = resolve_month_placeholder(month, ry_hint)
         return month, []
 
     header = sanitize_header([("" if v is None else str(v)) for v in rows[hidx]])
@@ -316,36 +337,20 @@ def parse_sheet(ws, ry_hint: Optional[int] = None) -> Tuple[Optional[str], List[
         empty_streak = 0
         out.append({header[i]: vals[i] if i < len(vals) else "" for i in range(len(header))})
 
+    # 更新日列で month 上書き（年あり）
     m2 = detect_month_from_rows(out)
     if m2:
         month = m2
 
-    # 年が書かれていない「4月」等を年度ヒントで復元
-    if month is None and ry_hint is not None:
-        z2h = str.maketrans("０１２３４５６７８９", "0123456789")
-        title = str(ws.title).translate(z2h)
-
-        m = re.search(r"([0-9]{1,2})\s*月", title)
-        if m is None:
-            for r in rows[:10]:
-                for v in r[:10]:
-                    tt = ("" if v is None else str(v)).translate(z2h)
-                    m = re.search(r"([0-9]{1,2})\s*月", tt)
-                    if m:
-                        break
-                if m:
-                    break
-
-        if m:
-            mm = int(m.group(1))
-            base_year = 2018 + ry_hint  # 令和6年度 -> 2024年度
-            y = base_year if mm >= 4 else (base_year + 1)
-            month = date(y, mm, 1).isoformat()
-
+    # month-only を年度ヒントで復元
+    month = resolve_month_placeholder(month, ry_hint)
     return month, out
 
 
-def read_xlsx(url: str, ry_hint: Optional[int] = None) -> Dict[str, List[Dict[str, str]]]:
+def read_xlsx(url: str, ry_hint: Optional[int]) -> Dict[str, List[Dict[str, str]]]:
+    """
+    1ファイル → {month: rows}（同月が複数シートなら後勝ち）
+    """
     print("download:", url, "ry_hint=", ry_hint)
     r = requests.get(url, timeout=180)
     r.raise_for_status()
@@ -353,7 +358,7 @@ def read_xlsx(url: str, ry_hint: Optional[int] = None) -> Dict[str, List[Dict[st
 
     mp: Dict[str, List[Dict[str, str]]] = {}
     for ws in wb.worksheets:
-        month, rows = parse_sheet(ws, ry_hint=ry_hint)
+        month, rows = parse_sheet(ws, ry_hint)
         if month and rows:
             mp[month] = rows
 
@@ -506,19 +511,19 @@ def main() -> None:
 
     for u, ry in urls["accept"]:
         try:
-            acc_by_month.update(read_xlsx(u, ry_hint=ry))
+            acc_by_month.update(read_xlsx(u, ry))
         except Exception as e:
             print("WARN accept xlsx failed:", u, e)
 
     for u, ry in urls["wait"]:
         try:
-            wai_by_month.update(read_xlsx(u, ry_hint=ry))
+            wai_by_month.update(read_xlsx(u, ry))
         except Exception as e:
             print("WARN wait xlsx failed:", u, e)
 
     for u, ry in urls["enrolled"]:
         try:
-            enr_by_month.update(read_xlsx(u, ry_hint=ry))
+            enr_by_month.update(read_xlsx(u, ry))
         except Exception as e:
             print("WARN enrolled xlsx failed:", u, e)
 
@@ -528,6 +533,7 @@ def main() -> None:
     ks_acc = sorted(acc_by_month.keys())
     print("DEBUG months in accept:", len(ks_acc), "range:", (ks_acc[0], ks_acc[-1]))
 
+    # target months: last N months
     end = month_floor(date.today())
     start = add_months(end, -(MONTHS_BACK - 1))
     want: List[str] = []
@@ -542,6 +548,7 @@ def main() -> None:
     if missing:
         print("missing (first 24):", missing[:24])
 
+    # months.json existing
     months_path = DATA_DIR / "months.json"
     existing_months: List[str] = []
     if months_path.exists():
@@ -550,6 +557,7 @@ def main() -> None:
         except Exception:
             existing_months = []
 
+    # generate each month
     for m in available:
         out_path = DATA_DIR / f"{m}.json"
         if out_path.exists() and not FORCE:
@@ -635,12 +643,12 @@ def main() -> None:
         )
         print("wrote:", out_path.name, "facilities:", len(facilities))
 
+    # update months.json
     ms = set(existing_months)
     for m in available:
         p = DATA_DIR / f"{m}.json"
         if p.exists() and p.stat().st_size > 200:
             ms.add(m)
-
     months_path.write_text(json.dumps({"months": sorted(ms)}, ensure_ascii=False, indent=2), encoding="utf-8")
     print("updated months.json:", len(ms))
 
