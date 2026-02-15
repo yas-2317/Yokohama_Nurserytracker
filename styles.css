@@ -206,3 +206,22 @@ tbody tr:nth-child(even){
 .kpi .pill *:not(.delta){
   color: #111 !important;
 }
+/* ===== Sticky table header: reliable ===== */
+.tablewrap{
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  background: var(--surface);
+}
+
+/* sticky は th に対して有効、背景が透明だと下が透けるので背景を付ける */
+#tbl thead th{
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--thead-bg);
+}
+
+/* もしヘッダー（sticky）が上にあるなら、重なる分だけ top をずらす（必要時のみ） */
+/* headerがstickyで高さがある場合、下の値を 0→72px などに調整 */
+/* #tbl thead th{ top: 72px; } */
