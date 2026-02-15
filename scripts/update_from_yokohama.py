@@ -64,6 +64,8 @@ def detect_month(rows: List[Dict[str, str]]) -> str:
 def read_csv_from_url(url: str) -> List[Dict[str, str]]:
     r = requests.get(url, timeout=60)
     r.raise_for_status()
+
+    # デコード
     for enc in ("cp932", "shift_jis", "utf-8-sig", "utf-8"):
         try:
             text = r.content.decode(enc)
@@ -72,8 +74,54 @@ def read_csv_from_url(url: str) -> List[Dict[str, str]]:
             continue
     else:
         text = r.text
-    return list(csv.DictReader(text.splitlines()))
 
+    lines = [ln for ln in text.splitlines() if ln is not None]
+
+    # まずは通常のCSVとして読む（必要なら後でヘッダ行を探す）
+    def sanitize_header(header: List[str]) -> List[str]:
+        out = []
+        seen = {}
+        for i, h in enumerate(header):
+            h2 = (h or "").strip()
+            if h2 == "":
+                h2 = f"col{i}"
+            if h2 in seen:
+                seen[h2] += 1
+                h2 = f"{h2}_{seen[h2]}"
+            else:
+                seen[h2] = 0
+            out.append(h2)
+        return out
+
+    # ヘッダ行を自動検出：非空セルが多く、かつキーワードを含む行
+    keywords = ("施設", "区", "合計", "0歳", "１歳", "２歳", "待ち", "受入")
+    best_idx = None
+    best_score = -1
+
+    reader = csv.reader(lines)
+    rows_preview = []
+    for i, row in enumerate(reader):
+        if i > 50:  # 先頭50行以内で探す（十分）
+            break
+        rows_preview.append(row)
+
+        nonempty = sum(1 for c in row if str(c).strip() != "")
+        has_kw = any(any(k in str(c) for k in keywords) for c in row)
+        score = nonempty + (10 if has_kw else 0)
+
+        # 明らかにヘッダっぽい条件（列数がそれなりにある）
+        if nonempty >= 5 and score > best_score:
+            best_score = score
+            best_idx = i
+
+    # best_idx が見つからなければ、従来通り DictReader を試す
+    if best_idx is None:
+        return list(csv.DictReader(lines))
+
+    header = sanitize_header(rows_preview[best_idx])
+    data_lines = lines[best_idx + 1 :]
+
+    return list(csv.DictReader(data_lines, fieldnames=header))
 
 def scrape_csv_urls() -> Dict[str, str]:
     """データセットページから accept/wait のCSV URLを推定して返す"""
