@@ -199,3 +199,10 @@ tbody tr:nth-child(even){
 .delta.minus { color: var(--delta-minus); }
 .delta.zero  { color: var(--delta-zero); }
 .delta.none  { color: var(--delta-none); }
+/* KPI文字色を黒に固定（増減の色はdeltaクラスで維持） */
+.kpi .pill{
+  color: #111 !important;
+}
+.kpi .pill *:not(.delta){
+  color: #111 !important;
+}
