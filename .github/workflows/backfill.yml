@@ -1,0 +1,44 @@
+name: Backfill last year data
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          set -e
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 openpyxl
+
+      - name: Run backfill
+        env:
+          WARD_FILTER: "港北区"
+          MONTHS_BACK: "12"
+          FORCE_BACKFILL: "0"
+        run: |
+          set -e
+          python -u scripts/backfill_last_year.py
+          ls -la data | sed -n '1,200p'
+
+      - name: Commit and push
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data
+          git commit -m "Backfill last year nursery data" || exit 0
+          git push
