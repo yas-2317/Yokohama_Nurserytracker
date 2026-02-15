@@ -225,3 +225,40 @@ tbody tr:nth-child(even){
 /* もしヘッダー（sticky）が上にあるなら、重なる分だけ top をずらす（必要時のみ） */
 /* headerがstickyで高さがある場合、下の値を 0→72px などに調整 */
 /* #tbl thead th{ top: 72px; } */
+/* ===== Mobile responsive ===== */
+@media (max-width: 768px){
+  h1{ font-size: 18px; }
+  .controls{ gap: 8px; }
+  input, select, button{ width: 100%; }
+  .badge{ width: 100%; }
+
+  /* KPIは縦積み */
+  .kpi{ gap: 8px; }
+  .kpi .pill{ width: 100%; }
+
+  /* 住所/地図を縦に */
+  .detailgrid{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  /* テーブルは横スクロール（ヘッダー固定は維持） */
+  .tablewrap{ overflow-x: auto; }
+  table{ min-width: 900px; }
+}
+
+/* PCでは2カラムで表示（園詳細の住所/地図） */
+.detailgrid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* 園詳細の戻るリンク */
+.topbar{ margin-bottom: 6px; }
+.backlink{ font-size: 13px; }
+.h2{ font-size: 14px; margin: 0 0 10px 0; }
+
