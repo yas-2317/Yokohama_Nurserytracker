@@ -110,6 +110,8 @@ def main():
         ward = norm(ar.get(ward_key) if ward_key else "")
         if WARD_FILTER and ward != norm(WARD_FILTER):
             continue
+if len(facilities) == 0:
+    raise RuntimeError("施設が0件です（区フィルタ or CSV列名/形式が想定と違う可能性）。コミットせず停止します。")
 
 
         wr = W.get(fid, {})
@@ -148,8 +150,6 @@ def main():
             "totals": {"accept": tot_accept, "wait": tot_wait, "enrolled": tot_enr, "capacity": tot_cap, "wait_per_capacity": tot_ratio},
             "ages": ages
         })
-if len(facilities) == 0:
-    raise RuntimeError("施設が0件です（区フィルタ or CSV列名/形式が想定と違う可能性）。コミットせず停止します。")
 
     (DATA_DIR / f"{month}.json").write_text(
         json.dumps({"month": month, "ward": (WARD_FILTER or "横浜市"), "facilities": facilities}, ensure_ascii=False, indent=2),
