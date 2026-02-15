@@ -77,7 +77,6 @@ def read_csv_from_url(url: str) -> List[Dict[str, str]]:
     r = requests.get(url, timeout=60)
     r.raise_for_status()
 
-    # decode
     for enc in ("cp932", "shift_jis", "utf-8-sig", "utf-8"):
         try:
             text = r.content.decode(enc)
@@ -91,7 +90,7 @@ def read_csv_from_url(url: str) -> List[Dict[str, str]]:
 
     def sanitize_header(header: List[str]) -> List[str]:
         out = []
-        seen = {}
+        seen: Dict[str, int] = {}
         for i, h in enumerate(header):
             h2 = (h or "").strip()
             if h2 == "":
@@ -104,7 +103,6 @@ def read_csv_from_url(url: str) -> List[Dict[str, str]]:
             out.append(h2)
         return out
 
-    # ヘッダ行を自動検出：非空セルが多く、かつキーワードを含む行
     keywords = ("施設", "区", "合計", "0歳", "０歳", "1歳", "１歳", "待ち", "受入", "児童")
     best_idx = None
     best_score = -1
@@ -179,26 +177,20 @@ def scrape_csv_urls() -> Dict[str, str]:
 
 def load_master() -> Dict[str, Dict[str, str]]:
     """
-    data/master_facilities.csv があれば参照して住所/緯度経度/地図URLなどを補完
-    追加：nearest_station, walk_minutes も補完
-    キーは facility_id / id のどちらでもOK（両対応）
+    data/master_facilities.csv があれば参照して住所/地図URL/最寄駅/徒歩などを補完
     """
     if not MASTER_CSV.exists():
         return {}
     out: Dict[str, Dict[str, str]] = {}
     with MASTER_CSV.open("r", encoding="utf-8-sig", newline="") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            fid = (row.get("facility_id") or row.get("id") or "").strip()
+        for row in csv.DictReader(f):
+            fid = (row.get("facility_id") or "").strip()
             if fid:
                 out[fid] = row
     return out
 
 
 def guess_facility_id_key(rows: List[Dict[str, str]]) -> str:
-    """
-    施設ID列を、列名候補 → 列名パターン → 中身の数値っぽさ で推定
-    """
     if not rows:
         raise RuntimeError("CSVが空です")
 
@@ -228,7 +220,6 @@ def guess_facility_id_key(rows: List[Dict[str, str]]) -> str:
         if any(p in k for p in patterns) and ("施設" in k or "事業所" in k):
             return k
 
-    # 中身（数字だけが多い列）で推定
     N = min(200, len(rows))
     digit_re = re.compile(r"^\d{4,}$")
     best_key, best_score = None, -1
@@ -258,9 +249,6 @@ def index_by_key(rows: List[Dict[str, str]], key: str) -> Dict[str, Dict[str, st
 
 
 def get_total(row: Dict[str, str]) -> Optional[int]:
-    """
-    “合計”列名が揺れるので '合計' を含む列から拾う
-    """
     if not row:
         return None
     if "合計" in row and str(row.get("合計", "")).strip() != "":
@@ -272,9 +260,6 @@ def get_total(row: Dict[str, str]) -> Optional[int]:
 
 
 def get_age_value(row: Dict[str, str], age: int) -> Optional[int]:
-    """
-    0-5歳の列名揺れ吸収
-    """
     if not row:
         return None
     z = "０１２３４５"
@@ -333,7 +318,6 @@ def main() -> None:
     month = detect_month(accept_rows)
     print("Detected month:", month)
 
-    # 施設ID列推定 & index
     fid_key = guess_facility_id_key(accept_rows)
     A = index_by_key(accept_rows, fid_key)
 
@@ -362,32 +346,22 @@ def main() -> None:
         name = str(ar.get(name_key, "")).strip() if name_key else ""
 
         m = master.get(fid, {})
-
-        # master補完（既存）
         address = (m.get("address") or "").strip()
         lat = (m.get("lat") or "").strip()
         lng = (m.get("lng") or "").strip()
         map_url = (m.get("map_url") or "").strip() or build_map_url(name, ward, address, lat, lng)
 
-        # ★ 追加：最寄り駅・徒歩
-        nearest_station = (m.get("nearest_station") or "").strip()
-        walk_minutes_raw = (m.get("walk_minutes") or "").strip()
+        # ★追加：最寄駅・徒歩（master_facilities.csv 側の列名に合わせて取得）
+        nearest_station = (m.get("nearest_station") or m.get("station") or m.get("最寄り駅") or "").strip()
+        walk_minutes = (m.get("walk_minutes") or m.get("徒歩") or m.get("徒歩分") or "").strip()
 
-        # 表示に困らないよう、数字っぽければ int 化、それ以外は文字のまま
-        walk_minutes: Any
-        wm_int = to_int(walk_minutes_raw) if walk_minutes_raw != "" else None
-        walk_minutes = wm_int if wm_int is not None else walk_minutes_raw
-
-        # totals（合計）
         tot_accept = get_total(ar)
         tot_wait = get_total(wr) if wr else None
         tot_enrolled = get_total(er) if er else None
 
-        # 参考値：総枠近似（入所児童 + 受入可能）
         tot_capacity_est = (tot_enrolled + tot_accept) if (tot_enrolled is not None and tot_accept is not None) else None
         tot_wait_per_capacity_est = ratio_opt(tot_wait, tot_capacity_est)
 
-        # 0〜5歳（内部用）
         ages_0_5: Dict[str, Dict[str, Any]] = {}
         for i in range(6):
             a = get_age_value(ar, i)
@@ -402,7 +376,6 @@ def main() -> None:
                 "wait_per_capacity_est": ratio_opt(w, cap_est),
             }
 
-        # ★ 4区分へ集約（0,1,2,3-5）
         g0 = ages_0_5.get("0", {})
         g1 = ages_0_5.get("1", {})
         g2 = ages_0_5.get("2", {})
@@ -431,15 +404,11 @@ def main() -> None:
                 "id": fid,
                 "name": name,
                 "ward": ward,
-
-                # master由来
                 "address": address,
                 "map_url": map_url,
                 "nearest_station": nearest_station,
                 "walk_minutes": walk_minutes,
-
                 "updated": month,
-
                 "totals": {
                     "accept": tot_accept,
                     "wait": tot_wait,
@@ -447,7 +416,6 @@ def main() -> None:
                     "capacity_est": tot_capacity_est,
                     "wait_per_capacity_est": tot_wait_per_capacity_est,
                 },
-
                 "age_groups": age_groups,
                 "ages_0_5": ages_0_5,
             }
@@ -457,7 +425,6 @@ def main() -> None:
     if len(facilities) == 0:
         raise RuntimeError("facilitiesが0件です（区フィルタ/列名不一致の可能性）")
 
-    # 先に月次JSONを書いてから months.json を更新（404事故防止）
     month_path = DATA_DIR / f"{month}.json"
     month_path.write_text(
         json.dumps({"month": month, "ward": (WARD_FILTER or "横浜市"), "facilities": facilities}, ensure_ascii=False, indent=2),
