@@ -14,6 +14,10 @@ from typing import Any, Dict, List, Optional
 import requests
 from bs4 import BeautifulSoup
 
+# ★ 追加：かな生成（API不要）
+from pykakasi import kakasi
+
+
 DATASET_PAGE = "https://data.city.yokohama.lg.jp/dataset/kodomo_nyusho-jokyo"
 
 WARD_FILTER = (os.getenv("WARD_FILTER", "港北区") or "").strip()
@@ -25,8 +29,30 @@ DATA_DIR = ROOT / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 MASTER_CSV = DATA_DIR / "master_facilities.csv"
 
+# ---- kana converter (hiragana) ----
+_kks = kakasi()
+_kks.setMode("J", "H")  # Kanji -> Hira
+_kks.setMode("K", "H")  # Kata -> Hira
+_kks.setMode("H", "H")  # Hira -> Hira
+_conv = _kks.getConverter()
 
-# ---------- small utils ----------
+def hira(s: Any) -> str:
+    s = "" if s is None else str(s)
+    s = s.strip()
+    if not s:
+        return ""
+    s = _conv.do(s)
+    s = s.replace("　", " ")
+    s = re.sub(r"\s+", "", s)
+    return s
+
+def station_base(s: str) -> str:
+    s = (s or "").strip()
+    if s.endswith("駅"):
+        s = s[:-1]
+    return s.strip()
+
+
 def norm(s: Any) -> str:
     if s is None:
         return ""
@@ -65,6 +91,7 @@ def detect_month(rows: List[Dict[str, str]]) -> str:
         for k in ("更新日", "更新年月日", "更新日時", "更新年月"):
             v = str(rows[0].get(k, "")).strip()
             if v:
+                # "YYYY/MM/DD" などでも来るので正規化
                 v = v[:10].replace("/", "-")
                 try:
                     y, m, _ = v.split("-")
@@ -114,7 +141,7 @@ def read_csv_from_url(url: str) -> List[Dict[str, str]]:
     preview_rows: List[List[str]] = []
 
     for i, row in enumerate(csv.reader(lines)):
-        if i > 120:
+        if i > 80:
             break
         preview_rows.append(row)
         nonempty = sum(1 for c in row if str(c).strip() != "")
@@ -160,13 +187,11 @@ def scrape_csv_urls() -> Dict[str, str]:
             if ("受入" in url) or ("入所可能" in url):
                 best["accept"] = url
                 break
-
     if "wait" not in best:
         for url in links:
             if "待ち" in url:
                 best["wait"] = url
                 break
-
     if "enrolled" not in best:
         for url in links:
             if ("入所児童" in url) or ("児童" in url):
@@ -180,10 +205,8 @@ def scrape_csv_urls() -> Dict[str, str]:
     return best
 
 
-# ---------- master ----------
 def load_master() -> Dict[str, Dict[str, str]]:
     if not MASTER_CSV.exists():
-        print("WARN: master_facilities.csv not found:", MASTER_CSV)
         return {}
     out: Dict[str, Dict[str, str]] = {}
     with MASTER_CSV.open("r", encoding="utf-8-sig", newline="") as f:
@@ -191,29 +214,29 @@ def load_master() -> Dict[str, Dict[str, str]]:
             fid = (row.get("facility_id") or "").strip()
             if fid:
                 out[fid] = row
-    print("master rows:", len(out))
     return out
 
 
-def build_map_url(name: str, ward: str, address: str = "", lat: str = "", lng: str = "") -> str:
-    if lat and lng:
-        return f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
-    q = " ".join([name, address, ward, "横浜市"]).strip()
-    q = re.sub(r"\s+", " ", q)
-    return f"https://www.google.com/maps/search/?api=1&query={q}"
-
-
-# ---------- column guessing ----------
 def guess_facility_id_key(rows: List[Dict[str, str]]) -> str:
     if not rows:
         raise RuntimeError("CSVが空です")
 
     header = list(rows[0].keys())
+    print("DEBUG: header columns =", header)
 
     candidates = [
-        "施設番号", "施設・事業所番号", "施設事業所番号", "事業所番号",
-        "施設ID", "施設ＩＤ", "施設・事業所ID", "施設・事業所ＩＤ",
-        "施設No", "施設Ｎｏ", "事業所No", "事業所Ｎｏ",
+        "施設番号",
+        "施設・事業所番号",
+        "施設事業所番号",
+        "事業所番号",
+        "施設ID",
+        "施設ＩＤ",
+        "施設・事業所ID",
+        "施設・事業所ＩＤ",
+        "施設No",
+        "施設Ｎｏ",
+        "事業所No",
+        "事業所Ｎｏ",
     ]
     for k in candidates:
         if k in rows[0]:
@@ -252,26 +275,6 @@ def index_by_key(rows: List[Dict[str, str]], key: str) -> Dict[str, Dict[str, st
     return out
 
 
-def pick_ward_key(row: Dict[str, str]) -> Optional[str]:
-    for k in ("施設所在区", "所在区", "区名"):
-        if k in row:
-            return k
-    for k in row.keys():
-        if "区" in k:
-            return k
-    return None
-
-
-def pick_name_key(row: Dict[str, str]) -> Optional[str]:
-    for k in ("施設名", "施設・事業名", "施設・事業所名", "事業名"):
-        if k in row:
-            return k
-    for k in row.keys():
-        if "施設" in k and "区" not in k:
-            return k
-    return None
-
-
 def get_total(row: Dict[str, str]) -> Optional[int]:
     if not row:
         return None
@@ -297,7 +300,34 @@ def get_age_value(row: Dict[str, str], age: int) -> Optional[int]:
     return None
 
 
-# ---------- main ----------
+def build_map_url(name: str, ward: str, address: str = "", lat: str = "", lng: str = "") -> str:
+    if lat and lng:
+        return f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
+    q = " ".join([name, address, ward, "横浜市"]).strip()
+    q = re.sub(r"\s+", " ", q)
+    return f"https://www.google.com/maps/search/?api=1&query={q}"
+
+
+def pick_ward_key(row: Dict[str, str]) -> Optional[str]:
+    for k in ("施設所在区", "所在区", "区名"):
+        if k in row:
+            return k
+    for k in row.keys():
+        if "区" in k:
+            return k
+    return None
+
+
+def pick_name_key(row: Dict[str, str]) -> Optional[str]:
+    for k in ("施設名", "施設・事業名", "施設・事業所名", "事業名"):
+        if k in row:
+            return k
+    for k in row.keys():
+        if "施設" in k and "区" not in k:
+            return k
+    return None
+
+
 def main() -> None:
     print("START update_from_yokohama.py  WARD_FILTER=", WARD_FILTER)
 
@@ -318,8 +348,8 @@ def main() -> None:
     fid_key = guess_facility_id_key(accept_rows)
     A = index_by_key(accept_rows, fid_key)
 
-    W = index_by_key(wait_rows, fid_key) if (wait_rows and fid_key in wait_rows[0]) else {}
-    E = index_by_key(enrolled_rows, fid_key) if (enrolled_rows and fid_key in enrolled_rows[0]) else {}
+    W = index_by_key(wait_rows, fid_key) if wait_rows and fid_key in wait_rows[0] else {}
+    E = index_by_key(enrolled_rows, fid_key) if enrolled_rows and fid_key in enrolled_rows[0] else {}
 
     ward_key = pick_ward_key(accept_rows[0]) if accept_rows else None
     name_key = pick_name_key(accept_rows[0]) if accept_rows else None
@@ -343,31 +373,32 @@ def main() -> None:
         name = str(ar.get(name_key, "")).strip() if name_key else ""
 
         m = master.get(fid, {})
+
         address = (m.get("address") or "").strip()
         lat = (m.get("lat") or "").strip()
         lng = (m.get("lng") or "").strip()
         map_url = (m.get("map_url") or "").strip() or build_map_url(name, ward, address, lat, lng)
-        
-        # ★追加：駅・徒歩・かな（無ければ空のままでもOK）
-        nearest_station = (m.get("nearest_station") or "").strip()
-        walk_minutes = (m.get("walk_minutes") or "").strip()
-        try:
-            walk_minutes = int(float(walk_minutes)) if walk_minutes != "" else None
-        except Exception:
-            walk_minutes = None
-        
-        name_kana = (m.get("name_kana") or "").strip()
-        station_kana = (m.get("station_kana") or "").strip()
-
-        nearest_station = (m.get("nearest_station") or "").strip()
-        walk_minutes = to_int(m.get("walk_minutes"))
-        name_kana = (m.get("name_kana") or "").strip()
-        station_kana = (m.get("station_kana") or "").strip()
 
         facility_type = (m.get("facility_type") or "").strip()
         phone = (m.get("phone") or "").strip()
         website = (m.get("website") or "").strip()
         notes = (m.get("notes") or "").strip()
+
+        nearest_station = (m.get("nearest_station") or "").strip()
+        station_kana = (m.get("station_kana") or "").strip()
+        name_kana = (m.get("name_kana") or "").strip()
+
+        walk_minutes_raw = (m.get("walk_minutes") or "").strip()
+        try:
+            walk_minutes = int(float(walk_minutes_raw)) if walk_minutes_raw != "" else None
+        except Exception:
+            walk_minutes = None
+
+        # ★ masterが空でも、その場で生成してJSONには必ず載せる
+        if not name_kana and name:
+            name_kana = hira(name)
+        if not station_kana and nearest_station:
+            station_kana = hira(station_base(nearest_station))
 
         tot_accept = get_total(ar)
         tot_wait = get_total(wr) if wr else None
@@ -413,12 +444,11 @@ def main() -> None:
             },
         }
 
-        # ★重要：JSONに「必ず」キーを出す（空でもキーは出る）
         facilities.append(
             {
-                "id": str(fid),
+                "id": fid,
                 "name": name,
-                "name_kana": name_kana,
+                "name_kana": name_kana,               # ★追加
                 "ward": ward,
                 "address": address,
                 "lat": lat,
@@ -428,9 +458,9 @@ def main() -> None:
                 "phone": phone,
                 "website": website,
                 "notes": notes,
-                "nearest_station": nearest_station,
-                "station_kana": station_kana,
-                "walk_minutes": walk_minutes,
+                "nearest_station": nearest_station,   # ★追加
+                "station_kana": station_kana,         # ★追加
+                "walk_minutes": walk_minutes,         # ★追加
                 "updated": month,
                 "totals": {
                     "accept": tot_accept,
@@ -470,17 +500,6 @@ def main() -> None:
 
     months_path.write_text(json.dumps(months, ensure_ascii=False, indent=2), encoding="utf-8")
     print("WROTE:", month_path.name, "and months.json")
-
-    # ★デバッグ：先頭施設のキーを出す（Actionsログで確認できる）
-    try:
-        sample = facilities[0]
-        print("DEBUG sample facility keys:", sorted(sample.keys()))
-        print("DEBUG name_kana:", sample.get("name_kana"))
-        print("DEBUG station_kana:", sample.get("station_kana"))
-        print("DEBUG nearest_station:", sample.get("nearest_station"))
-        print("DEBUG walk_minutes:", sample.get("walk_minutes"))
-    except Exception:
-        pass
 
 
 if __name__ == "__main__":
