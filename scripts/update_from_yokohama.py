@@ -342,14 +342,22 @@ def main() -> None:
 
         name = str(ar.get(name_key, "")).strip() if name_key else ""
 
-        m = master.get(fid, {}) if master else {}
+        m = master.get(fid, {})
         address = (m.get("address") or "").strip()
         lat = (m.get("lat") or "").strip()
         lng = (m.get("lng") or "").strip()
-
-        map_url = (m.get("map_url") or "").strip()
-        if not map_url:
-            map_url = build_map_url(name, ward, address, lat, lng)
+        map_url = (m.get("map_url") or "").strip() or build_map_url(name, ward, address, lat, lng)
+        
+        # ★追加：駅・徒歩・かな（無ければ空のままでもOK）
+        nearest_station = (m.get("nearest_station") or "").strip()
+        walk_minutes = (m.get("walk_minutes") or "").strip()
+        try:
+            walk_minutes = int(float(walk_minutes)) if walk_minutes != "" else None
+        except Exception:
+            walk_minutes = None
+        
+        name_kana = (m.get("name_kana") or "").strip()
+        station_kana = (m.get("station_kana") or "").strip()
 
         nearest_station = (m.get("nearest_station") or "").strip()
         walk_minutes = to_int(m.get("walk_minutes"))
