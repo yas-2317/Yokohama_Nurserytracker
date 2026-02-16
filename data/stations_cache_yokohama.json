@@ -1,17 +1,3 @@
 {
-  "stations": [
-    {
-      "place_id": "ChIJgRICuYRaGGARxF5HSl_u-jg",
-      "name": "戸塚駅",
-      "lat": 35.40061310000001,
-      "lng": 139.5342406,
-      "types": [
-        "transit_station",
-        "subway_station",
-        "train_station",
-        "point_of_interest",
-        "establishment"
-      ]
-    }
-  ]
+  "stations": []
 }
