@@ -116,8 +116,8 @@ jobs:
           WARD_FILTER: ${{ inputs.ward_filter }}
         run: |
           set -euxo pipefail
-          test -f scripts/apply_master_to_months.py
-          python -u scripts/apply_master_to_months.py
+          test -f scripts/apply_master_to_all_months.py
+          python -u scripts/apply_master_to_all_months.py
           ls -la data || true
 
       - name: Rebuild latest month JSON (refresh latest month from city dataset)
@@ -139,7 +139,7 @@ jobs:
           fi
 
           git add data || true
-          git add scripts/apply_master_to_months.py || true
+          git add scripts/apply_master_to_all_months.py || true
           git commit -m "Fix master + apply to all months + rebuild latest" || true
 
           git fetch origin main
