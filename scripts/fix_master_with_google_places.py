@@ -7,436 +7,450 @@ import csv
 import os
 import re
 import time
-from datetime import datetime
+import math
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 
-# ------------------------
-# Paths / Env
-# ------------------------
+# ========= Config =========
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
 MASTER_CSV = DATA_DIR / "master_facilities.csv"
+UPDATES_CSV = DATA_DIR / "master_facilities_updates.csv"
+GEOCODE_MISSES_CSV = DATA_DIR / "geocode_misses.csv"
+STATION_MISSES_CSV = DATA_DIR / "station_misses.csv"
 
-API_KEY = (os.getenv("GOOGLE_MAPS_API_KEY") or "").strip()
+API_KEY = (os.getenv("GOOGLE_MAPS_API_KEY", "") or "").strip()
 if not API_KEY:
-    raise SystemExit("ERROR: GOOGLE_MAPS_API_KEY is required (set env or GitHub Secrets)")
+    raise RuntimeError("GOOGLE_MAPS_API_KEY が空です（GitHub Secrets に設定してください）")
 
-# 任意: 港北区だけ等に絞る
-WARD_FILTER = (os.getenv("WARD_FILTER") or "").strip() or None
+WARD_FILTER = (os.getenv("WARD_FILTER", "港北区") or "").strip() or None
 
-# 叩きすぎ防止（秒）
-SLEEP_SEC = float(os.getenv("GOOGLE_API_SLEEP_SEC", "0.1"))
+MAX_UPDATES = int(os.getenv("MAX_UPDATES", "80"))  # 1回で更新する最大件数
+ONLY_BAD_ROWS = (os.getenv("ONLY_BAD_ROWS", "1") == "1")  # 怪しい行だけ更新
+STRICT_ADDRESS_CHECK = (os.getenv("STRICT_ADDRESS_CHECK", "1") == "1")  # 横浜市+区が入る住所だけ採用
+SLEEP_SEC = float(os.getenv("GOOGLE_API_SLEEP_SEC", "0.15"))
 
-# 更新対象を「怪しい行だけ」にする（1推奨）
-ONLY_BAD_ROWS = (os.getenv("ONLY_BAD_ROWS", "1") == "1")
-
-# 住所の一致チェックを厳格にする（1推奨）
-STRICT_ADDRESS_CHECK = (os.getenv("STRICT_ADDRESS_CHECK", "1") == "1")
-
-# phone/website/map_url を上書きするか（通常は空欄のみ埋めるのが安全）
 OVERWRITE_PHONE = (os.getenv("OVERWRITE_PHONE", "0") == "1")
 OVERWRITE_WEBSITE = (os.getenv("OVERWRITE_WEBSITE", "0") == "1")
 OVERWRITE_MAP_URL = (os.getenv("OVERWRITE_MAP_URL", "0") == "1")
 
-# address / latlng を上書きするか（通常は怪しい行のみ更新でOK）
-OVERWRITE_ADDRESS = (os.getenv("OVERWRITE_ADDRESS", "1") == "1")
-OVERWRITE_LATLNG = (os.getenv("OVERWRITE_LATLNG", "1") == "1")
+# ★追加：最寄り駅/徒歩
+FILL_NEAREST_STATION = (os.getenv("FILL_NEAREST_STATION", "1") == "1")
+OVERWRITE_NEAREST_STATION = (os.getenv("OVERWRITE_NEAREST_STATION", "0") == "1")
+OVERWRITE_WALK_MINUTES = (os.getenv("OVERWRITE_WALK_MINUTES", "0") == "1")
 
-# 一回の実行で更新する最大件数（コスト制御）
-MAX_UPDATES = int(os.getenv("MAX_UPDATES", "999999"))
-
-LANG = "ja"
-REGION = "jp"
-
-# Places API (Legacy Web Service endpoints)
-FIND_PLACE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
-DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json"
-TEXT_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-
-
-# ------------------------
-# Helpers
-# ------------------------
+# ========= Utils =========
 def norm(s: Any) -> str:
-    s = "" if s is None else str(s)
-    s = s.replace("　", " ")
-    s = re.sub(r"\s+", " ", s)
-    return s.strip()
+    if s is None:
+        return ""
+    x = str(s).replace("　", " ")
+    x = re.sub(r"\s+", " ", x).strip()
+    return x
 
+def is_blank(s: Any) -> bool:
+    return (s is None) or (str(s).strip() == "")
 
-def norm_key(s: Any) -> str:
-    s = norm(s).lower()
-    s = s.replace("（", "(").replace("）", ")")
-    s = re.sub(r"[()\[\]「」『』・,，\.。、】【]", "", s)
-    # 施設名の揺れ吸収（必要に応じて追加）
-    s = s.replace("認定こども園", "").replace("こども園", "")
-    s = s.replace("保育園", "").replace("保育所", "")
-    s = s.replace("横浜", "").replace("市", "").replace("区", "")
-    s = re.sub(r"\s+", "", s)
-    return s
+def should_update_cell(current: str, overwrite: bool) -> bool:
+    return overwrite or is_blank(current)
 
-
-def to_int(x: Any) -> Optional[int]:
-    s = norm(x)
-    if s == "" or s.lower() == "nan":
+def try_float(s: Any) -> Optional[float]:
+    if s is None:
+        return None
+    t = str(s).strip()
+    if t == "":
         return None
     try:
-        return int(float(s))
+        return float(t)
     except Exception:
         return None
 
+def ceil_minutes(seconds: Optional[int]) -> Optional[int]:
+    if seconds is None:
+        return None
+    return int(math.ceil(seconds / 60.0))
 
-def safe_get(d: dict, path: List[str], default=None):
-    cur = d
-    for k in path:
-        if not isinstance(cur, dict) or k not in cur:
-            return default
-        cur = cur[k]
-    return cur
-
-
-def looks_bad_address(address: str, ward: str) -> bool:
-    a = norm(address)
-    w = norm(ward)
-    if a == "":
-        return True
-    # 最低限：横浜市を含む
-    if "横浜市" not in a:
-        return True
-    # ward があれば含む
-    if w and w not in a:
-        return True
-    return False
-
-
-def looks_missing_latlng(lat: str, lng: str) -> bool:
-    return norm(lat) == "" or norm(lng) == ""
-
-
-def request_json(url: str, params: dict, timeout: int = 30) -> dict:
+def http_get(url: str, params: Dict[str, Any], timeout: int = 30) -> Dict[str, Any]:
     r = requests.get(url, params=params, timeout=timeout)
     r.raise_for_status()
     return r.json()
 
+def build_query(name: str, ward: str, address: str) -> str:
+    # 住所が変なケースでも name + ward で引けるように
+    parts = [name, address, ward, "横浜市", "日本"]
+    parts = [p for p in parts if p and str(p).strip()]
+    q = " ".join(parts)
+    q = re.sub(r"\s+", " ", q).strip()
+    return q
 
-def find_place(query: str) -> List[dict]:
+def ok_address(addr: str) -> bool:
+    if not STRICT_ADDRESS_CHECK:
+        return True
+    if "横浜市" not in addr:
+        return False
+    if WARD_FILTER and WARD_FILTER not in addr:
+        return False
+    return True
+
+# ========= Google APIs (Geocode + Places Details-ish via Place search) =========
+def geocode_text_search(query: str) -> Optional[Dict[str, Any]]:
+    """
+    住所・座標を得る：Geocoding API
+    """
+    url = "https://maps.googleapis.com/maps/api/geocode/json"
+    data = http_get(url, {"address": query, "key": API_KEY, "language": "ja", "region": "jp"}, timeout=30)
+    if data.get("status") != "OK":
+        return None
+    results = data.get("results", [])
+    if not results:
+        return None
+    return results[0]
+
+def places_find_by_text(query: str) -> Optional[Dict[str, Any]]:
+    """
+    place_id / name / formatted_address / geometry / website / phone を拾う
+    （Places API Legacy: Find Place From Text）
+    """
+    url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
     params = {
         "input": query,
         "inputtype": "textquery",
         "fields": "place_id,name,formatted_address,geometry",
-        "language": LANG,
-        "region": REGION,
+        "language": "ja",
+        "region": "jp",
         "key": API_KEY,
     }
-    js = request_json(FIND_PLACE_URL, params=params, timeout=30)
-    if js.get("status") != "OK":
-        return []
-    return js.get("candidates", []) or []
+    data = http_get(url, params, timeout=30)
+    if data.get("status") != "OK":
+        return None
+    cands = data.get("candidates", [])
+    if not cands:
+        return None
+    return cands[0]
 
-
-def text_search(query: str) -> List[dict]:
-    params = {
-        "query": query,
-        "language": LANG,
-        "region": REGION,
-        "key": API_KEY,
-    }
-    js = request_json(TEXT_SEARCH_URL, params=params, timeout=30)
-    if js.get("status") != "OK":
-        return []
-    return js.get("results", []) or []
-
-
-def place_details(place_id: str) -> Optional[dict]:
+def places_details(place_id: str) -> Optional[Dict[str, Any]]:
+    """
+    phone/website を補完（Places Details Legacy）
+    """
+    url = "https://maps.googleapis.com/maps/api/place/details/json"
     params = {
         "place_id": place_id,
-        # 欲しいものだけ（コスト/レスポンス節約）
-        "fields": "place_id,name,formatted_address,geometry/location,formatted_phone_number,website,url",
-        "language": LANG,
-        "region": REGION,
+        "fields": "formatted_phone_number,website,url",
+        "language": "ja",
+        "region": "jp",
         "key": API_KEY,
     }
-    js = request_json(DETAILS_URL, params=params, timeout=30)
-    if js.get("status") != "OK":
+    data = http_get(url, params, timeout=30)
+    if data.get("status") != "OK":
         return None
-    return js.get("result")
+    return data.get("result") or None
 
+# ========= Nearest station + walking time =========
+def places_nearest_station(lat: float, lng: float) -> Optional[Dict[str, Any]]:
+    """
+    近傍の駅を探す：Places Nearby Search (Legacy)
+    rankby=distance を使う（最寄り順）
+    """
+    url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 
-def choose_best(target_name: str, candidates: List[dict]) -> Optional[dict]:
-    if not candidates:
+    # まず train_station → ダメなら subway_station → transit_station
+    types = ["train_station", "subway_station", "transit_station"]
+
+    for t in types:
+        params = {
+            "location": f"{lat},{lng}",
+            "rankby": "distance",
+            "type": t,
+            "language": "ja",
+            "region": "jp",
+            "key": API_KEY,
+        }
+        data = http_get(url, params, timeout=30)
+        status = data.get("status")
+        if status not in ("OK", "ZERO_RESULTS"):
+            # OVER_QUERY_LIMIT 等は上に投げるより、ここは None にして後でmissにする
+            return None
+        results = data.get("results", [])
+        if not results:
+            continue
+
+        # “駅” っぽい名前を優先（保険）
+        for r in results[:10]:
+            name = str(r.get("name", "")).strip()
+            if "駅" in name:
+                return r
+        return results[0]
+
+    return None
+
+def distance_matrix_walk_minutes(lat: float, lng: float, dest_place_id: str) -> Optional[int]:
+    """
+    徒歩分：Distance Matrix API（destinations に place_id:xxx を指定） :contentReference[oaicite:2]{index=2}
+    """
+    url = "https://maps.googleapis.com/maps/api/distancematrix/json"
+    params = {
+        "origins": f"{lat},{lng}",
+        "destinations": f"place_id:{dest_place_id}",
+        "mode": "walking",
+        "language": "ja",
+        "region": "jp",
+        "key": API_KEY,
+    }
+    data = http_get(url, params, timeout=30)
+    if data.get("status") != "OK":
         return None
-    t = norm_key(target_name)
+    rows = data.get("rows", [])
+    if not rows:
+        return None
+    els = rows[0].get("elements", [])
+    if not els:
+        return None
+    el = els[0]
+    if el.get("status") != "OK":
+        return None
+    dur = el.get("duration", {})
+    sec = dur.get("value")
+    if sec is None:
+        return None
+    return ceil_minutes(int(sec))
 
-    best = None
-    best_score = -10**9
-    for c in candidates[:7]:
-        cn = norm_key(c.get("name", ""))
-        score = 0
+# ========= Row judgement =========
+def looks_bad_row(row: Dict[str, str]) -> bool:
+    """
+    ざっくり「住所が空/緯度経度が無い/住所が変」のどれかなら“修正対象”
+    """
+    addr = (row.get("address") or "").strip()
+    lat = (row.get("lat") or "").strip()
+    lng = (row.get("lng") or "").strip()
+    # 住所が空 or 横浜市が入ってない（雑）
+    if addr == "" or ("横浜市" not in addr):
+        return True
+    # 座標が無い
+    if lat == "" or lng == "":
+        return True
+    return False
 
-        if t and cn:
-            # 片方が片方を含むなら強く加点
-            if t in cn or cn in t:
-                score += 80
-            # 共有文字（雑だけど意外と効く）
-            score += len(set(t) & set(cn))
-
-        # 住所がある候補を少し優遇
-        if c.get("formatted_address"):
-            score += 5
-        # geometryがある候補も優遇
-        if safe_get(c, ["geometry", "location", "lat"]) is not None:
-            score += 2
-
-        if score > best_score:
-            best_score = score
-            best = c
-
-    return best
-
-
-def ensure_columns(fieldnames: List[str], required: List[str]) -> List[str]:
-    s = set(fieldnames)
-    for c in required:
-        if c not in s:
-            fieldnames.append(c)
-            s.add(c)
-    return fieldnames
-
-
-def read_master(path: Path) -> Tuple[List[str], List[Dict[str, str]]]:
-    with path.open("r", encoding="utf-8-sig", newline="") as f:
-        r = csv.DictReader(f)
-        fieldnames = r.fieldnames or []
-        rows = [dict(x) for x in r]
-    return fieldnames, rows
-
-
-def write_master(path: Path, fieldnames: List[str], rows: List[Dict[str, str]]) -> None:
-    with path.open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=fieldnames)
-        w.writeheader()
-        for row in rows:
-            w.writerow(row)
-
-
-def should_update_address(new_addr: str, ward: str) -> bool:
-    a = norm(new_addr)
-    w = norm(ward)
-    if a == "":
-        return False
-    if STRICT_ADDRESS_CHECK:
-        if "横浜市" not in a:
-            return False
-        if w and w not in a:
-            return False
-    return True
-
-
-def build_query(name: str, ward: str, address_hint: str = "") -> str:
-    parts = [name]
-    if address_hint:
-        parts.append(address_hint)
-    if ward:
-        parts.append(ward)
-    parts.append("横浜市")
-    parts.append("保育園")
-    return norm(" ".join(parts))
-
-
-# ------------------------
-# Main
-# ------------------------
+# ========= Main =========
 def main() -> None:
     if not MASTER_CSV.exists():
-        raise SystemExit(f"ERROR: not found: {MASTER_CSV}")
+        raise RuntimeError(f"{MASTER_CSV} が見つかりません")
 
-    fieldnames, rows = read_master(MASTER_CSV)
+    with MASTER_CSV.open("r", encoding="utf-8-sig", newline="") as f:
+        rows = list(csv.DictReader(f))
 
-    required_cols = [
-        "facility_id", "name", "ward",
-        "address", "lat", "lng",
-        "facility_type", "phone", "website", "notes",
-        "nearest_station", "walk_minutes",
-        "map_url",
+    # ensure columns exist
+    cols = rows[0].keys() if rows else []
+    need_cols = [
+        "facility_id","name","ward","address","lat","lng","facility_type","phone","website","notes",
+        "nearest_station","walk_minutes","map_url"
     ]
-    fieldnames = ensure_columns(fieldnames, required_cols)
-
-    misses_path = DATA_DIR / "geocode_misses.csv"
-    updates_path = DATA_DIR / "master_facilities_updates.csv"
-
-    miss_rows: List[Dict[str, str]] = []
-    update_rows: List[Dict[str, str]] = []
+    for nc in need_cols:
+        if nc not in cols:
+            # 無い列は追加して後で書き出す
+            pass
 
     updated = 0
-    checked = 0
+    geocode_misses: List[Dict[str, str]] = []
+    station_misses: List[Dict[str, str]] = []
+    updates_log: List[Dict[str, str]] = []
 
-    for row in rows:
-        fid = norm(row.get("facility_id", ""))
-        name = norm(row.get("name", ""))
-        ward = norm(row.get("ward", ""))
-
-        if not name:
+    for r in rows:
+        ward = (r.get("ward") or "").strip()
+        if WARD_FILTER and WARD_FILTER not in ward:
             continue
 
-        if WARD_FILTER and norm(WARD_FILTER) not in ward:
+        if ONLY_BAD_ROWS and (not looks_bad_row(r)):
+            # bad rows のみ対象
             continue
 
-        address = norm(row.get("address", ""))
-        lat = norm(row.get("lat", ""))
-        lng = norm(row.get("lng", ""))
-
-        bad_addr = looks_bad_address(address, ward)
-        miss_ll = looks_missing_latlng(lat, lng)
-
-        if ONLY_BAD_ROWS and not (bad_addr or miss_ll):
-            continue
-
-        checked += 1
         if updated >= MAX_UPDATES:
             break
 
-        # クエリ（住所ヒントがあると精度が上がるが、誤住所なら逆効果なので控えめに）
-        addr_hint = "" if bad_addr else address
-        q = build_query(name, ward, addr_hint)
+        fid = (r.get("facility_id") or "").strip()
+        name = (r.get("name") or "").strip()
+        addr0 = (r.get("address") or "").strip()
 
-        # 1) Find Place
-        candidates = find_place(q)
-        best = choose_best(name, candidates)
-
-        # 2) 保険：Text Search
-        if best is None:
-            candidates2 = text_search(q)
-            best = choose_best(name, candidates2)
-
-        if best is None:
-            miss_rows.append({
-                "facility_id": fid, "name": name, "ward": ward,
-                "query_tried": q, "reason": "no_candidates"
-            })
-            time.sleep(SLEEP_SEC)
-            continue
-
-        pid = best.get("place_id") or ""
-        if not pid:
-            miss_rows.append({
-                "facility_id": fid, "name": name, "ward": ward,
-                "query_tried": q, "reason": "no_place_id"
-            })
-            time.sleep(SLEEP_SEC)
-            continue
-
-        det = place_details(pid)
-        if not det:
-            miss_rows.append({
-                "facility_id": fid, "name": name, "ward": ward,
-                "query_tried": q, "reason": "details_failed"
-            })
-            time.sleep(SLEEP_SEC)
-            continue
-
-        new_addr = norm(det.get("formatted_address", ""))
-        loc_lat = safe_get(det, ["geometry", "location", "lat"], None)
-        loc_lng = safe_get(det, ["geometry", "location", "lng"], None)
-        new_phone = norm(det.get("formatted_phone_number", ""))
-        new_web = norm(det.get("website", ""))
-        new_url = norm(det.get("url", ""))
-
-        # 誤爆防止
-        if not should_update_address(new_addr, ward):
-            miss_rows.append({
-                "facility_id": fid, "name": name, "ward": ward,
-                "query_tried": q, "reason": f"addr_mismatch:{new_addr}"
-            })
-            time.sleep(SLEEP_SEC)
-            continue
-
-        # before snapshot for diff log
-        before = {
-            "facility_id": fid,
-            "name": name,
-            "ward": ward,
-            "address_before": address,
-            "lat_before": lat,
-            "lng_before": lng,
-            "phone_before": norm(row.get("phone", "")),
-            "website_before": norm(row.get("website", "")),
-            "map_url_before": norm(row.get("map_url", "")),
-            "query": q,
-            "place_id": pid,
-        }
-
-        # Update fields
-        if OVERWRITE_ADDRESS:
-            row["address"] = new_addr
-
-        if OVERWRITE_LATLNG and (loc_lat is not None) and (loc_lng is not None):
-            row["lat"] = str(loc_lat)
-            row["lng"] = str(loc_lng)
-
-        if OVERWRITE_PHONE or (not norm(row.get("phone", ""))):
-            if new_phone:
-                row["phone"] = new_phone
-
-        if OVERWRITE_WEBSITE or (not norm(row.get("website", ""))):
-            if new_web:
-                row["website"] = new_web
-
-        if OVERWRITE_MAP_URL or (not norm(row.get("map_url", ""))):
-            if new_url:
-                row["map_url"] = new_url
-
-        after = {
-            "address_after": norm(row.get("address", "")),
-            "lat_after": norm(row.get("lat", "")),
-            "lng_after": norm(row.get("lng", "")),
-            "phone_after": norm(row.get("phone", "")),
-            "website_after": norm(row.get("website", "")),
-            "map_url_after": norm(row.get("map_url", "")),
-        }
-
-        update_rows.append({**before, **after})
-        updated += 1
+        query = build_query(name, ward, addr0)
+        # まず FindPlace で place_id/geometry を得る（精度と後続が楽）
+        place = places_find_by_text(query)
         time.sleep(SLEEP_SEC)
 
-    # write master
-    write_master(MASTER_CSV, fieldnames, rows)
+        if not place:
+            # Geocoding も試す
+            g = geocode_text_search(query)
+            time.sleep(SLEEP_SEC)
+            if not g:
+                geocode_misses.append({"facility_id": fid, "name": name, "ward": ward, "query_tried": query})
+                continue
 
-    # write updates log
-    if update_rows:
-        with updates_path.open("w", encoding="utf-8", newline="") as f:
-            cols = [
-                "facility_id", "name", "ward",
-                "query", "place_id",
-                "address_before", "address_after",
-                "lat_before", "lat_after",
-                "lng_before", "lng_after",
-                "phone_before", "phone_after",
-                "website_before", "website_after",
-                "map_url_before", "map_url_after",
-            ]
-            w = csv.DictWriter(f, fieldnames=cols)
+            loc = (((g.get("geometry") or {}).get("location")) or {})
+            lat = loc.get("lat")
+            lng = loc.get("lng")
+            fmt_addr = (g.get("formatted_address") or "").replace("日本、", "")
+            if fmt_addr and not ok_address(fmt_addr):
+                geocode_misses.append({"facility_id": fid, "name": name, "ward": ward, "query_tried": query})
+                continue
+
+            # apply geocode result
+            changed = False
+            if fmt_addr and should_update_cell(r.get("address",""), overwrite=True):
+                r["address"] = fmt_addr
+                changed = True
+            if lat is not None and should_update_cell(r.get("lat",""), overwrite=True):
+                r["lat"] = str(lat)
+                changed = True
+            if lng is not None and should_update_cell(r.get("lng",""), overwrite=True):
+                r["lng"] = str(lng)
+                changed = True
+
+            if changed:
+                updates_log.append({"facility_id": fid, "field": "geocode", "value": "applied"})
+                updated += 1
+
+        else:
+            # FindPlace から geometry/address
+            pid = place.get("place_id")
+            loc = ((place.get("geometry") or {}).get("location")) or {}
+            lat = loc.get("lat")
+            lng = loc.get("lng")
+            fmt_addr = (place.get("formatted_address") or "").replace("日本、", "")
+
+            if fmt_addr and not ok_address(fmt_addr):
+                geocode_misses.append({"facility_id": fid, "name": name, "ward": ward, "query_tried": query})
+                continue
+
+            changed_any = False
+
+            if fmt_addr and should_update_cell(r.get("address",""), overwrite=True):
+                r["address"] = fmt_addr
+                changed_any = True
+            if lat is not None and should_update_cell(r.get("lat",""), overwrite=True):
+                r["lat"] = str(lat)
+                changed_any = True
+            if lng is not None and should_update_cell(r.get("lng",""), overwrite=True):
+                r["lng"] = str(lng)
+                changed_any = True
+
+            # details (phone/website/map_url)
+            details = places_details(pid) if pid else None
+            time.sleep(SLEEP_SEC)
+
+            if details:
+                phone = (details.get("formatted_phone_number") or "").strip()
+                web = (details.get("website") or "").strip()
+                gurl = (details.get("url") or "").strip()  # Google Maps URL
+
+                if phone and should_update_cell(r.get("phone",""), OVERWRITE_PHONE):
+                    r["phone"] = phone
+                    changed_any = True
+                    updates_log.append({"facility_id": fid, "field": "phone", "value": phone})
+
+                if web and should_update_cell(r.get("website",""), OVERWRITE_WEBSITE):
+                    r["website"] = web
+                    changed_any = True
+                    updates_log.append({"facility_id": fid, "field": "website", "value": web})
+
+                if gurl and should_update_cell(r.get("map_url",""), OVERWRITE_MAP_URL):
+                    r["map_url"] = gurl
+                    changed_any = True
+                    updates_log.append({"facility_id": fid, "field": "map_url", "value": gurl})
+
+            # ★最寄り駅 + 徒歩分
+            if FILL_NEAREST_STATION:
+                latf = try_float(r.get("lat"))
+                lngf = try_float(r.get("lng"))
+                if latf is not None and lngf is not None:
+                    need_station = should_update_cell(r.get("nearest_station",""), OVERWRITE_NEAREST_STATION)
+                    need_walk = should_update_cell(r.get("walk_minutes",""), OVERWRITE_WALK_MINUTES)
+
+                    if need_station or need_walk:
+                        st = places_nearest_station(latf, lngf)
+                        time.sleep(SLEEP_SEC)
+
+                        if not st:
+                            station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "no_station_found"})
+                        else:
+                            st_name = str(st.get("name","")).strip()
+                            st_pid = str(st.get("place_id","")).strip()
+
+                            if st_name and need_station:
+                                r["nearest_station"] = st_name
+                                changed_any = True
+                                updates_log.append({"facility_id": fid, "field": "nearest_station", "value": st_name})
+
+                            if st_pid and need_walk:
+                                mins = distance_matrix_walk_minutes(latf, lngf, st_pid)
+                                time.sleep(SLEEP_SEC)
+                                if mins is None:
+                                    station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "distance_matrix_failed"})
+                                else:
+                                    r["walk_minutes"] = str(mins)
+                                    changed_any = True
+                                    updates_log.append({"facility_id": fid, "field": "walk_minutes", "value": str(mins)})
+
+            if changed_any:
+                updated += 1
+
+    # Write back master csv (keep header stable)
+    # collect all columns from existing + required
+    all_cols = set()
+    for r in rows:
+        all_cols |= set(r.keys())
+    # ensure required columns exist
+    for c in [
+        "facility_id","name","ward","address","lat","lng","facility_type","phone","website","notes",
+        "nearest_station","walk_minutes","map_url"
+    ]:
+        all_cols.add(c)
+
+    # keep a nice order
+    ordered = [
+        "facility_id","name","ward","address","lat","lng",
+        "facility_type","phone","website","map_url",
+        "nearest_station","walk_minutes","notes",
+    ]
+    rest = [c for c in sorted(all_cols) if c not in ordered]
+    fieldnames = ordered + rest
+
+    with MASTER_CSV.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        for r in rows:
+            # ensure all keys exist
+            out = {k: r.get(k, "") for k in fieldnames}
+            w.writerow(out)
+
+    # logs
+    if updates_log:
+        with UPDATES_CSV.open("w", encoding="utf-8-sig", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["facility_id","field","value"])
             w.writeheader()
-            for r in update_rows:
-                w.writerow({k: r.get(k, "") for k in cols})
+            for x in updates_log:
+                w.writerow(x)
 
-    # write misses
-    if miss_rows:
-        with misses_path.open("w", encoding="utf-8", newline="") as f:
-            cols = ["facility_id", "name", "ward", "query_tried", "reason"]
-            w = csv.DictWriter(f, fieldnames=cols)
+    if geocode_misses:
+        with GEOCODE_MISSES_CSV.open("w", encoding="utf-8-sig", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["facility_id","name","ward","query_tried"])
             w.writeheader()
-            for r in miss_rows:
-                w.writerow({k: r.get(k, "") for k in cols})
+            for x in geocode_misses:
+                w.writerow(x)
 
-    print("DONE")
-    print("timestamp:", datetime.now().isoformat(timespec="seconds"))
+    if station_misses:
+        with STATION_MISSES_CSV.open("w", encoding="utf-8-sig", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["facility_id","name","ward","reason"])
+            w.writeheader()
+            for x in station_misses:
+                w.writerow(x)
+
+    print("DONE.")
     print("total rows:", len(rows))
-    print("checked:", checked)
-    print("updated:", updated, f"(see {updates_path.name})" if update_rows else "")
-    print("misses:", len(miss_rows), f"(see {misses_path.name})" if miss_rows else "")
+    print("updated rows:", updated)
+    print("geocode misses:", len(geocode_misses))
+    print("station misses:", len(station_misses))
+    print("wrote:", str(MASTER_CSV))
 
 
 if __name__ == "__main__":
