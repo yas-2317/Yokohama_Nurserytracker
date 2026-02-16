@@ -5,7 +5,7 @@
     {
       "id": "1410051024248",
       "name": "下田みんなの保育園",
-      "name_kana": "",
+      "name_kana": "しもだみんなのほいくえん",
       "ward": "港北区",
       "address": "〒223-0064 神奈川県横浜市港北区下田町１丁目３−４１",
       "lat": "35.5581632",
@@ -16,7 +16,7 @@
       "website": "https://shimodaminna.web.fc2.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 18,
       "updated": "2026-02-01",
       "totals": {
@@ -104,7 +104,7 @@
     {
       "id": "1410051015659",
       "name": "グローバルキッズ下田町園",
-      "name_kana": "",
+      "name_kana": "ぐろーばるきっずしもだまちその",
       "ward": "港北区",
       "address": "〒223-0064 神奈川県横浜市港北区下田町３丁目１６−２５ Ｌｕ－ｃｈｅ 1F",
       "lat": "35.5590836",
@@ -115,7 +115,7 @@
       "website": "http://www.gkids.co.jp/facilities/nursery_038.html",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 26,
       "updated": "2026-02-01",
       "totals": {
@@ -203,7 +203,7 @@
     {
       "id": "1410051015675",
       "name": "グローバルキッズ日吉園",
-      "name_kana": "",
+      "name_kana": "ぐろーばるきっずひよしその",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉１丁目１０−２６",
       "lat": "35.55645",
@@ -214,7 +214,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_028.html",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -302,7 +302,7 @@
     {
       "id": "1410051014280",
       "name": "太陽の子　日吉保育園",
-      "name_kana": "",
+      "name_kana": "たいようのこひよしほいくえん",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉１丁目２１−５５",
       "lat": "35.5571046",
@@ -313,7 +313,7 @@
       "website": "https://www.kidslife-nursery.com/facility/kanagawa/yokohama/hiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -401,7 +401,7 @@
     {
       "id": "1410051017184",
       "name": "日吉みんなの保育園",
-      "name_kana": "",
+      "name_kana": "ひよしみんなのほいくえん",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉２丁目９−６",
       "lat": "35.5557124",
@@ -412,7 +412,7 @@
       "website": "https://hiyoshiminna.web.fc2.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -500,7 +500,7 @@
     {
       "id": "1410051027126",
       "name": "日吉ちとせ保育園",
-      "name_kana": "",
+      "name_kana": "ひよしちとせほいくえん",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉２丁目１０−２３",
       "lat": "35.55592",
@@ -511,7 +511,7 @@
       "website": "https://www.chitosek.or.jp/preschools/hiyoshi",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -599,7 +599,7 @@
     {
       "id": "1410051014918",
       "name": "ベネッセ　日吉保育園",
-      "name_kana": "",
+      "name_kana": "べねっせひよしほいくえん",
       "ward": "港北区",
       "address": "〒223-8526 神奈川県横浜市港北区日吉４丁目１−１ 1F 慶應義塾日吉キャンパス",
       "lat": "35.5520511",
@@ -610,7 +610,7 @@
       "website": "https://hoiku.benesse-style-care.co.jp/facilities/area_kanagawa/yokohama/h-hiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -698,7 +698,7 @@
     {
       "id": "1410051018638",
       "name": "まなびの森　日吉こども園",
-      "name_kana": "",
+      "name_kana": "まなびのもりひよしこどもその",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉５丁目１１−２４ ルミエール日吉",
       "lat": "35.546318",
@@ -709,7 +709,7 @@
       "website": "http://kodomonomori.co.jp/hy/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 21,
       "updated": "2026-02-01",
       "totals": {
@@ -797,7 +797,7 @@
     {
       "id": "1410051025989",
       "name": "みらいく矢上園",
-      "name_kana": "",
+      "name_kana": "みらいくやがみその",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉５丁目１３−４ ＬＯＣ’Ｓ ＨＩＹＯＳＨＩ ２Ｆ",
       "lat": "35.548424",
@@ -808,7 +808,7 @@
       "website": "https://www.miraiku-h.co.jp/nursery/yagami/?utm_source=google&utm_medium=maps",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 23,
       "updated": "2026-02-01",
       "totals": {
@@ -896,7 +896,7 @@
     {
       "id": "1410051024024",
       "name": "ブライト保育園横浜日吉",
-      "name_kana": "",
+      "name_kana": "ぶらいとほいくえんよこはまひよし",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉５丁目２１−１",
       "lat": "35.5459392",
@@ -907,7 +907,7 @@
       "website": "https://saiseikai.net/brighthiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 24,
       "updated": "2026-02-01",
       "totals": {
@@ -995,7 +995,7 @@
     {
       "id": "1410051027043",
       "name": "グローバルキッズ日吉五丁目園",
-      "name_kana": "",
+      "name_kana": "ぐろーばるきっずひよしごちょうめその",
       "ward": "港北区",
       "address": "日吉五丁目公園, 21, 日吉, 港北区, 横浜市, 神奈川県, 223-0061, 日本",
       "lat": "35.5511185",
@@ -1006,7 +1006,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_177.html",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
@@ -1094,7 +1094,7 @@
     {
       "id": "1410051015634",
       "name": "くっくおさんぽ保育園",
-      "name_kana": "",
+      "name_kana": "くっくおさんぽほいくえん",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉６丁目１−７",
       "lat": "35.545629",
@@ -1105,7 +1105,7 @@
       "website": "http://kukkuosanpo.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 21,
       "updated": "2026-02-01",
       "totals": {
@@ -1193,7 +1193,7 @@
     {
       "id": "1410051017101",
       "name": "アスク日吉東保育園",
-      "name_kana": "",
+      "name_kana": "あすくひよしひがしほいくえん",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉７丁目２０−４４",
       "lat": "35.5431376",
@@ -1204,7 +1204,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/hiyoshihigashi/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 18,
       "updated": "2026-02-01",
       "totals": {
@@ -1292,7 +1292,7 @@
     {
       "id": "1410051027977",
       "name": "さくらんぼ保育園",
-      "name_kana": "",
+      "name_kana": "さくらんぼほいくえん",
       "ward": "港北区",
       "address": "さくらんぼ保育園, 日吉中央通り, 日吉本町一丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.553934",
@@ -1303,7 +1303,7 @@
       "website": "https://sakuranbo-hoikuen.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -1391,7 +1391,7 @@
     {
       "id": "1410051018216",
       "name": "アスク日吉本町開善保育園",
-      "name_kana": "",
+      "name_kana": "あすくひよしほんちょうかいよしやすいくその",
       "ward": "港北区",
       "address": "アスク日吉本町開善保育園, 赤門坂, 日吉本町二丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.5515575",
@@ -1402,7 +1402,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/hiyoshihoncho/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
@@ -1490,7 +1490,7 @@
     {
       "id": "1410051014884",
       "name": "アスク日吉本町第二保育園",
-      "name_kana": "",
+      "name_kana": "あすくひよしほんちょうだいにほいくえん",
       "ward": "港北区",
       "address": "アスク日吉本町第二保育園, 赤門坂, 日吉本町二丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.551642",
@@ -1501,7 +1501,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/hiyoshihoncho2/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
@@ -1589,7 +1589,7 @@
     {
       "id": "1410051028231",
       "name": "スターチャイルド≪日吉本町駅前ナーサリー≫",
-      "name_kana": "",
+      "name_kana": "すたーちゃいるど≪ひよしほんちょうえきまえなーさりー≫",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町６丁目２−２ 14号",
       "lat": "35.5524733",
@@ -1600,7 +1600,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 23,
       "updated": "2026-02-01",
       "totals": {
@@ -1688,7 +1688,7 @@
     {
       "id": "1410051018232",
       "name": "Gakkenほいくえん日吉本町",
-      "name_kana": "",
+      "name_kana": "Gakkenほいくえんひよしほんちょう",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町３丁目２３−１５",
       "lat": "35.5477261",
@@ -1699,7 +1699,7 @@
       "website": "http://nursery.cocofump.co.jp/nursery/hiyoshihonchou/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 17,
       "updated": "2026-02-01",
       "totals": {
@@ -1787,7 +1787,7 @@
     {
       "id": "1410051027944",
       "name": "スターチャイルド《日吉本町ナーサリー》",
-      "name_kana": "",
+      "name_kana": "すたーちゃいるど《ひよしほんちょうなーさりー》",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町６丁目２−２ 14号",
       "lat": "35.5524733",
@@ -1798,7 +1798,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 23,
       "updated": "2026-02-01",
       "totals": {
@@ -1886,7 +1886,7 @@
     {
       "id": "1410051019024",
       "name": "横浜市南日吉保育園",
-      "name_kana": "",
+      "name_kana": "よこはましなんにちよしやすいくその",
       "ward": "港北区",
       "address": "横浜市南日吉保育園, 荏田綱島線, 日吉本町四丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.545476",
@@ -1897,7 +1897,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
@@ -1985,7 +1985,7 @@
     {
       "id": "1410051024487",
       "name": "みらいく日吉本町園",
-      "name_kana": "",
+      "name_kana": "みらいくひよしほんちょうその",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町４丁目１７−４６ １Ｆ",
       "lat": "35.5466272",
@@ -1996,7 +1996,7 @@
       "website": "https://www.miraiku-h.co.jp/nursery/hiyoshihonmachi/?utm_source=google&utm_medium=maps",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 21,
       "updated": "2026-02-01",
       "totals": {
@@ -2084,7 +2084,7 @@
     {
       "id": "1410051018240",
       "name": "日吉夢保育園",
-      "name_kana": "",
+      "name_kana": "ひよしゆめほいくえん",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町５丁目７４−１",
       "lat": "35.5504539",
@@ -2095,7 +2095,7 @@
       "website": "https://www.yumekoubou.or.jp/hoikuen/hiyoshiyume/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 29,
       "updated": "2026-02-01",
       "totals": {
@@ -2183,7 +2183,7 @@
     {
       "id": "1410051027134",
       "name": "まなびの森　ヴィラ日吉こども園",
-      "name_kana": "",
+      "name_kana": "まなびのもりゔぃらひよしこどもその",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町１丁目２−１ １",
       "lat": "35.5509782",
@@ -2194,7 +2194,7 @@
       "website": "http://kodomonomori.co.jp/vh/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -2282,7 +2282,7 @@
     {
       "id": "1410051027829",
       "name": "小学館アカデミーひよし保育園",
-      "name_kana": "",
+      "name_kana": "しょうがくかんあかでみーひよしほいくえん",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町２丁目２−１２ アリアソワン・プレミアム日吉 101",
       "lat": "35.5473856",
@@ -2293,7 +2293,7 @@
       "website": "https://hoiku.shopro.co.jp/hoiku/about/nursery/hiyoshi.html",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -2381,7 +2381,7 @@
     {
       "id": "1410051024974",
       "name": "アスクみのわ保育園",
-      "name_kana": "",
+      "name_kana": "あすくみのわほいくえん",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町２丁目２−２９ 1F",
       "lat": "35.5470576",
@@ -2392,7 +2392,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/minowa/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -2480,7 +2480,7 @@
     {
       "id": "1410051027928",
       "name": "にじいろ保育園箕輪町",
-      "name_kana": "",
+      "name_kana": "にじいろほいくえんみのわまち",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町２丁目５−８",
       "lat": "35.5439716",
@@ -2491,7 +2491,7 @@
       "website": "https://www.like-kd.co.jp/establishment/nijiiro/HPminowacho?utm_source=google&utm_medium=maps&utm_campaign=minowacho",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -2579,7 +2579,7 @@
     {
       "id": "1410051026003",
       "name": "にじいろ保育園日吉",
-      "name_kana": "",
+      "name_kana": "にじいろほいくえんひよし",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町２丁目７−４２ プラウドシティ日吉 ﾚｼﾞﾃﾞﾝｽⅡｿｺﾗ日吉",
       "lat": "35.5464641",
@@ -2590,7 +2590,7 @@
       "website": "https://www.like-kd.co.jp/establishment/nijiiro/HPhiyoshi?utm_source=google&utm_medium=maps&utm_campaign=hiyoshi",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -2678,7 +2678,7 @@
     {
       "id": "1410051023877",
       "name": "みのわのぞみ保育園",
-      "name_kana": "",
+      "name_kana": "みのわのぞみほいくえん",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町３丁目７−２ 横浜市立箕輪保育園",
       "lat": "35.548148",
@@ -2689,7 +2689,7 @@
       "website": "https://shkb.org/minowanozomi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -2777,7 +2777,7 @@
     {
       "id": "1410051026730",
       "name": "木下の保育園日吉",
-      "name_kana": "",
+      "name_kana": "きのしたのほいくえんひよし",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町３丁目１５−３８",
       "lat": "35.5457811",
@@ -2788,7 +2788,7 @@
       "website": "https://www.kinoshita-hoiku.com/facility/hiyoshi",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
@@ -2876,7 +2876,7 @@
     {
       "id": "1410051027589",
       "name": "日吉箕輪えほんの森保育園",
-      "name_kana": "",
+      "name_kana": "ひよしみのわえほんのもりやすいくその",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町２丁目１３−１５",
       "lat": "35.5432017",
@@ -2887,7 +2887,7 @@
       "website": "https://www.miraikeikaku.jp/miraien/hiyoshi-minowa/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
@@ -2975,7 +2975,7 @@
     {
       "id": "1410051024578",
       "name": "みらいく高田園",
-      "name_kana": "",
+      "name_kana": "みらいくたかだその",
       "ward": "港北区",
       "address": "〒223-0066 神奈川県横浜市港北区高田西４丁目２６−７",
       "lat": "35.5530385",
@@ -2986,7 +2986,7 @@
       "website": "https://www.miraiku-h.co.jp/nursery/takata/?utm_source=google&utm_medium=maps",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "",
+      "station_kana": "たかだ",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -3074,7 +3074,7 @@
     {
       "id": "1410051014959",
       "name": "たかた保育園",
-      "name_kana": "",
+      "name_kana": "たかたほいくえん",
       "ward": "港北区",
       "address": "〒223-0066 神奈川県横浜市港北区高田西４丁目３５−１８ 横浜市立高田保育園",
       "lat": "35.554939",
@@ -3085,7 +3085,7 @@
       "website": "http://www.takata-hoikuen.jp/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "",
+      "station_kana": "たかだ",
       "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
@@ -3173,7 +3173,7 @@
     {
       "id": "1410051027159",
       "name": "トゥインクルキッズ高田保育園",
-      "name_kana": "",
+      "name_kana": "とぅいんくるきっずたかだほいくえん",
       "ward": "港北区",
       "address": "〒223-0065 神奈川県横浜市港北区高田東３丁目１−１１ Ｆｉｏｒｉｔｕｒａ １Ｆ",
       "lat": "35.5501204",
@@ -3184,7 +3184,7 @@
       "website": "https://twinkle-kids.space/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 30,
       "updated": "2026-02-01",
       "totals": {
@@ -3272,7 +3272,7 @@
     {
       "id": "1410051014900",
       "name": "ケンパ高田",
-      "name_kana": "",
+      "name_kana": "けんぱたかだ",
       "ward": "港北区",
       "address": "〒223-0065 神奈川県横浜市港北区高田東４丁目１７−１７",
       "lat": "35.5474166",
@@ -3283,7 +3283,7 @@
       "website": "https://www.kenpa.jp/nursery/takadaen/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 25,
       "updated": "2026-02-01",
       "totals": {
@@ -3371,7 +3371,7 @@
     {
       "id": "1410051015758",
       "name": "パレット保育園・高田",
-      "name_kana": "",
+      "name_kana": "ぱれっとほいくえん・たかだ",
       "ward": "港北区",
       "address": "〒223-0065 神奈川県横浜市港北区高田東４丁目２２−３８",
       "lat": "35.5492024",
@@ -3382,7 +3382,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E9%AB%98%E7%94%B0/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 28,
       "updated": "2026-02-01",
       "totals": {
@@ -3470,7 +3470,7 @@
     {
       "id": "1410051017242",
       "name": "アイグラン保育園高田東",
-      "name_kana": "",
+      "name_kana": "あいぐらんほいくえんたかだひがし",
       "ward": "港北区",
       "address": "〒223-0065 神奈川県横浜市港北区高田東４丁目２３−１７",
       "lat": "35.5484765",
@@ -3481,7 +3481,7 @@
       "website": "https://ai-takadahigashi.hoiku-en.net/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 28,
       "updated": "2026-02-01",
       "totals": {
@@ -3569,7 +3569,7 @@
     {
       "id": "1410051023976",
       "name": "ブライト保育園横浜綱島",
-      "name_kana": "",
+      "name_kana": "ぶらいとほいくえんよこはまつなしま",
       "ward": "港北区",
       "address": "〒223-0058 神奈川県横浜市港北区新吉田東１丁目６−２６",
       "lat": "35.54183",
@@ -3580,7 +3580,7 @@
       "website": "https://www.saiseikai.net/brighttsunashima/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 20,
       "updated": "2026-02-01",
       "totals": {
@@ -3668,7 +3668,7 @@
     {
       "id": "1410051017218",
       "name": "森のエルマー保育園",
-      "name_kana": "",
+      "name_kana": "もりのえるまーほいくえん",
       "ward": "港北区",
       "address": "〒223-0058 神奈川県横浜市港北区新吉田東３丁目６−３３",
       "lat": "35.546112",
@@ -3679,7 +3679,7 @@
       "website": "http://elmer-kids.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 29,
       "updated": "2026-02-01",
       "totals": {
@@ -3767,7 +3767,7 @@
     {
       "id": "1410051014942",
       "name": "めぐみ保育園",
-      "name_kana": "",
+      "name_kana": "めぐみほいくえん",
       "ward": "港北区",
       "address": "めぐみ保育園, 宮内新横浜線, 新吉田東三丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.5438125",
@@ -3778,7 +3778,7 @@
       "website": "https://megumi.hazawa.jp/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 30,
       "updated": "2026-02-01",
       "totals": {
@@ -3866,7 +3866,7 @@
     {
       "id": "1410051025807",
       "name": "港北コスモス保育園",
-      "name_kana": "",
+      "name_kana": "こうほくこすもすほいくえん",
       "ward": "港北区",
       "address": "〒223-0058 神奈川県横浜市港北区新吉田東５丁目７８−２４",
       "lat": "35.5400431",
@@ -3877,7 +3877,7 @@
       "website": "https://cosmosfukushikai.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 29,
       "updated": "2026-02-01",
       "totals": {
@@ -3965,7 +3965,7 @@
     {
       "id": "1410051023984",
       "name": "スターチャイルド≪新吉田ナーサリー≫",
-      "name_kana": "",
+      "name_kana": "すたーちゃいるど≪しんきちたなーさりー≫",
       "ward": "港北区",
       "address": "〒223-0058 神奈川県横浜市港北区新吉田東７丁目２８−１",
       "lat": "35.5328338",
@@ -3976,7 +3976,7 @@
       "website": "https://www.starchild.jp/nursery/shinyoshida/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 25,
       "updated": "2026-02-01",
       "totals": {
@@ -4064,7 +4064,7 @@
     {
       "id": "1410051024016",
       "name": "コビープリスクールつなしま",
-      "name_kana": "",
+      "name_kana": "こびーぷりすくーるつなしま",
       "ward": "港北区",
       "address": "〒223-0055 神奈川県横浜市港北区綱島上町91−１",
       "lat": "35.5356878",
@@ -4075,7 +4075,7 @@
       "website": "https://www.coby.jp/institute/tsunashima/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -4163,7 +4163,7 @@
     {
       "id": "1410051023992",
       "name": "ベネッセ　綱島台保育園",
-      "name_kana": "",
+      "name_kana": "べねっせつなしまだいほいくえん",
       "ward": "港北区",
       "address": "〒223-0054 神奈川県横浜市港北区綱島台１７−２３",
       "lat": "35.54296679999999",
@@ -4174,7 +4174,7 @@
       "website": "https://hoiku.benesse-style-care.co.jp/facilities/area_kanagawa/yokohama/h-tsunashimadai/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -4262,7 +4262,7 @@
     {
       "id": "1410051015691",
       "name": "パレット保育園・綱島",
-      "name_kana": "",
+      "name_kana": "ぱれっとほいくえん・つなしま",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西１丁目２−９",
       "lat": "35.537881",
@@ -4273,7 +4273,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E3%81%9F%E3%81%BE%E3%83%97%E3%83%A9%E3%83%BC%E3%82%B6/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -4361,7 +4361,7 @@
     {
       "id": "1410051019644",
       "name": "第二尚花愛児園",
-      "name_kana": "",
+      "name_kana": "だいにたかしはなあいじその",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西１丁目１６−２７",
       "lat": "35.5388901",
@@ -4372,7 +4372,7 @@
       "website": "http://dai2-shoka-aijien.jp/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -4460,7 +4460,7 @@
     {
       "id": "1410051025427",
       "name": "ウッズ保育園",
-      "name_kana": "",
+      "name_kana": "うっずほいくえん",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西２丁目１−７",
       "lat": "35.53499890000001",
@@ -4471,7 +4471,7 @@
       "website": "https://hoikushitsu-woods.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -4559,7 +4559,7 @@
     {
       "id": "1410051015220",
       "name": "尚花愛児園",
-      "name_kana": "",
+      "name_kana": "たかしはなあいじその",
       "ward": "港北区",
       "address": "尚花愛児園, 川崎町田線, 大曽根三丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.535369",
@@ -4570,7 +4570,7 @@
       "website": "https://www.shoka-aijien.or.jp/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -4658,7 +4658,7 @@
     {
       "id": "1410051015683",
       "name": "にじいろ保育園綱島",
-      "name_kana": "",
+      "name_kana": "にじいろほいくえんつなしま",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区綱島西３丁目４−８",
       "lat": "35.5370716",
@@ -4669,7 +4669,7 @@
       "website": "https://www.like-kd.co.jp/establishment/nijiiro/HPtsunashima?utm_source=google&utm_medium=maps&utm_campaign=tsunashima",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -4757,7 +4757,7 @@
     {
       "id": "1410051027233",
       "name": "保育室プリンプリンROOM",
-      "name_kana": "",
+      "name_kana": "ほいくしつぷりんぷりんROOM",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西３丁目９−１２ プリンプリンルーム",
       "lat": "35.5381209",
@@ -4768,7 +4768,7 @@
       "website": "https://purinpurin-room.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -4856,7 +4856,7 @@
     {
       "id": "1410051027142",
       "name": "スターチャイルド≪綱島ナーサリー≫",
-      "name_kana": "",
+      "name_kana": "すたーちゃいるど≪つなしまなーさりー≫",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西５丁目３−１５",
       "lat": "35.5444884",
@@ -4867,7 +4867,7 @@
       "website": "https://www.starchild.jp/nursery/tsunashima",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 18,
       "updated": "2026-02-01",
       "totals": {
@@ -4955,7 +4955,7 @@
     {
       "id": "1410051023786",
       "name": "わかさと保育園",
-      "name_kana": "",
+      "name_kana": "わかさとほいくえん",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西６丁目３−１３",
       "lat": "35.5447991",
@@ -4966,7 +4966,7 @@
       "website": "https://wakasato.site/nursery/wakasato/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
@@ -5054,7 +5054,7 @@
     {
       "id": "1410051024842",
       "name": "まなびの森　綱島こども園",
-      "name_kana": "",
+      "name_kana": "まなびのもりつなしまこどもその",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島西６丁目２３",
       "lat": "35.5418784",
@@ -5065,7 +5065,7 @@
       "website": "http://kodomonomori.co.jp/tu/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -5153,7 +5153,7 @@
     {
       "id": "1410051027530",
       "name": "キッズフォレ綱島",
-      "name_kana": "",
+      "name_kana": "きっずふぉれつなしま",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西１丁目２１−５",
       "lat": "35.53909489999999",
@@ -5164,7 +5164,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -5252,7 +5252,7 @@
     {
       "id": "1410051027548",
       "name": "こどものまち綱島西保育園",
-      "name_kana": "",
+      "name_kana": "こどものまちつなしまにしぼいくその",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西３丁目２１−２６",
       "lat": "35.539372",
@@ -5263,7 +5263,7 @@
       "website": "https://www.kodomonomachi-group.jp/tsunashimanishihoikuen",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -5351,7 +5351,7 @@
     {
       "id": "1410051024602",
       "name": "はなまる保育園",
-      "name_kana": "",
+      "name_kana": "はなまるほいくえん",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東１丁目１３−２ ＭＫマンション第三",
       "lat": "35.536421",
@@ -5362,7 +5362,7 @@
       "website": "https://www.hanamaru-hoikuen.com/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -5450,7 +5450,7 @@
     {
       "id": "1410051027910",
       "name": "にじいろ保育園綱島東",
-      "name_kana": "",
+      "name_kana": "にじいろほいくえんつなしまひがし",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区綱島東１丁目１１−２ マンション桐本 1F・2F",
       "lat": "35.5349222",
@@ -5461,7 +5461,7 @@
       "website": "https://www.like-kd.co.jp/establishment/nijiiro/HPtsunashimahigashi?utm_source=google&utm_medium=maps&utm_campaign=tsunashimahigashi",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -5549,7 +5549,7 @@
     {
       "id": "1410051026516",
       "name": "明日葉保育園綱島園",
-      "name_kana": "",
+      "name_kana": "あしたばほいくえんつなしまその",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東３丁目１−４",
       "lat": "35.5378822",
@@ -5560,7 +5560,7 @@
       "website": "https://www.ashita-ba.jp/hoiku/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -5648,7 +5648,7 @@
     {
       "id": "1410051024255",
       "name": "ポピンズナーサリースクール綱島",
-      "name_kana": "",
+      "name_kana": "ぽぴんずなーさりーすくーるつなしま",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東３丁目２−１５",
       "lat": "35.5387454",
@@ -5659,7 +5659,7 @@
       "website": "https://www.poppins.co.jp/educare/room-search/tsunashima/?utm_source=gmap&utm_medium=room&utm_campaign=202210",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -5747,7 +5747,7 @@
     {
       "id": "1410051014298",
       "name": "マイ・ハート綱島東保育園",
-      "name_kana": "",
+      "name_kana": "まい・はーとつなしまひがしほいくえん",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東３丁目４−３２",
       "lat": "35.5381171",
@@ -5758,7 +5758,7 @@
       "website": "https://my-heart.co.jp/%E3%83%9E%E3%82%A4%E3%83%BB%E3%83%8F%E3%83%BC%E3%83%88%E7%B6%B1%E5%B3%B6%E6%9D%B1%E4%BF%9D%E8%82%B2%E5%9C%92%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -5846,7 +5846,7 @@
     {
       "id": "1410051026623",
       "name": "Gakkenほいくえん綱島",
-      "name_kana": "",
+      "name_kana": "Gakkenほいくえんつなしま",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東３丁目５−５７−１",
       "lat": "35.539698",
@@ -5857,7 +5857,7 @@
       "website": "https://nursery.cocofump.co.jp/nursery/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -5945,7 +5945,7 @@
     {
       "id": "1410051028249",
       "name": "ミアヘルサ保育園ひびき綱島",
-      "name_kana": "",
+      "name_kana": "みあへるさほいくえんひびきつなしま",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東３丁目５−５",
       "lat": "35.5400644",
@@ -5956,7 +5956,7 @@
       "website": "https://dev-merhalsa.jp/hoikuen/nursery/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -6044,7 +6044,7 @@
     {
       "id": "1410051017119",
       "name": "アスクバイリンガル保育園ゆめみらい",
-      "name_kana": "",
+      "name_kana": "あすくばいりんがるほいくえんゆめみらい",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東４丁目１−５",
       "lat": "35.5427877",
@@ -6055,7 +6055,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/yumemirai/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -6143,7 +6143,7 @@
     {
       "id": "1410051024008",
       "name": "木下の保育園　綱島東",
-      "name_kana": "",
+      "name_kana": "きのしたのほいくえんつなしまひがし",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東４丁目５−３５",
       "lat": "35.541757",
@@ -6154,7 +6154,7 @@
       "website": "https://www.kinoshita-hoiku.com/facility/tsunashimahigashi",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -6242,7 +6242,7 @@
     {
       "id": "1410051025500",
       "name": "キッズパートナー綱島東",
-      "name_kana": "",
+      "name_kana": "きっずぱーとなーつなしまひがし",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東４丁目６−３３",
       "lat": "35.5412137",
@@ -6253,7 +6253,7 @@
       "website": "https://www.care-partner.com/service/childcare/tunashimahigashi/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -6341,7 +6341,7 @@
     {
       "id": "1410051023760",
       "name": "テンダーラビング保育園綱島東",
-      "name_kana": "",
+      "name_kana": "てんだーらびんぐほいくえんつなしまひがし",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東４丁目１０−３４",
       "lat": "35.541573",
@@ -6352,7 +6352,7 @@
       "website": "https://tlcs-ns.jp/facility/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
@@ -6440,7 +6440,7 @@
     {
       "id": "1410051015667",
       "name": "グローバルキッズ綱島園",
-      "name_kana": "",
+      "name_kana": "ぐろーばるきっずつなしまその",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東４丁目１１−３８",
       "lat": "35.5395148",
@@ -6451,7 +6451,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_039.html",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -6539,7 +6539,7 @@
     {
       "id": "1410051015212",
       "name": "大倉山保育園",
-      "name_kana": "",
+      "name_kana": "おおくらやまほいくえん",
       "ward": "港北区",
       "address": "〒222-0003 神奈川県横浜市港北区大曽根１丁目７−１ 横浜市立大倉山保育園 大倉山保育園",
       "lat": "35.524644",
@@ -6550,7 +6550,7 @@
       "website": "https://kyosaikai.jp/service/okurayama-hoiku/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -6638,7 +6638,7 @@
     {
       "id": "1410051019016",
       "name": "横浜市大曽根保育園",
-      "name_kana": "",
+      "name_kana": "よこはましおおそねほいくえん",
       "ward": "港北区",
       "address": "横浜市大曽根保育園, 東京丸子横浜線, 大曽根一丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.527395",
@@ -6649,7 +6649,7 @@
       "website": "https://www.city.yokohama.lg.jp/kohoku/kurashi/kosodate_kyoiku/hoiku/hoikujo/osone.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -6737,7 +6737,7 @@
     {
       "id": "1410051025856",
       "name": "大曽根コスモス保育園",
-      "name_kana": "",
+      "name_kana": "おおそねこすもすほいくえん",
       "ward": "港北区",
       "address": "〒222-0003 神奈川県横浜市港北区大曽根２丁目３２−８",
       "lat": "35.5317312",
@@ -6748,7 +6748,7 @@
       "website": "https://cosmosfukushikai.com/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -6836,7 +6836,7 @@
     {
       "id": "1410051015618",
       "name": "おおつな保育園",
-      "name_kana": "",
+      "name_kana": "おおつなほいくえん",
       "ward": "港北区",
       "address": "〒222-0003 神奈川県横浜市港北区大曽根２丁目３３−８",
       "lat": "35.531368",
@@ -6847,7 +6847,7 @@
       "website": "https://www.shoutokukai.jp/facilities/otsuna",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -6935,7 +6935,7 @@
     {
       "id": "1410051024859",
       "name": "パレット保育園・大倉山",
-      "name_kana": "",
+      "name_kana": "ぱれっとほいくえん・おおくらやま",
       "ward": "港北区",
       "address": "〒222-0001 神奈川県横浜市港北区樽町１丁目１３−３",
       "lat": "35.5267364",
@@ -6946,7 +6946,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E5%A4%A7%E5%80%89%E5%B1%B1/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -7034,7 +7034,7 @@
     {
       "id": "1410051015592",
       "name": "大倉山元気の泉保育園",
-      "name_kana": "",
+      "name_kana": "おおくらやまげんきのいずみほいくえん",
       "ward": "港北区",
       "address": "〒222-0001 神奈川県横浜市港北区樽町１丁目１４−２０",
       "lat": "35.5272079",
@@ -7045,7 +7045,7 @@
       "website": "https://genkinoizumi.ed.jp/okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -7133,7 +7133,7 @@
     {
       "id": "1410051025971",
       "name": "ぶれすと綱島ほいくえん",
-      "name_kana": "",
+      "name_kana": "ぶれすとつなしまほいくえん",
       "ward": "港北区",
       "address": "〒222-0001 神奈川県横浜市港北区樽町２丁目３−１ １F",
       "lat": "35.5304121",
@@ -7144,7 +7144,7 @@
       "website": "https://hoikuen.brest.co.jp/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -7232,7 +7232,7 @@
     {
       "id": "1410051026680",
       "name": "ぶれすと綱島二階ほいくえん",
-      "name_kana": "",
+      "name_kana": "ぶれすとつなしまにかいほいくえん",
       "ward": "港北区",
       "address": "〒222-0001 神奈川県横浜市港北区樽町２丁目３−１ ２F",
       "lat": "35.5303442",
@@ -7243,7 +7243,7 @@
       "website": "https://hoikuen.brest.co.jp/tsunashima-nikai/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -7331,7 +7331,7 @@
     {
       "id": "1410051027845",
       "name": "小学館アカデミーつなしま保育園",
-      "name_kana": "",
+      "name_kana": "しょうがくかんあかでみーつなしまほいくえん",
       "ward": "港北区",
       "address": "〒222-0001 神奈川県横浜市港北区樽町２丁目１３−２７",
       "lat": "35.531361",
@@ -7342,7 +7342,7 @@
       "website": "https://hoiku.shopro.co.jp/hoiku/about/nursery/tsunashima.html",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -7430,7 +7430,7 @@
     {
       "id": "1410051017176",
       "name": "なあな保育園",
-      "name_kana": "",
+      "name_kana": "なあなほいくえん",
       "ward": "港北区",
       "address": "なあな保育園, 川崎町田線, 樽町三丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.5302772",
@@ -7441,7 +7441,7 @@
       "website": "http://www.tokyolm.co.jp/nana_ns/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
@@ -7529,7 +7529,7 @@
     {
       "id": "1410051027878",
       "name": "ヒューマンアカデミー大倉山保育園",
-      "name_kana": "",
+      "name_kana": "ひゅーまんあかでみーおおくらやまほいくえん",
       "ward": "港北区",
       "address": "〒222-0002 神奈川県横浜市港北区師岡町２９８",
       "lat": "35.5187655",
@@ -7540,7 +7540,7 @@
       "website": "https://hoiku.athuman.com/access/#tab_access_okurayama",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -7628,7 +7628,7 @@
     {
       "id": "1410051025997",
       "name": "ちいさなたね保育園",
-      "name_kana": "",
+      "name_kana": "ちいさなたねほいくえん",
       "ward": "港北区",
       "address": "〒222-0002 神奈川県横浜市港北区師岡町８４６−１",
       "lat": "35.5264148",
@@ -7639,7 +7639,7 @@
       "website": "https://bi-no.org/small",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 22,
       "updated": "2026-02-01",
       "totals": {
@@ -7727,7 +7727,7 @@
     {
       "id": "1410051025591",
       "name": "スターチャイルド≪大倉山ナーサリー≫",
-      "name_kana": "",
+      "name_kana": "すたーちゃいるど≪おおくらやまなーさりー≫",
       "ward": "港北区",
       "address": "〒222-0002 神奈川県横浜市港北区師岡町１１８４−１",
       "lat": "35.5228629",
@@ -7738,7 +7738,7 @@
       "website": "https://www.starchild.jp/nursery/okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -7826,7 +7826,7 @@
     {
       "id": "1410051027225",
       "name": "つばき駅前保育園",
-      "name_kana": "",
+      "name_kana": "つばきえきまえほいくえん",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山１丁目４−５",
       "lat": "35.5228677",
@@ -7837,7 +7837,7 @@
       "website": "https://www.tsubaki-hoikuen.jp/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -7925,7 +7925,7 @@
     {
       "id": "1410051026029",
       "name": "ララランド大倉山",
-      "name_kana": "",
+      "name_kana": "らららんどおおくらやま",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山１丁目１０−１２ ステラマリス",
       "lat": "35.52184700000001",
@@ -7936,7 +7936,7 @@
       "website": "https://la-la-land.co.jp/school-okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -8024,7 +8024,7 @@
     {
       "id": "1410051024388",
       "name": "聖保育園第二",
-      "name_kana": "",
+      "name_kana": "ひじりほいくえんだいに",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山１丁目１１−８",
       "lat": "35.521349",
@@ -8035,7 +8035,7 @@
       "website": "https://hijirihoikuen-daini.com/recruit/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -8123,7 +8123,7 @@
     {
       "id": "1410051026466",
       "name": "明日葉保育園大倉山園",
-      "name_kana": "",
+      "name_kana": "あしたばほいくえんおおくらやまその",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山１丁目１５−２１",
       "lat": "35.5204863",
@@ -8134,7 +8134,7 @@
       "website": "https://www.ashita-ba.jp/hoiku/okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -8222,7 +8222,7 @@
     {
       "id": "1410051015741",
       "name": "森の樹保育園",
-      "name_kana": "",
+      "name_kana": "もりのきほいくえん",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山１丁目２２−５",
       "lat": "35.5179402",
@@ -8233,7 +8233,7 @@
       "website": "http://morinoki.yokohama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -8321,7 +8321,7 @@
     {
       "id": "1410051015600",
       "name": "おおくらやまえきまえのぞみ保育園",
-      "name_kana": "",
+      "name_kana": "おおくらやまえきまえのぞみほいくえん",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山３丁目５−１６",
       "lat": "35.520741",
@@ -8332,7 +8332,7 @@
       "website": "https://shkb.org/ookurayamaekimae/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -8420,7 +8420,7 @@
     {
       "id": "1410051015725",
       "name": "聖保育園",
-      "name_kana": "",
+      "name_kana": "ひじりほいくえん",
       "ward": "港北区",
       "address": "聖保育園, 大倉山エルム通り, 大倉山三丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.5222993",
@@ -8431,7 +8431,7 @@
       "website": "https://hijirihoikuen-daini.com/recruit/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -8519,7 +8519,7 @@
     {
       "id": "1410051025468",
       "name": "天才キッズクラブ楽学館大倉山園",
-      "name_kana": "",
+      "name_kana": "てんさいきっずくらぶがくがくかんおおくらやまその",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山３丁目５５−３",
       "lat": "35.5227424",
@@ -8530,7 +8530,7 @@
       "website": "http://tensaikids.jp/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -8618,7 +8618,7 @@
     {
       "id": "1410051026037",
       "name": "グローバルキッズ大倉山園",
-      "name_kana": "",
+      "name_kana": "ぐろーばるきっずおおくらやまその",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山３丁目５８−１３",
       "lat": "35.523032",
@@ -8629,7 +8629,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_173.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -8717,7 +8717,7 @@
     {
       "id": "1410051017093",
       "name": "アスク大倉山保育園",
-      "name_kana": "",
+      "name_kana": "あすくおおくらやまほいくえん",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山４丁目１−１ BROTE大倉山 1F",
       "lat": "35.51809009999999",
@@ -8728,7 +8728,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/okurayama/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -8816,7 +8816,7 @@
     {
       "id": "1410051019040",
       "name": "横浜市太尾保育園",
-      "name_kana": "",
+      "name_kana": "よこはましたおほいくえん",
       "ward": "港北区",
       "address": "横浜市太尾保育園, 太尾新道, 新横浜三丁目, 大倉山五丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.520757",
@@ -8827,7 +8827,7 @@
       "website": "https://www.city.yokohama.lg.jp/kohoku/kosodate_kyoiku/hoiku/hoikujo/hutoohoikuen.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -8915,7 +8915,7 @@
     {
       "id": "1410051017226",
       "name": "わおわお大倉山保育園",
-      "name_kana": "",
+      "name_kana": "わおわおおおくらやまほいくえん",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山５丁目７−２ ダイアパレスグランデージ大倉山弐番館 1F",
       "lat": "35.5239804",
@@ -8926,7 +8926,7 @@
       "website": "http://www.waowao.or.jp/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -9014,7 +9014,7 @@
     {
       "id": "1410051015642",
       "name": "くっくおさんぽ保育園大倉山",
-      "name_kana": "",
+      "name_kana": "くっくおさんぽほいくえんおおくらやま",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山５丁目３９−２３",
       "lat": "35.5257606",
@@ -9025,7 +9025,7 @@
       "website": "https://cgi.city.yokohama.lg.jp/kodomo/hoiku-shisetu/hdata/n0374.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -9113,7 +9113,7 @@
     {
       "id": "1410051017275",
       "name": "たんぽぽ保育園",
-      "name_kana": "",
+      "name_kana": "たんぽぽほいくえん",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山２丁目１３−９",
       "lat": "35.5248334",
@@ -9124,7 +9124,7 @@
       "website": "http://tanpopo.kir.jp/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -9212,7 +9212,7 @@
     {
       "id": "1410051019628",
       "name": "くっくおさんぽ保育園ふとお",
-      "name_kana": "",
+      "name_kana": "くっくおさんぽほいくえんふとお",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山７丁目４０−２",
       "lat": "35.5187186",
@@ -9223,7 +9223,7 @@
       "website": "https://cgi.city.yokohama.lg.jp/kodomo/hoiku-shisetu/hdata/n0677.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
@@ -9311,7 +9311,7 @@
     {
       "id": "1410051027605",
       "name": "大倉山きずな保育園",
-      "name_kana": "",
+      "name_kana": "おおくらやまきずなほいくえん",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山３丁目４−３１ ２階・3階",
       "lat": "35.5210832",
@@ -9322,7 +9322,7 @@
       "website": "https://ookurayama-kizuna.com/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -9410,7 +9410,7 @@
     {
       "id": "1410051015626",
       "name": "おおつな森の保育園",
-      "name_kana": "",
+      "name_kana": "おおつなもりのほいくえん",
       "ward": "港北区",
       "address": "〒223-0057 神奈川県横浜市港北区新羽町１０２０−１",
       "lat": "35.5196718",
@@ -9421,7 +9421,7 @@
       "website": "https://www.shoutokukai.jp/facilities/otsunam",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 25,
       "updated": "2026-02-01",
       "totals": {
@@ -9509,7 +9509,7 @@
     {
       "id": "1410051028561",
       "name": "オハナ新羽保育園",
-      "name_kana": "",
+      "name_kana": "おはなしんはねほいくえん",
       "ward": "港北区",
       "address": "〒223-0057 神奈川県横浜市港北区新羽町１６８５−２",
       "lat": "35.528451",
@@ -9520,7 +9520,7 @@
       "website": "http://kiyukai.or.jp/ohana_nippa/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 30,
       "updated": "2026-02-01",
       "totals": {
@@ -9608,7 +9608,7 @@
     {
       "id": "1410051017259",
       "name": "新羽どろんこ保育園",
-      "name_kana": "",
+      "name_kana": "しんはねどろんこほいくえん",
       "ward": "港北区",
       "address": "〒223-0057 神奈川県横浜市港北区新羽町２１８５−１",
       "lat": "35.5264206",
@@ -9619,7 +9619,7 @@
       "website": "https://www.doronko.jp/facilities/doronko-nippa/?utm_source=GBP&utm_medium=click&utm_campaign=page_doronko-nippa",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 35,
       "updated": "2026-02-01",
       "totals": {
@@ -9707,7 +9707,7 @@
     {
       "id": "1410051025641",
       "name": "キディ大倉山・横浜",
-      "name_kana": "",
+      "name_kana": "きでぃおおくらやま・よこはま",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区大豆戸町３５−１",
       "lat": "35.5191771",
@@ -9718,7 +9718,7 @@
       "website": "https://www.shinkoufukushikai.com/hoiku/ninka/kiddy-okurayama",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -9806,7 +9806,7 @@
     {
       "id": "1410051017200",
       "name": "まめどくれっしゅ",
-      "name_kana": "",
+      "name_kana": "まめどくれっしゅ",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区大豆戸町４０−３",
       "lat": "35.5194603",
@@ -9817,7 +9817,7 @@
       "website": "https://www.doronko.jp/facilities/mamedokuresshu/?utm_source=GBP&utm_medium=click&utm_campaign=page_mamedokuresshu",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -9905,7 +9905,7 @@
     {
       "id": "1410051019669",
       "name": "パレット保育園・大豆戸",
-      "name_kana": "",
+      "name_kana": "ぱれっとほいくえん・まめど",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区大豆戸町５５２−１",
       "lat": "35.5139927",
@@ -9916,7 +9916,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E5%A4%A7%E8%B1%86%E6%88%B8/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -10004,7 +10004,7 @@
     {
       "id": "1410051026789",
       "name": "キッズラディ",
-      "name_kana": "",
+      "name_kana": "きっずらでぃ",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区大豆戸町６３９−２",
       "lat": "35.5126262",
@@ -10015,7 +10015,7 @@
       "website": "http://www.kyokushin-mm.jp/50index",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -10103,7 +10103,7 @@
     {
       "id": "1410051019651",
       "name": "大豆戸どろんこ保育園",
-      "name_kana": "",
+      "name_kana": "まめどどろんこほいくえん",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区大豆戸町９４３",
       "lat": "35.51669260000001",
@@ -10114,7 +10114,7 @@
       "website": "https://www.doronko.jp/facilities/doronko-mamedo/?utm_source=GBP&utm_medium=click&utm_campaign=page_doronko-mamedo",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -10202,7 +10202,7 @@
     {
       "id": "1410051018265",
       "name": "ペガサスベビー保育園",
-      "name_kana": "",
+      "name_kana": "ぺがさすべびーほいくえん",
       "ward": "港北区",
       "address": "ペガサスベビー保育園, 環状2号線, 新横浜三丁目, 新横浜一丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.505686",
@@ -10213,7 +10213,7 @@
       "website": "http://www.yamayuri-kai.jp/babyindex.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -10301,7 +10301,7 @@
     {
       "id": "1410051017135",
       "name": "岩崎学園新横浜保育園",
-      "name_kana": "",
+      "name_kana": "いわさきがくえんしんよこはまほいくえん",
       "ward": "港北区",
       "address": "〒222-0033 神奈川県横浜市港北区新横浜２丁目４−１０",
       "lat": "35.509036",
@@ -10312,7 +10312,7 @@
       "website": "http://hoiku.iwasaki.ac.jp/kosodate/isyh/index.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -10400,7 +10400,7 @@
     {
       "id": "1410051024594",
       "name": "ベネッセ　新横浜保育園",
-      "name_kana": "",
+      "name_kana": "べねっせしんよこはまほいくえん",
       "ward": "港北区",
       "address": "〒222-0033 神奈川県横浜市港北区新横浜２丁目１１−１１ スケートセンタ 2階",
       "lat": "35.507934",
@@ -10411,7 +10411,7 @@
       "website": "https://hoiku.benesse-style-care.co.jp/facilities/area_kanagawa/yokohama/h-cccshinyokohama/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -10499,7 +10499,7 @@
     {
       "id": "1410051024693",
       "name": "クレシュ新横浜",
-      "name_kana": "",
+      "name_kana": "くれしゅしんよこはま",
       "ward": "港北区",
       "address": "〒222-0033 神奈川県横浜市港北区新横浜３丁目２−４ プレシア新横浜 3F",
       "lat": "35.5109871",
@@ -10510,7 +10510,7 @@
       "website": "http://www.creche-shinyokohama.net/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -10598,7 +10598,7 @@
     {
       "id": "1410051017127",
       "name": "岩崎学園新横浜第二保育園",
-      "name_kana": "",
+      "name_kana": "いわさきがくえんしんよこはまだいにほいくえん",
       "ward": "港北区",
       "address": "〒222-0033 神奈川県横浜市港北区新横浜３丁目２２−１９",
       "lat": "35.5123982",
@@ -10609,7 +10609,7 @@
       "website": "https://hoiku.iwasaki.ac.jp/kosodate/isyh2/index.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -10697,7 +10697,7 @@
     {
       "id": "1410051018257",
       "name": "ペガサス新横浜保育園",
-      "name_kana": "",
+      "name_kana": "ぺがさすしんよこはまほいくえん",
       "ward": "港北区",
       "address": "ペガサス新横浜保育園, 新横浜中央通り, 新横浜三丁目, 新横浜二丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.5140227",
@@ -10708,7 +10708,7 @@
       "website": "http://www.yamayuri-kai.jp/shinyokohamaindex.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -10796,7 +10796,7 @@
     {
       "id": "1410051018273",
       "name": "ペガサス夜間保育園",
-      "name_kana": "",
+      "name_kana": "ぺがさすやかんほいくえん",
       "ward": "港北区",
       "address": "〒222-0033 神奈川県横浜市港北区新横浜３丁目２４−１４",
       "lat": "35.51403639999999",
@@ -10807,7 +10807,7 @@
       "website": "https://yamayuri-kai.jp/nursery_school_info/pegasus-night/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -10895,7 +10895,7 @@
     {
       "id": "1410051024586",
       "name": "キッズパートナー小机",
-      "name_kana": "",
+      "name_kana": "きっずぱーとなーこづくえ",
       "ward": "港北区",
       "address": "〒222-0036 神奈川県横浜市港北区小机町２１９０ 番",
       "lat": "35.509617",
@@ -10906,7 +10906,7 @@
       "website": "https://www.care-partner.com/place/kodukue/",
       "notes": "",
       "nearest_station": "小机駅",
-      "station_kana": "",
+      "station_kana": "こづくえ",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -10994,7 +10994,7 @@
     {
       "id": "1410051019289",
       "name": "ポピンズナーサリースクール小机",
-      "name_kana": "",
+      "name_kana": "ぽぴんずなーさりーすくーるこづくえ",
       "ward": "港北区",
       "address": "〒222-0036 神奈川県横浜市港北区小机町２５８０−１",
       "lat": "35.507964",
@@ -11005,7 +11005,7 @@
       "website": "https://www.poppins.co.jp/educare/room-search/kodukue/?utm_source=gmap&utm_medium=room&utm_campaign=202210",
       "notes": "",
       "nearest_station": "小机駅",
-      "station_kana": "",
+      "station_kana": "こづくえ",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -11093,7 +11093,7 @@
     {
       "id": "1410051024230",
       "name": "光の園アンティー保育園",
-      "name_kana": "",
+      "name_kana": "ひかりのそのあんてぃーほいくえん",
       "ward": "港北区",
       "address": "〒222-0011 神奈川県横浜市港北区菊名１丁目６−１４",
       "lat": "35.4983114",
@@ -11104,7 +11104,7 @@
       "website": "http://aunty-i.com/",
       "notes": "",
       "nearest_station": "妙蓮寺駅",
-      "station_kana": "",
+      "station_kana": "みょうれんじ",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -11192,7 +11192,7 @@
     {
       "id": "1410051018281",
       "name": "リトルスカラー妙蓮寺保育園",
-      "name_kana": "",
+      "name_kana": "りとるすからーみょうれんじほいくえん",
       "ward": "港北区",
       "address": "〒222-0011 神奈川県横浜市港北区菊名１丁目１７−８",
       "lat": "35.5032705",
@@ -11203,7 +11203,7 @@
       "website": "http://ls-myorenji.com/",
       "notes": "",
       "nearest_station": "妙蓮寺駅",
-      "station_kana": "",
+      "station_kana": "みょうれんじ",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -11291,7 +11291,7 @@
     {
       "id": "1410051019032",
       "name": "横浜市菊名保育園",
-      "name_kana": "",
+      "name_kana": "よこはましきくなほいくえん",
       "ward": "港北区",
       "address": "〒222-0011 神奈川県横浜市港北区菊名３丁目１０−２０",
       "lat": "35.505776",
@@ -11302,7 +11302,7 @@
       "website": "http://www.city.yokohama.lg.jp/kohoku/hoikuen/kikuna/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -11390,7 +11390,7 @@
     {
       "id": "1410051014264",
       "name": "菊名愛児園",
-      "name_kana": "",
+      "name_kana": "きくなあいじその",
       "ward": "港北区",
       "address": "菊名愛児園, 東京丸子横浜線, 菊名四丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.509703",
@@ -11401,7 +11401,7 @@
       "website": "https://kikuna.jpn.org/aijien/index.html",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -11489,7 +11489,7 @@
     {
       "id": "1410051024198",
       "name": "グローバルキッズ菊名園",
-      "name_kana": "",
+      "name_kana": "ぐろーばるきっずきくなその",
       "ward": "港北区",
       "address": "〒222-0011 神奈川県横浜市港北区菊名６丁目３−２０",
       "lat": "35.5120875",
@@ -11500,7 +11500,7 @@
       "website": "http://www.gkids.co.jp/facilities/nursery_011.html",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -11588,7 +11588,7 @@
     {
       "id": "1410051025476",
       "name": "光の園第二保育園",
-      "name_kana": "",
+      "name_kana": "ひかりのそのだいにほいくえん",
       "ward": "港北区",
       "address": "〒222-0011 神奈川県横浜市港北区菊名６丁目１５−１４",
       "lat": "35.5144609",
@@ -11599,7 +11599,7 @@
       "website": "https://www.aunty-i.com/hikarinosono.html#nursery2",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -11687,7 +11687,7 @@
     {
       "id": "1410051019636",
       "name": "うみのくに保育園きくな",
-      "name_kana": "",
+      "name_kana": "うみのくにほいくえんきくな",
       "ward": "港北区",
       "address": "〒222-0011 神奈川県横浜市港北区菊名７丁目５−３６",
       "lat": "35.5161632",
@@ -11698,7 +11698,7 @@
       "website": "https://soranohane.com/kikuna.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -11786,7 +11786,7 @@
     {
       "id": "1410051026011",
       "name": "まなびの森　菊名こども園",
-      "name_kana": "",
+      "name_kana": "まなびのもりきくなこどもその",
       "ward": "港北区",
       "address": "〒222-0013 神奈川県横浜市港北区錦が丘１９−１８",
       "lat": "35.5078074",
@@ -11797,7 +11797,7 @@
       "website": "http://kodomonomori.co.jp/ki/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -11885,7 +11885,7 @@
     {
       "id": "1410051015709",
       "name": "光の園保育園",
-      "name_kana": "",
+      "name_kana": "ひかりのそのほいくえん",
       "ward": "港北区",
       "address": "〒222-0021 神奈川県横浜市港北区篠原北２丁目４−９ パールエイト菊名",
       "lat": "35.510017",
@@ -11896,7 +11896,7 @@
       "website": "http://www.aunty-i.com/sp/hikarinosono.html",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -11984,7 +11984,7 @@
     {
       "id": "1410051014934",
       "name": "マーマしのはら保育園",
-      "name_kana": "",
+      "name_kana": "まーましのはらほいくえん",
       "ward": "港北区",
       "address": "〒222-0026 神奈川県横浜市港北区篠原町９７４−２５",
       "lat": "35.5010425",
@@ -11995,7 +11995,7 @@
       "website": "https://www.mama-hoikuen.com/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -12083,7 +12083,7 @@
     {
       "id": "1410051017168",
       "name": "第二福澤保育センター",
-      "name_kana": "",
+      "name_kana": "だいにふくざわほいくせんたー",
       "ward": "港北区",
       "address": "第二福沢保育センター, 牛坂, 新横浜三丁目, 篠原町, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.505064",
@@ -12094,7 +12094,7 @@
       "website": "https://www.kuonen-kids.jp/sub2.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -12182,7 +12182,7 @@
     {
       "id": "1410051026631",
       "name": "ぶれすと新横浜ほいくえん",
-      "name_kana": "",
+      "name_kana": "ぶれすとしんよこはまほいくえん",
       "ward": "港北区",
       "address": "〒222-0034 神奈川県横浜市港北区岸根町３７５−１",
       "lat": "35.5027115",
@@ -12193,7 +12193,7 @@
       "website": "https://hoikuen.brest.co.jp/shinyoko/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -12281,7 +12281,7 @@
     {
       "id": "1410051025633",
       "name": "パレット保育園・妙蓮寺",
-      "name_kana": "",
+      "name_kana": "ぱれっとほいくえん・みょうれんじ",
       "ward": "港北区",
       "address": "〒222-0023 神奈川県横浜市港北区仲手原１丁目１８−１３",
       "lat": "35.4956041",
@@ -12292,7 +12292,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E5%A6%99%E8%93%AE%E5%AF%BA/",
       "notes": "",
       "nearest_station": "妙蓮寺駅",
-      "station_kana": "",
+      "station_kana": "みょうれんじ",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -12380,7 +12380,7 @@
     {
       "id": "1410051019008",
       "name": "横浜市港北保育園",
-      "name_kana": "",
+      "name_kana": "よこはましこうほくほいくえん",
       "ward": "港北区",
       "address": "横浜市港北保育園, 旧綱島街道, 白幡町, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.496176",
@@ -12391,7 +12391,7 @@
       "website": "https://www.city.yokohama.lg.jp/kohoku/kosodate_kyoiku/hoiku/hoikujo/kohoku.html",
       "notes": "",
       "nearest_station": "妙蓮寺駅",
-      "station_kana": "",
+      "station_kana": "みょうれんじ",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -12479,7 +12479,7 @@
     {
       "id": "1410052004355",
       "name": "ベイキッズ星の森保育園",
-      "name_kana": "",
+      "name_kana": "べいきっずほしのもりやすいくその",
       "ward": "港北区",
       "address": "日本、〒222-0023 神奈川県横浜市港北区仲手原２丁目２０−１９",
       "lat": "35.4962100",
@@ -12490,7 +12490,7 @@
       "website": "https://www.bay-kids.com/aozora.html",
       "notes": "",
       "nearest_station": "妙蓮寺駅",
-      "station_kana": "",
+      "station_kana": "みょうれんじ",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -12578,7 +12578,7 @@
     {
       "id": "1410052004371",
       "name": "くじら保育園",
-      "name_kana": "",
+      "name_kana": "くじらほいくえん",
       "ward": "港北区",
       "address": "〒223-0064 神奈川県横浜市港北区下田町５丁目２９−２３ 下田ビル",
       "lat": "35.557977",
@@ -12589,7 +12589,7 @@
       "website": "https://www.kjrnoko.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 28,
       "updated": "2026-02-01",
       "totals": {
@@ -12677,7 +12677,7 @@
     {
       "id": "1410052005733",
       "name": "もしもしのほし日吉保育園",
-      "name_kana": "",
+      "name_kana": "もしもしのほしひよしほいくえん",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉２丁目３−８ 日吉ビル 1F 柏屋",
       "lat": "35.5545036",
@@ -12688,7 +12688,7 @@
       "website": "https://mocmo.ed.jp/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -12776,7 +12776,7 @@
     {
       "id": "1410052005931",
       "name": "イルカ保育園",
-      "name_kana": "",
+      "name_kana": "いるかほいくえん",
       "ward": "港北区",
       "address": "イルカ保育園, サンロード, 日吉二丁目, 日吉, 港北区, 横浜市, 神奈川県, 223-0061, 日本",
       "lat": "35.5546581",
@@ -12787,7 +12787,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -12875,7 +12875,7 @@
     {
       "id": "1410052002771",
       "name": "スターチス日吉保育園",
-      "name_kana": "",
+      "name_kana": "すたーちすひよしほいくえん",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町１丁目２３−１２ ライオンズマンション日吉台 1F",
       "lat": "35.5527725",
@@ -12886,7 +12886,7 @@
       "website": "http://www.statice-ns.or.jp/hiyoshi-2",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -12974,7 +12974,7 @@
     {
       "id": "1410052004470",
       "name": "ジャンプ保育園",
-      "name_kana": "",
+      "name_kana": "じゃんぷほいくえん",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町３丁目３３−１６",
       "lat": "35.5499776",
@@ -12985,7 +12985,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 20,
       "updated": "2026-02-01",
       "totals": {
@@ -13073,7 +13073,7 @@
     {
       "id": "1410052005691",
       "name": "みらいこうほく保育園",
-      "name_kana": "",
+      "name_kana": "みらいこうほくほいくえん",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町５丁目６７−１１−１",
       "lat": "35.5482486",
@@ -13084,7 +13084,7 @@
       "website": "https://www.miraikai.ed.jp/guide/2590.html",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 25,
       "updated": "2026-02-01",
       "totals": {
@@ -13172,7 +13172,7 @@
     {
       "id": "1410052003233",
       "name": "キッズパートナー日吉",
-      "name_kana": "",
+      "name_kana": "きっずぱーとなーひよし",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町１丁目１−１８",
       "lat": "35.5510388",
@@ -13183,7 +13183,7 @@
       "website": "https://www.care-partner.com/place/hiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -13271,7 +13271,7 @@
     {
       "id": "1410052004074",
       "name": "日吉チューリップルーム",
-      "name_kana": "",
+      "name_kana": "ひよしちゅーりっぷるーむ",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町１丁目１６−１８ グリーン・ヴュー小嶋 １０１号室",
       "lat": "35.5499024",
@@ -13282,7 +13282,7 @@
       "website": "http://tuliproom.info/hiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -13370,7 +13370,7 @@
     {
       "id": "1410052005261",
       "name": "ルリ保育園日吉",
-      "name_kana": "",
+      "name_kana": "るりほいくえんひよし",
       "ward": "港北区",
       "address": "〒223-0051 神奈川県横浜市港北区箕輪町２丁目３−７ 日吉ロイヤルマンション",
       "lat": "35.545727",
@@ -13381,7 +13381,7 @@
       "website": "https://kosodate-web.com/ruly/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -13469,7 +13469,7 @@
     {
       "id": "1410052005725",
       "name": "保育室テックテックROOM",
-      "name_kana": "",
+      "name_kana": "ほいくしつてっくてっくROOM",
       "ward": "港北区",
       "address": "〒223-0054 神奈川県横浜市港北区綱島台１４−１３",
       "lat": "35.5400467",
@@ -13480,7 +13480,7 @@
       "website": "https://tectec-room.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -13568,7 +13568,7 @@
     {
       "id": "1410052004264",
       "name": "尚花ぞうさん保育室",
-      "name_kana": "",
+      "name_kana": "たかしはなぞうさんほいくしつ",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西２丁目１５−１４",
       "lat": "35.5353078",
@@ -13579,7 +13579,7 @@
       "website": "http://www.shoka-aijien.or.jp/publics/index/43/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -13667,7 +13667,7 @@
     {
       "id": "1410052005683",
       "name": "ばばほいくしつ綱島",
-      "name_kana": "",
+      "name_kana": "ばばほいくしつつなしま",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西３丁目５−１６ 武市ビル",
       "lat": "35.5377521",
@@ -13678,7 +13678,7 @@
       "website": "https://fazer-bon.org/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -13766,7 +13766,7 @@
     {
       "id": "1410052004686",
       "name": "キッズパートナー綱島",
-      "name_kana": "",
+      "name_kana": "きっずぱーとなーつなしま",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西３丁目６−１９",
       "lat": "35.538206",
@@ -13777,7 +13777,7 @@
       "website": "https://www.care-partner.com/place/tsunashima/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -13865,7 +13865,7 @@
     {
       "id": "1410052006038",
       "name": "リトルスカラー綱島保育園",
-      "name_kana": "",
+      "name_kana": "りとるすからーつなしまほいくえん",
       "ward": "港北区",
       "address": "〒223-0053 神奈川県横浜市港北区綱島西１丁目２−７ 細野ビル",
       "lat": "35.537656",
@@ -13876,7 +13876,7 @@
       "website": "http://www.little-scholar.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -13964,7 +13964,7 @@
     {
       "id": "1410052004389",
       "name": "天才キッズクラブ楽遊館綱島園",
-      "name_kana": "",
+      "name_kana": "てんさいきっずくらぶらくゆうかんつなしまその",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東１丁目１２",
       "lat": "35.5350153",
@@ -13975,7 +13975,7 @@
       "website": "http://tensaikids.jp/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -14063,7 +14063,7 @@
     {
       "id": "1410052005824",
       "name": "preschool ALICE Clover",
-      "name_kana": "",
+      "name_kana": "preschoolALICEClover",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東３丁目５−５０ コリエンテ綱島 1階",
       "lat": "35.5390966",
@@ -14074,7 +14074,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -14162,7 +14162,7 @@
     {
       "id": "1410052004868",
       "name": "グローバルキッズ綱島ＳＳＴ保育園",
-      "name_kana": "",
+      "name_kana": "ぐろーばるきっずつなしまＳＳＴほいくえん",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東４丁目３−４２",
       "lat": "35.5412298",
@@ -14173,7 +14173,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_123.html",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -14261,7 +14261,7 @@
     {
       "id": "1410052003423",
       "name": "Ｌｕｃｅ陽だまりの家保育園綱島",
-      "name_kana": "",
+      "name_kana": "Ｌｕｃｅようだまりのいえほいくえんつなしま",
       "ward": "港北区",
       "address": "〒223-0052 神奈川県横浜市港北区綱島東４丁目９−２８",
       "lat": "35.5416772",
@@ -14272,7 +14272,7 @@
       "website": "http://www.luce.or.jp/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "",
+      "station_kana": "しんつなしま",
       "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
@@ -14360,7 +14360,7 @@
     {
       "id": "1410052005253",
       "name": "きゅーぴーるーむ大倉山園",
-      "name_kana": "",
+      "name_kana": "きゅゅぴぴるるむおおくらやまその",
       "ward": "港北区",
       "address": "〒222-0037 神奈川県横浜市港北区大倉山３丁目５８−１３",
       "lat": "35.5230426",
@@ -14371,7 +14371,7 @@
       "website": "https://qproom.jp/okurayamaen/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -14459,7 +14459,7 @@
     {
       "id": "1410052002714",
       "name": "キッズパートナー大倉山",
-      "name_kana": "",
+      "name_kana": "きっずぱーとなーおおくらやま",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区大豆戸町１１３−１",
       "lat": "35.5180374",
@@ -14470,7 +14470,7 @@
       "website": "https://www.care-partner.com/place/okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -14558,7 +14558,7 @@
     {
       "id": "1410052005030",
       "name": "聖愛クロス保育園　きくな",
-      "name_kana": "",
+      "name_kana": "せいあいくろすほいくえんきくな",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区大豆戸町２５７",
       "lat": "35.5123782",
@@ -14569,7 +14569,7 @@
       "website": "https://www.occ.ed.jp/kikuna/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -14657,7 +14657,7 @@
     {
       "id": "1410052002912",
       "name": "港北こども園",
-      "name_kana": "",
+      "name_kana": "こうほくこどもその",
       "ward": "港北区",
       "address": "〒222-0032 神奈川県横浜市港北区大豆戸町３６５−１",
       "lat": "35.5160105",
@@ -14668,7 +14668,7 @@
       "website": "http://www.cibi.net/kodomoen/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "",
+      "station_kana": "おおくらやま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -14756,7 +14756,7 @@
     {
       "id": "1410052003043",
       "name": "ピッコロ・グランデ新横浜",
-      "name_kana": "",
+      "name_kana": "ぴっころ・ぐらんでしんよこはま",
       "ward": "港北区",
       "address": "〒222-0033 神奈川県横浜市港北区新横浜１丁目",
       "lat": "35.5024113",
@@ -14767,7 +14767,7 @@
       "website": "https://www.senrikai.jp/piccolo/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -14855,7 +14855,7 @@
     {
       "id": "1410052003431",
       "name": "小規模保育事業ＭＩＲＡｉｏ新横浜",
-      "name_kana": "",
+      "name_kana": "しょうきぼほいくじぎょうＭＩＲＡｉｏしんよこはま",
       "ward": "港北区",
       "address": "〒222-0033 神奈川県横浜市港北区新横浜３丁目１２−４",
       "lat": "35.5130592",
@@ -14866,7 +14866,7 @@
       "website": "http://www.miraio.net/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -14954,7 +14954,7 @@
     {
       "id": "1410052005188",
       "name": "フェアリーテイルそら",
-      "name_kana": "",
+      "name_kana": "ふぇありーているそら",
       "ward": "港北区",
       "address": "〒222-0033 神奈川県横浜市港北区新横浜３丁目２３−３ 1階",
       "lat": "35.5134997",
@@ -14965,7 +14965,7 @@
       "website": "https://o-planet.jp/hoiku/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -15053,7 +15053,7 @@
     {
       "id": "1410052006111",
       "name": "新横浜めぶき保育園",
-      "name_kana": "",
+      "name_kana": "しんよこはまめぶきほいくえん",
       "ward": "港北区",
       "address": "〒222-0026 神奈川県横浜市港北区篠原町２５８９ 1FKコート新横浜 102",
       "lat": "35.5077744",
@@ -15064,7 +15064,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -15152,7 +15152,7 @@
     {
       "id": "1410052005469",
       "name": "キッズラボ菊名園",
-      "name_kana": "",
+      "name_kana": "きっずらぼきくなその",
       "ward": "港北区",
       "address": "キッズラボ菊名園, 東京丸子横浜線, 菊名六丁目, 港北区, 横浜市, 神奈川県, 231-0017, 日本",
       "lat": "35.51336",
@@ -15163,7 +15163,7 @@
       "website": "https://kids-lab.co.jp/kikunaen/?utm_source=google&utm_medium=maps",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -15251,7 +15251,7 @@
     {
       "id": "1410052003514",
       "name": "Ｌｕｃｅ陽だまりの家保育園",
-      "name_kana": "",
+      "name_kana": "Ｌｕｃｅようだまりのいえほいくえん",
       "ward": "港北区",
       "address": "〒222-0012 神奈川県横浜市港北区富士塚２丁目２８−１６ テルージュキクナⅠ 102",
       "lat": "35.5047978",
@@ -15262,7 +15262,7 @@
       "website": "http://www.luce.or.jp/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -15350,7 +15350,7 @@
     {
       "id": "1410052004025",
       "name": "佐藤保育室",
-      "name_kana": "",
+      "name_kana": "さとうほいくしつ",
       "ward": "港北区",
       "address": "〒223-0061 神奈川県横浜市港北区日吉６丁目１−２０",
       "lat": "35.5461134",
@@ -15361,7 +15361,7 @@
       "website": "http://sato-kodomo.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "",
+      "station_kana": "ひよし",
       "walk_minutes": 21,
       "updated": "2026-02-01",
       "totals": {
@@ -15449,7 +15449,7 @@
     {
       "id": "1410052004058",
       "name": "ローズ保育園",
-      "name_kana": "",
+      "name_kana": "ろーずほいくえん",
       "ward": "港北区",
       "address": "〒223-0066 神奈川県横浜市港北区高田西２丁目２１−１１",
       "lat": "35.55205309999999",
@@ -15460,7 +15460,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "",
+      "station_kana": "たかだ",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -15548,7 +15548,7 @@
     {
       "id": "1410051027886",
       "name": "横浜りとるぱんぷきんず(保育所部分)",
-      "name_kana": "",
+      "name_kana": "よこはまりとるぱんぷきんず(ほいくしょぶぶん)",
       "ward": "港北区",
       "address": "〒223-0062 神奈川県横浜市港北区日吉本町４丁目１０−４９",
       "lat": "35.5457737",
@@ -15559,7 +15559,7 @@
       "website": "https://www.seikoukai.or.jp/facilities/yokohama/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 18,
       "updated": "2026-02-01",
       "totals": {
@@ -15647,7 +15647,7 @@
     {
       "id": "1410051026581",
       "name": "しんよしだこども園（保育所部分）",
-      "name_kana": "",
+      "name_kana": "しんよしだこどもその（ほいくしょぶぶん）",
       "ward": "港北区",
       "address": "〒223-0058 神奈川県横浜市港北区新吉田東６丁目１７−３",
       "lat": "35.536528",
@@ -15658,7 +15658,7 @@
       "website": "http://www.shinyoshida-hoikuen.or.jp/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "",
+      "station_kana": "つなしま",
       "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
@@ -15746,7 +15746,7 @@
     {
       "id": "1410051021780",
       "name": "認定こども園高木学園附属幼稚園（保育所部分）",
-      "name_kana": "",
+      "name_kana": "にんていこどもそのたかぎがくえんふぞくようちえん（ほいくしょぶぶん）",
       "ward": "港北区",
       "address": "〒222-0011 神奈川県横浜市港北区菊名７丁目３−３０",
       "lat": "35.515252",
@@ -15757,7 +15757,7 @@
       "website": "https://takagi-kids.ed.jp/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "",
+      "station_kana": "きくな",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -15845,7 +15845,7 @@
     {
       "id": "1410051026854",
       "name": "認定こども園新羽幼稚園（保育所部分）",
-      "name_kana": "",
+      "name_kana": "にんていこどもそのしんはねようちえん（ほいくしょぶぶん）",
       "ward": "港北区",
       "address": "〒223-0057 神奈川県横浜市港北区新羽町２８７６",
       "lat": "35.5257677",
@@ -15856,7 +15856,7 @@
       "website": "https://nippa.byodo.ac.jp/",
       "notes": "",
       "nearest_station": "小机駅",
-      "station_kana": "",
+      "station_kana": "こづくえ",
       "walk_minutes": 38,
       "updated": "2026-02-01",
       "totals": {
@@ -15944,7 +15944,7 @@
     {
       "id": "1410051027316",
       "name": "認定こども園しのはら幼稚園（保育所部分）",
-      "name_kana": "",
+      "name_kana": "にんていこどもそのしのはらようちえん（ほいくしょぶぶん）",
       "ward": "港北区",
       "address": "〒222-0026 神奈川県横浜市港北区篠原町１１６３",
       "lat": "35.4988133",
@@ -15955,7 +15955,7 @@
       "website": "http://www.shinohara.ed.jp/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -16043,7 +16043,7 @@
     {
       "id": "1410051026243",
       "name": "認定こども園岸根こども園（保育所部分）",
-      "name_kana": "",
+      "name_kana": "にんていこどもそのきしねこどもその（ほいくしょぶぶん）",
       "ward": "港北区",
       "address": "〒222-0034 神奈川県横浜市港北区岸根町６８５−１２ 山百合会岸根保育園",
       "lat": "35.496435",
@@ -16054,7 +16054,7 @@
       "website": "https://yamayuri-kai.jp/nursery_school_info/kishine/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "",
+      "station_kana": "しんよこはま",
       "walk_minutes": 22,
       "updated": "2026-02-01",
       "totals": {
