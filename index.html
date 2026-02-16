@@ -32,31 +32,32 @@
 <main class="container">
   <div class="card">
     <div class="kpi" id="kpi"></div>
-    <div class="small">住所などは <code>data/master_facilities.csv</code> を埋めると表示できます。地図は園名検索リンクです。</div>
+    <div class="small">
+      住所/最寄り駅などは <code>data/master_facilities.csv</code> を更新すると反映されます。
+    </div>
   </div>
 
   <div class="card tablewrap">
     <table id="tbl">
       <thead>
         <tr>
-          <th class="col-name">園名</th>
+          <th style="min-width:240px;">園名</th>
 
           <!-- ★ ここから4列に分割 -->
-          <th class="col-addr">住所</th>
-          <th class="col-map">地図</th>
-          <th class="col-sta">最寄り駅</th>
-          <th class="col-walk">徒歩</th>
-          <!-- ★ ここまで -->
+          <th style="min-width:240px;">住所</th>
+          <th style="min-width:90px;">地図</th>
+          <th style="min-width:120px;">最寄り駅</th>
+          <th style="min-width:80px;">徒歩</th>
 
-          <th class="col-num">受入可能（合計）</th>
-          <th class="col-num">入所待ち（合計）</th>
-          <th class="col-delta">前月比 入所待ち</th>
-          <th class="col-delta">前月比 受入可能</th>
+          <th>受入可能（合計）</th>
+          <th>入所待ち（合計）</th>
+          <th>前月比 入所待ち</th>
+          <th>前月比 受入可能</th>
 
-          <th class="agecol col-num">0歳 受入</th><th class="agecol col-num">0歳 待ち</th>
-          <th class="agecol col-num">1歳 受入</th><th class="agecol col-num">1歳 待ち</th>
-          <th class="agecol col-num">2歳 受入</th><th class="agecol col-num">2歳 待ち</th>
-          <th class="agecol col-num">3〜5歳 受入</th><th class="agecol col-num">3〜5歳 待ち</th>
+          <th class="agecol">0歳 受入</th><th class="agecol">0歳 待ち</th>
+          <th class="agecol">1歳 受入</th><th class="agecol">1歳 待ち</th>
+          <th class="agecol">2歳 受入</th><th class="agecol">2歳 待ち</th>
+          <th class="agecol">3〜5歳 受入</th><th class="agecol">3〜5歳 待ち</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -103,10 +104,10 @@ function getGroups(f){
 function rowHTML(f, prevF){
   const addr = safeStr(f.address||'');
   const map = safeStr(f.map_url||'');
-  const station = safeStr(f.nearest_station || '');
-  const walkMin = (f.walk_minutes==null || f.walk_minutes==='') ? '' : String(f.walk_minutes);
+  const station = safeStr(f.nearest_station||'');
+  const walkMin = (f.walk_minutes==null || f.walk_minutes==="") ? "" : String(f.walk_minutes);
 
-  const mapLink = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map</a>` : '—';
+  const mapLink = map ? `<a href="${map}" target="_blank" rel="noopener">地図</a>` : '';
 
   const g = getGroups(f);
   function acc(k){ return fmt(g?.[k]?.accept); }
@@ -114,35 +115,29 @@ function rowHTML(f, prevF){
 
   const dWait = prevF ? (Number(f.totals?.wait||0) - Number(prevF.totals?.wait||0)) : null;
   const dAcc  = prevF ? (Number(f.totals?.accept||0) - Number(prevF.totals?.accept||0)) : null;
-
-  const sign = (n)=> {
-    if(n==null) return "—";
-    if(n>0) return `+${n}`;
-    return `${n}`;
-  };
+  const sign = (n)=> (n==null ? "—" : (n>0 ? `+${n}` : `${n}`));
 
   return `<tr>
-    <td class="col-name">
+    <td>
       <a href="facility.html?id=${encodeURIComponent(f.id)}">${safeStr(f.name)}</a>
       <div class="small">施設番号：${safeStr(f.id)}</div>
     </td>
 
-    <!-- ★ 4列分割 -->
-    <td class="col-addr">${addr ? addr : '—'}</td>
-    <td class="col-map">${mapLink}</td>
-    <td class="col-sta">${station ? station : '—'}</td>
-    <td class="col-walk">${walkMin ? `${walkMin}分` : '—'}</td>
-    <!-- ★ -->
+    <!-- ★ 4列 -->
+    <td>${addr}</td>
+    <td>${mapLink}</td>
+    <td>${station}</td>
+    <td>${walkMin ? `${walkMin}分` : ''}</td>
 
-    <td class="col-num">${fmt(f.totals?.accept)}</td>
-    <td class="col-num">${fmt(f.totals?.wait)}</td>
-    <td class="col-delta">${sign(dWait)}</td>
-    <td class="col-delta">${sign(dAcc)}</td>
+    <td>${fmt(f.totals?.accept)}</td>
+    <td>${fmt(f.totals?.wait)}</td>
+    <td>${sign(dWait)}</td>
+    <td>${sign(dAcc)}</td>
 
-    <td class="agecol col-num">${acc('0')}</td><td class="agecol col-num">${wai('0')}</td>
-    <td class="agecol col-num">${acc('1')}</td><td class="agecol col-num">${wai('1')}</td>
-    <td class="agecol col-num">${acc('2')}</td><td class="agecol col-num">${wai('2')}</td>
-    <td class="agecol col-num">${acc('3-5')}</td><td class="agecol col-num">${wai('3-5')}</td>
+    <td class="agecol">${acc('0')}</td><td class="agecol">${wai('0')}</td>
+    <td class="agecol">${acc('1')}</td><td class="agecol">${wai('1')}</td>
+    <td class="agecol">${acc('2')}</td><td class="agecol">${wai('2')}</td>
+    <td class="agecol">${acc('3-5')}</td><td class="agecol">${wai('3-5')}</td>
   </tr>`;
 }
 
@@ -176,7 +171,7 @@ function sortFacilities(arr, mode){
 
 async function main(){
   const months = await loadJSON('data/months.json');
-  const ms = (months.months||[]).slice().sort(); // 昇順
+  const ms = (months.months||[]).slice().sort();
   const sel = document.getElementById('monthSelect');
   sel.innerHTML = ms.map(m=>`<option value="${m}">${m}</option>`).join('');
   sel.value = ms.length ? ms[ms.length-1] : '';
