@@ -17,7 +17,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "18",
+      "walk_minutes": 18,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -116,7 +116,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "26",
+      "walk_minutes": 27,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -215,7 +215,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "9",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -314,7 +314,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "12",
+      "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -413,7 +413,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "5",
+      "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -512,7 +512,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "5",
+      "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -611,7 +611,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "2",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -710,7 +710,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "21",
+      "walk_minutes": 21,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -809,7 +809,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "23",
+      "walk_minutes": 23,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -908,7 +908,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "24",
+      "walk_minutes": 24,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -1007,7 +1007,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "19",
+      "walk_minutes": 20,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -1106,7 +1106,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "21",
+      "walk_minutes": 21,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -1205,7 +1205,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "18",
+      "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -1304,7 +1304,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "2",
+      "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -1403,7 +1403,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "19",
+      "walk_minutes": 20,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -1502,7 +1502,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "19",
+      "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -1601,7 +1601,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "23",
+      "walk_minutes": 24,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -1700,7 +1700,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "17",
+      "walk_minutes": 17,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -1799,7 +1799,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "23",
+      "walk_minutes": 24,
       "updated": "2026-02-01",
       "totals": {
         "accept": 9,
@@ -1898,7 +1898,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "16",
+      "walk_minutes": 17,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -1997,7 +1997,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "21",
+      "walk_minutes": 22,
       "updated": "2026-02-01",
       "totals": {
         "accept": 6,
@@ -2096,7 +2096,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "29",
+      "walk_minutes": 29,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -2195,7 +2195,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "4",
+      "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -2294,7 +2294,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "10",
+      "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -2393,7 +2393,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "12",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -2492,7 +2492,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "14",
+      "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
         "accept": 12,
@@ -2591,7 +2591,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "12",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -2690,7 +2690,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "13",
+      "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -2789,7 +2789,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "15",
+      "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -2886,9 +2886,9 @@
       "phone": "",
       "website": "https://www.miraikeikaku.jp/miraien/hiyoshi-minowa/",
       "notes": "",
-      "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
-      "walk_minutes": "16",
+      "nearest_station": "日吉駅",
+      "station_kana": "ひよし",
+      "walk_minutes": 20,
       "updated": "2026-02-01",
       "totals": {
         "accept": 8,
@@ -2985,9 +2985,9 @@
       "phone": "045-620-4511",
       "website": "https://www.miraiku-h.co.jp/nursery/takata/?utm_source=google&utm_medium=maps",
       "notes": "",
-      "nearest_station": "高田駅",
-      "station_kana": "たかだ",
-      "walk_minutes": "12",
+      "nearest_station": "綱島駅",
+      "station_kana": "つなしま",
+      "walk_minutes": 41,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -3084,9 +3084,9 @@
       "phone": "045-592-3251",
       "website": "http://www.takata-hoikuen.jp/",
       "notes": "",
-      "nearest_station": "高田駅",
-      "station_kana": "たかだ",
-      "walk_minutes": "15",
+      "nearest_station": "綱島駅",
+      "station_kana": "つなしま",
+      "walk_minutes": 44,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -3185,7 +3185,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "30",
+      "walk_minutes": 30,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -3284,7 +3284,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "25",
+      "walk_minutes": 26,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -3383,7 +3383,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "28",
+      "walk_minutes": 29,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -3482,7 +3482,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "28",
+      "walk_minutes": 29,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -3581,7 +3581,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "20",
+      "walk_minutes": 20,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -3680,7 +3680,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "29",
+      "walk_minutes": 30,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -3779,7 +3779,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "30",
+      "walk_minutes": 31,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -3878,7 +3878,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "29",
+      "walk_minutes": 29,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -3977,7 +3977,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "25",
+      "walk_minutes": 26,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -4076,7 +4076,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "14",
+      "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -4175,7 +4175,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "14",
+      "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -4274,7 +4274,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "1",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -4373,7 +4373,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "8",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -4472,7 +4472,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "3",
+      "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -4571,7 +4571,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "7",
+      "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -4670,7 +4670,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "7",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 6,
@@ -4769,7 +4769,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "8",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -4868,7 +4868,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "18",
+      "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -4967,7 +4967,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "15",
+      "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -5064,9 +5064,9 @@
       "phone": "045-547-6655",
       "website": "http://kodomonomori.co.jp/tu/",
       "notes": "",
-      "nearest_station": "綱島駅",
-      "station_kana": "つなしま",
-      "walk_minutes": "10",
+      "nearest_station": "新綱島駅",
+      "station_kana": "しんつなしま",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -5165,7 +5165,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "4",
+      "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -5264,7 +5264,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "9",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 9,
@@ -5363,7 +5363,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "1",
+      "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -5462,7 +5462,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "1",
+      "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
         "accept": 10,
@@ -5561,7 +5561,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "5",
+      "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -5660,7 +5660,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "8",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -5759,7 +5759,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "9",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -5858,7 +5858,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "10",
+      "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -5957,7 +5957,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "10",
+      "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -6056,7 +6056,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "12",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -6155,7 +6155,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "12",
+      "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -6254,7 +6254,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "13",
+      "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -6353,7 +6353,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "16",
+      "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -6452,7 +6452,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "12",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -6551,7 +6551,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "7",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -6650,7 +6650,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "11",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 11,
@@ -6747,9 +6747,9 @@
       "phone": "045-633-8605",
       "website": "https://cosmosfukushikai.com/",
       "notes": "",
-      "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
-      "walk_minutes": "12",
+      "nearest_station": "綱島駅",
+      "station_kana": "つなしま",
+      "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -6846,9 +6846,9 @@
       "phone": "045-531-0501",
       "website": "https://www.shoutokukai.jp/facilities/otsuna",
       "notes": "",
-      "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
-      "walk_minutes": "12",
+      "nearest_station": "綱島駅",
+      "station_kana": "つなしま",
+      "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -6947,7 +6947,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "11",
+      "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -7046,7 +7046,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "14",
+      "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -7145,7 +7145,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "14",
+      "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -7244,7 +7244,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "14",
+      "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -7343,7 +7343,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "8",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -7442,7 +7442,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "19",
+      "walk_minutes": 20,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -7541,7 +7541,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "10",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -7638,9 +7638,9 @@
       "phone": "045-515-0619",
       "website": "https://bi-no.org/small",
       "notes": "",
-      "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
-      "walk_minutes": "22",
+      "nearest_station": "新綱島駅",
+      "station_kana": "しんつなしま",
+      "walk_minutes": 27,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -7739,7 +7739,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "9",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -7838,7 +7838,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "2",
+      "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -7937,7 +7937,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "3",
+      "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -8036,7 +8036,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "2",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -8135,7 +8135,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "3",
+      "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -8234,7 +8234,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "8",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -8333,7 +8333,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "2",
+      "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -8432,7 +8432,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "4",
+      "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
         "accept": 6,
@@ -8531,7 +8531,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "7",
+      "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -8630,7 +8630,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "7",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 7,
@@ -8729,7 +8729,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "9",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -8828,7 +8828,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "12",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -8927,7 +8927,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "9",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -9026,7 +9026,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "14",
+      "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -9125,7 +9125,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "9",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -9224,7 +9224,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "15",
+      "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -9323,7 +9323,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "3",
+      "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -9420,9 +9420,9 @@
       "phone": "045-545-0620",
       "website": "https://www.shoutokukai.jp/facilities/otsunam",
       "notes": "",
-      "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
-      "walk_minutes": "25",
+      "nearest_station": "小机駅",
+      "station_kana": "こづくえ",
+      "walk_minutes": 30,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -9521,7 +9521,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "30",
+      "walk_minutes": 31,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -9620,7 +9620,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "35",
+      "walk_minutes": 36,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -9719,7 +9719,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "7",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 5,
@@ -9818,7 +9818,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "7",
+      "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -9915,9 +9915,9 @@
       "phone": "045-438-3149",
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E5%A4%A7%E8%B1%86%E6%88%B8/",
       "notes": "",
-      "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
-      "walk_minutes": "13",
+      "nearest_station": "菊名駅",
+      "station_kana": "きくな",
+      "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -10016,7 +10016,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "9",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -10115,7 +10115,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "12",
+      "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -10214,7 +10214,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "7",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -10313,7 +10313,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "1",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -10412,7 +10412,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "6",
+      "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -10511,7 +10511,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "6",
+      "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -10610,7 +10610,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "6",
+      "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -10709,7 +10709,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "9",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -10808,7 +10808,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "9",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -10907,7 +10907,7 @@
       "notes": "",
       "nearest_station": "小机駅",
       "station_kana": "こづくえ",
-      "walk_minutes": "2",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -11006,7 +11006,7 @@
       "notes": "",
       "nearest_station": "小机駅",
       "station_kana": "こづくえ",
-      "walk_minutes": "1",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -11105,7 +11105,7 @@
       "notes": "",
       "nearest_station": "妙蓮寺駅",
       "station_kana": "みょうれんじ",
-      "walk_minutes": "2",
+      "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -11204,7 +11204,7 @@
       "notes": "",
       "nearest_station": "妙蓮寺駅",
       "station_kana": "みょうれんじ",
-      "walk_minutes": "9",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -11303,7 +11303,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "10",
+      "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -11402,7 +11402,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "5",
+      "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -11501,7 +11501,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "3",
+      "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -11600,7 +11600,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "7",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -11699,7 +11699,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "9",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -11798,7 +11798,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "4",
+      "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -11897,7 +11897,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "1",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -11996,7 +11996,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "12",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -12095,7 +12095,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "8",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -12194,7 +12194,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "13",
+      "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -12293,7 +12293,7 @@
       "notes": "",
       "nearest_station": "妙蓮寺駅",
       "station_kana": "みょうれんじ",
-      "walk_minutes": "6",
+      "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -12392,7 +12392,7 @@
       "notes": "",
       "nearest_station": "妙蓮寺駅",
       "station_kana": "みょうれんじ",
-      "walk_minutes": "5",
+      "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
         "accept": 5,
@@ -12491,7 +12491,7 @@
       "notes": "",
       "nearest_station": "妙蓮寺駅",
       "station_kana": "みょうれんじ",
-      "walk_minutes": "5",
+      "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -12590,7 +12590,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "28",
+      "walk_minutes": 28,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -12689,7 +12689,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "2",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -12788,7 +12788,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "2",
+      "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
         "accept": 3,
@@ -12887,7 +12887,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "2",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -12986,7 +12986,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "20",
+      "walk_minutes": 21,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -13085,7 +13085,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "25",
+      "walk_minutes": 25,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -13184,7 +13184,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "4",
+      "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -13283,7 +13283,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "8",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -13382,7 +13382,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "13",
+      "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -13481,7 +13481,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "10",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -13580,7 +13580,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "8",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -13679,7 +13679,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "7",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -13778,7 +13778,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "7",
+      "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -13877,7 +13877,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "1",
+      "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
         "accept": 4,
@@ -13976,7 +13976,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "2",
+      "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -14075,7 +14075,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "10",
+      "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -14174,7 +14174,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "11",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -14273,7 +14273,7 @@
       "notes": "",
       "nearest_station": "新綱島駅",
       "station_kana": "しんつなしま",
-      "walk_minutes": "16",
+      "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -14372,7 +14372,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "7",
+      "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -14471,7 +14471,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "9",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -14570,7 +14570,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "4",
+      "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -14669,7 +14669,7 @@
       "notes": "",
       "nearest_station": "大倉山駅",
       "station_kana": "おおくらやま",
-      "walk_minutes": "12",
+      "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -14768,7 +14768,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "12",
+      "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -14867,7 +14867,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "10",
+      "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -14966,7 +14966,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "9",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -15065,7 +15065,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "7",
+      "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -15164,7 +15164,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "5",
+      "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -15263,7 +15263,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "10",
+      "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -15362,7 +15362,7 @@
       "notes": "",
       "nearest_station": "日吉駅",
       "station_kana": "ひよし",
-      "walk_minutes": "21",
+      "walk_minutes": 21,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -15459,9 +15459,9 @@
       "phone": "",
       "website": "",
       "notes": "",
-      "nearest_station": "高田駅",
-      "station_kana": "たかだ",
-      "walk_minutes": "8",
+      "nearest_station": "綱島駅",
+      "station_kana": "つなしま",
+      "walk_minutes": 37,
       "updated": "2026-02-01",
       "totals": {
         "accept": 2,
@@ -15560,7 +15560,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "18",
+      "walk_minutes": 18,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -15659,7 +15659,7 @@
       "notes": "",
       "nearest_station": "綱島駅",
       "station_kana": "つなしま",
-      "walk_minutes": "19",
+      "walk_minutes": 19,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -15758,7 +15758,7 @@
       "notes": "",
       "nearest_station": "菊名駅",
       "station_kana": "きくな",
-      "walk_minutes": "9",
+      "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
@@ -15857,7 +15857,7 @@
       "notes": "",
       "nearest_station": "小机駅",
       "station_kana": "こづくえ",
-      "walk_minutes": "38",
+      "walk_minutes": 39,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -15956,7 +15956,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "13",
+      "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
         "accept": 0,
@@ -16055,7 +16055,7 @@
       "notes": "",
       "nearest_station": "新横浜駅",
       "station_kana": "しんよこはま",
-      "walk_minutes": "22",
+      "walk_minutes": 22,
       "updated": "2026-02-01",
       "totals": {
         "accept": 1,
