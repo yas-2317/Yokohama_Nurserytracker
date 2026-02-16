@@ -16,7 +16,7 @@
       "website": "https://shimodaminna.web.fc2.com/",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "しもだなかちょう",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -115,7 +115,7 @@
       "website": "http://www.gkids.co.jp/facilities/nursery_038.html",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょう",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -205,16 +205,16 @@
       "name": "グローバルキッズ日吉園",
       "name_kana": "ぐろーばるきっずひよしその",
       "ward": "港北区",
-      "address": "日本、〒223-0061 神奈川県横浜市港北区日吉１丁目１０−２６",
-      "lat": "35.55645",
-      "lng": "139.6425261",
-      "map_url": "https://maps.google.com/?cid=12593351626645322118",
-      "facility_type": "establishment,point_of_interest",
+      "address": "日本、〒223-0061 神奈川県横浜市港北区日吉１丁目１０ グローバルキッズ日吉園",
+      "lat": "35.5567248",
+      "lng": "139.6424395",
+      "map_url": "https://maps.google.com/?cid=13385297955881866588",
+      "facility_type": "premise,street_address",
       "phone": "+81 45-562-0321",
       "website": "https://www.gkids.co.jp/facilities/nursery_028.html",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよしちょう",
+      "station_kana": "ひよしえき",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -313,7 +313,7 @@
       "website": "https://www.kidslife-nursery.com/facility/kanagawa/yokohama/hiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -412,7 +412,7 @@
       "website": "https://hiyoshiminna.web.fc2.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -511,7 +511,7 @@
       "website": "https://www.chitosek.or.jp/preschools/hiyoshi",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -610,7 +610,7 @@
       "website": "https://hoiku.benesse-style-care.co.jp/facilities/area_kanagawa/yokohama/h-hiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -709,7 +709,7 @@
       "website": "http://kodomonomori.co.jp/hy/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -808,7 +808,7 @@
       "website": "https://www.miraiku-h.co.jp/nursery/yagami/?utm_source=google&utm_medium=maps",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -907,7 +907,7 @@
       "website": "https://saiseikai.net/brighthiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "いっぽんばし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -1006,7 +1006,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_177.html",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "こしじ",
+      "station_kana": "ひよしえき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -1105,7 +1105,7 @@
       "website": "http://kukkuosanpo.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -1204,7 +1204,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/hiyoshihigashi/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -1303,7 +1303,7 @@
       "website": "https://sakuranbo-hoikuen.com/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -1402,7 +1402,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/hiyoshihoncho/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょう",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -1501,7 +1501,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/hiyoshihoncho2/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょう",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -1600,7 +1600,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょう",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -1699,7 +1699,7 @@
       "website": "http://nursery.cocofump.co.jp/nursery/hiyoshihonchou/",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょう",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -1798,7 +1798,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "みのわまちさんちょうめ",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -1897,7 +1897,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょうこうばんいりぐち",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -1996,7 +1996,7 @@
       "website": "https://www.miraiku-h.co.jp/nursery/hiyoshihonmachi/?utm_source=google&utm_medium=maps",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょうしていめみなみ",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -2095,7 +2095,7 @@
       "website": "https://www.yumekoubou.or.jp/hoikuen/hiyoshiyume/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -2194,7 +2194,7 @@
       "website": "http://kodomonomori.co.jp/vh/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -2293,7 +2293,7 @@
       "website": "https://hoiku.shopro.co.jp/hoiku/about/nursery/hiyoshi.html",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ぷらうどしてぃひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -2392,7 +2392,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/minowa/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ぷらうどしてぃひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -2491,7 +2491,7 @@
       "website": "https://www.like-kd.co.jp/establishment/nijiiro/HPminowacho?utm_source=google&utm_medium=maps&utm_campaign=minowacho",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "きたつなしま",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -2590,7 +2590,7 @@
       "website": "https://www.like-kd.co.jp/establishment/nijiiro/HPhiyoshi?utm_source=google&utm_medium=maps&utm_campaign=hiyoshi",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ぷらうどしてぃひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -2689,7 +2689,7 @@
       "website": "https://shkb.org/minowanozomi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "みのわまち",
+      "station_kana": "ひよしえき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -2788,7 +2788,7 @@
       "website": "https://www.kinoshita-hoiku.com/facility/hiyoshi",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "みのわまちふねした",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 12,
       "updated": "2026-02-01",
       "totals": {
@@ -2887,7 +2887,7 @@
       "website": "https://www.miraikeikaku.jp/miraien/hiyoshi-minowa/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "にちだいこうこうせいもん",
+      "station_kana": "ひよしえき",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -2986,7 +2986,7 @@
       "website": "https://www.miraiku-h.co.jp/nursery/takata/?utm_source=google&utm_medium=maps",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -3085,7 +3085,7 @@
       "website": "http://www.takata-hoikuen.jp/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -3184,7 +3184,7 @@
       "website": "https://twinkle-kids.space/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -3283,7 +3283,7 @@
       "website": "https://www.kenpa.jp/nursery/takadaen/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだこうさてん",
+      "station_kana": "たかだ えき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -3382,7 +3382,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E9%AB%98%E7%94%B0/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -3481,7 +3481,7 @@
       "website": "https://ai-takadahigashi.hoiku-en.net/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -3580,7 +3580,7 @@
       "website": "https://www.saiseikai.net/brighttsunashima/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -3679,7 +3679,7 @@
       "website": "http://elmer-kids.com/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -3778,7 +3778,7 @@
       "website": "https://megumi.hazawa.jp/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "しついえ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -3877,7 +3877,7 @@
       "website": "https://cosmosfukushikai.com/",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
@@ -3976,7 +3976,7 @@
       "website": "https://www.starchild.jp/nursery/shinyoshida/",
       "notes": "",
       "nearest_station": "新羽駅",
-      "station_kana": "しんはね",
+      "station_kana": "しん はね えき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -4075,7 +4075,7 @@
       "website": "https://www.coby.jp/institute/tsunashima/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "ぐりーんさらうんどしてぃ",
+      "station_kana": "つなしま えき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -4174,7 +4174,7 @@
       "website": "https://hoiku.benesse-style-care.co.jp/facilities/area_kanagawa/yokohama/h-tsunashimadai/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "きたつなしましょうがっこういりぐち",
+      "station_kana": "つなしま えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -4273,7 +4273,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E3%81%9F%E3%81%BE%E3%83%97%E3%83%A9%E3%83%BC%E3%82%B6/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "つなしまいりぐち",
+      "station_kana": "つなしま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -4372,7 +4372,7 @@
       "website": "http://dai2-shoka-aijien.jp/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "べっしょ",
+      "station_kana": "つなしま えき",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -4471,7 +4471,7 @@
       "website": "https://hoikushitsu-woods.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "つなしまいりぐち",
+      "station_kana": "つなしま えき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -4570,7 +4570,7 @@
       "website": "https://www.shoka-aijien.or.jp/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "つなしまにしにちょうめ",
+      "station_kana": "つなしま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -4669,7 +4669,7 @@
       "website": "https://www.like-kd.co.jp/establishment/nijiiro/HPtsunashima?utm_source=google&utm_medium=maps&utm_campaign=tsunashima",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "つなしまにしにちょうめ",
+      "station_kana": "つなしま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -4768,7 +4768,7 @@
       "website": "https://purinpurin-room.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "うえまち［こうほくく］",
+      "station_kana": "つなしま えき",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -4867,7 +4867,7 @@
       "website": "https://www.starchild.jp/nursery/tsunashima",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "よしだくち",
+      "station_kana": "たかだ えき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -4966,7 +4966,7 @@
       "website": "https://wakasato.site/nursery/wakasato/",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょうこうばんいりぐち",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -5064,8 +5064,8 @@
       "phone": "+81 45-547-6655",
       "website": "http://kodomonomori.co.jp/tu/",
       "notes": "",
-      "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "nearest_station": "綱島駅",
+      "station_kana": "つなしま えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -5164,7 +5164,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "つなしま",
+      "station_kana": "つなしま えき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -5263,7 +5263,7 @@
       "website": "https://www.kodomonomachi-group.jp/tsunashimanishihoikuen",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "うえまち［こうほくく］",
+      "station_kana": "つなしま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -5362,7 +5362,7 @@
       "website": "https://www.hanamaru-hoikuen.com/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -5461,7 +5461,7 @@
       "website": "https://www.like-kd.co.jp/establishment/nijiiro/HPtsunashimahigashi?utm_source=google&utm_medium=maps&utm_campaign=tsunashimahigashi",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -5560,7 +5560,7 @@
       "website": "https://www.ashita-ba.jp/hoiku/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "ちょうふくてらまえ",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -5659,7 +5659,7 @@
       "website": "https://www.poppins.co.jp/educare/room-search/tsunashima/?utm_source=gmap&utm_medium=room&utm_campaign=202210",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -5758,7 +5758,7 @@
       "website": "https://my-heart.co.jp/%E3%83%9E%E3%82%A4%E3%83%BB%E3%83%8F%E3%83%BC%E3%83%88%E7%B6%B1%E5%B3%B6%E6%9D%B1%E4%BF%9D%E8%82%B2%E5%9C%92%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -5857,7 +5857,7 @@
       "website": "https://nursery.cocofump.co.jp/nursery/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -5956,7 +5956,7 @@
       "website": "https://dev-merhalsa.jp/hoikuen/nursery/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -6055,7 +6055,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/yumemirai/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -6154,7 +6154,7 @@
       "website": "https://www.kinoshita-hoiku.com/facility/tsunashimahigashi",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "つなしまひがししていめ",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -6253,7 +6253,7 @@
       "website": "https://www.care-partner.com/service/childcare/tunashimahigashi/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -6352,7 +6352,7 @@
       "website": "https://tlcs-ns.jp/facility/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "つなしまひがししていめ",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -6451,7 +6451,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_039.html",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -6550,7 +6550,7 @@
       "website": "https://kyosaikai.jp/service/okurayama-hoiku/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおそねまち",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -6641,15 +6641,15 @@
       "name_kana": "よこはましおおそねほいくえん",
       "ward": "港北区",
       "address": "日本、〒222-0003 神奈川県横浜市港北区大曽根２丁目５−１ 横浜市立大曽根保育園",
-      "lat": "35.527435",
-      "lng": "139.630613",
-      "map_url": "https://maps.google.com/?cid=8333443589952290506",
-      "facility_type": "establishment,point_of_interest,school",
+      "lat": "35.5274272",
+      "lng": "139.6306136",
+      "map_url": "https://maps.google.com/?cid=6684032815184946896",
+      "facility_type": "premise,street_address",
       "phone": "+81 45-531-0034",
       "website": "https://www.city.yokohama.lg.jp/kohoku/kurashi/kosodate_kyoiku/hoiku/hoikujo/osone.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおそねまち",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -6748,7 +6748,7 @@
       "website": "https://cosmosfukushikai.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "たいこうはし",
+      "station_kana": "つなしま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -6847,7 +6847,7 @@
       "website": "https://www.shoutokukai.jp/facilities/otsuna",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "たいこうはし",
+      "station_kana": "つなしま えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -6946,7 +6946,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E5%A4%A7%E5%80%89%E5%B1%B1/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおそねまち",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -7036,16 +7036,16 @@
       "name": "大倉山元気の泉保育園",
       "name_kana": "おおくらやまげんきのいずみほいくえん",
       "ward": "港北区",
-      "address": "日本、〒222-0001 神奈川県横浜市港北区樽町１丁目１４−２０",
-      "lat": "35.5272079",
-      "lng": "139.6353107",
-      "map_url": "https://maps.google.com/?cid=17703017322259509272",
-      "facility_type": "establishment,point_of_interest,school",
+      "address": "日本、〒222-0001 神奈川県横浜市港北区樽町１丁目１４−２０ 大倉山元気の泉保育園",
+      "lat": "35.5271637",
+      "lng": "139.6353404",
+      "map_url": "https://maps.google.com/?cid=8596189769130883493",
+      "facility_type": "premise,street_address",
       "phone": "+81 45-532-0076",
       "website": "https://genkinoizumi.ed.jp/okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおそねまち",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -7144,7 +7144,7 @@
       "website": "https://hoikuen.brest.co.jp/tsunashima/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -7243,7 +7243,7 @@
       "website": "https://hoikuen.brest.co.jp/tsunashima-nikai/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -7342,7 +7342,7 @@
       "website": "https://hoiku.shopro.co.jp/hoiku/about/nursery/tsunashima.html",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -7441,7 +7441,7 @@
       "website": "http://www.tokyolm.co.jp/nana_ns/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "たるまち",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -7540,7 +7540,7 @@
       "website": "https://hoiku.athuman.com/access/#tab_access_okurayama",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -7639,7 +7639,7 @@
       "website": "https://bi-no.org/small",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "おもてだにこ",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
@@ -7738,7 +7738,7 @@
       "website": "https://www.starchild.jp/nursery/okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "くまのじんじゃいりぐち",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -7837,7 +7837,7 @@
       "website": "https://www.tsubaki-hoikuen.jp/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -7936,7 +7936,7 @@
       "website": "https://la-la-land.co.jp/school-okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "くまのじんじゃいりぐち",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -8035,7 +8035,7 @@
       "website": "https://hijirihoikuen-daini.com/recruit/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -8134,7 +8134,7 @@
       "website": "https://www.ashita-ba.jp/hoiku/okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -8233,7 +8233,7 @@
       "website": "http://morinoki.yokohama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -8332,7 +8332,7 @@
       "website": "https://shkb.org/ookurayamaekimae/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -8431,7 +8431,7 @@
       "website": "https://hijirihoikuen-daini.com/recruit/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -8530,7 +8530,7 @@
       "website": "http://tensaikids.jp/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -8629,7 +8629,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_173.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -8728,7 +8728,7 @@
       "website": "https://list.nihonhoiku.co.jp/nursery/detail/okurayama/?utm_source=google&utm_medium=map&utm_campaign=gbp",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -8827,7 +8827,7 @@
       "website": "https://www.city.yokohama.lg.jp/kohoku/kosodate_kyoiku/hoiku/hoikujo/hutoohoikuen.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -8926,7 +8926,7 @@
       "website": "http://www.waowao.or.jp/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -9025,7 +9025,7 @@
       "website": "https://cgi.city.yokohama.lg.jp/kodomo/hoiku-shisetu/hdata/n0374.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "たおじんじゃまえ",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -9115,16 +9115,16 @@
       "name": "たんぽぽ保育園",
       "name_kana": "たんぽぽほいくえん",
       "ward": "港北区",
-      "address": "日本、〒222-0032 神奈川県横浜市港北区大豆戸町７４９−５",
-      "lat": "35.5154435",
-      "lng": "139.6214718",
-      "map_url": "https://maps.google.com/?cid=12929394207615915678",
+      "address": "日本、〒222-0037 神奈川県横浜市港北区大倉山２丁目１３−９",
+      "lat": "35.5248334",
+      "lng": "139.6247439",
+      "map_url": "https://maps.google.com/?cid=570756107517769049",
       "facility_type": "establishment,point_of_interest,school",
       "phone": "+81 45-633-4141",
       "website": "http://tanpopo.kir.jp/",
       "notes": "",
       "nearest_station": "北新横浜駅",
-      "station_kana": "たおじんじゃまえ",
+      "station_kana": "きたしん よこはまえき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -9223,7 +9223,7 @@
       "website": "https://cgi.city.yokohama.lg.jp/kodomo/hoiku-shisetu/hdata/n0677.html",
       "notes": "",
       "nearest_station": "北新横浜駅",
-      "station_kana": "きたしんよこはま",
+      "station_kana": "きたしん よこはまえき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -9322,7 +9322,7 @@
       "website": "https://ookurayama-kizuna.com/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -9421,7 +9421,7 @@
       "website": "https://www.shoutokukai.jp/facilities/otsunam",
       "notes": "",
       "nearest_station": "北新横浜駅",
-      "station_kana": "せんねんてらまえ",
+      "station_kana": "きたしん よこはまえき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -9520,7 +9520,7 @@
       "website": "http://kiyukai.or.jp/ohana_nippa/",
       "notes": "",
       "nearest_station": "新羽駅",
-      "station_kana": "しんはね",
+      "station_kana": "しん はね えき",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -9619,7 +9619,7 @@
       "website": "https://www.doronko.jp/facilities/doronko-nippa/?utm_source=GBP&utm_medium=click&utm_campaign=page_doronko-nippa",
       "notes": "",
       "nearest_station": "新羽駅",
-      "station_kana": "なかいした",
+      "station_kana": "しん はね えき",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -9718,7 +9718,7 @@
       "website": "https://www.shinkoufukushikai.com/hoiku/ninka/kiddy-okurayama",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -9817,7 +9817,7 @@
       "website": "https://www.doronko.jp/facilities/mamedokuresshu/?utm_source=GBP&utm_medium=click&utm_campaign=page_mamedokuresshu",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -9916,7 +9916,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E5%A4%A7%E8%B1%86%E6%88%B8/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -10015,7 +10015,7 @@
       "website": "http://www.kyokushin-mm.jp/50index",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -10114,7 +10114,7 @@
       "website": "https://www.doronko.jp/facilities/doronko-mamedo/?utm_source=GBP&utm_medium=click&utm_campaign=page_doronko-mamedo",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -10213,7 +10213,7 @@
       "website": "http://www.yamayuri-kai.jp/babyindex.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "IKEAこうほく しゃとるばすのりば",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -10312,7 +10312,7 @@
       "website": "http://hoiku.iwasaki.ac.jp/kosodate/isyh/index.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -10411,7 +10411,7 @@
       "website": "https://hoiku.benesse-style-care.co.jp/facilities/area_kanagawa/yokohama/h-cccshinyokohama/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "IKEAこうほく しゃとるばすのりば",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -10510,7 +10510,7 @@
       "website": "http://www.creche-shinyokohama.net/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -10609,7 +10609,7 @@
       "website": "https://hoiku.iwasaki.ac.jp/kosodate/isyh2/index.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 7,
       "updated": "2026-02-01",
       "totals": {
@@ -10708,7 +10708,7 @@
       "website": "http://www.yamayuri-kai.jp/shinyokohamaindex.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -10807,7 +10807,7 @@
       "website": "https://yamayuri-kai.jp/nursery_school_info/pegasus-night/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -10906,7 +10906,7 @@
       "website": "https://www.care-partner.com/place/kodukue/",
       "notes": "",
       "nearest_station": "小机駅",
-      "station_kana": "こづくえ",
+      "station_kana": "こづくえ えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -11005,7 +11005,7 @@
       "website": "https://www.poppins.co.jp/educare/room-search/kodukue/?utm_source=gmap&utm_medium=room&utm_campaign=202210",
       "notes": "",
       "nearest_station": "小机駅",
-      "station_kana": "こづくえ",
+      "station_kana": "こづくえ えき",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -11104,7 +11104,7 @@
       "website": "http://aunty-i.com/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "みょうれんじ",
+      "station_kana": "きくなえき",
       "walk_minutes": 16,
       "updated": "2026-02-01",
       "totals": {
@@ -11203,7 +11203,7 @@
       "website": "http://ls-myorenji.com/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "ふじづか",
+      "station_kana": "きくなえき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -11302,7 +11302,7 @@
       "website": "http://www.city.yokohama.lg.jp/kohoku/hoikuen/kikuna/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -11401,7 +11401,7 @@
       "website": "https://kikuna.jpn.org/aijien/index.html",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくなしょうがっこういりぐち",
+      "station_kana": "きくなえき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -11500,7 +11500,7 @@
       "website": "http://www.gkids.co.jp/facilities/nursery_011.html",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -11599,7 +11599,7 @@
       "website": "https://www.aunty-i.com/hikarinosono.html#nursery2",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -11698,7 +11698,7 @@
       "website": "https://soranohane.com/kikuna.html",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "しんきくなはし",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -11797,7 +11797,7 @@
       "website": "http://kodomonomori.co.jp/ki/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -11896,7 +11896,7 @@
       "website": "http://www.aunty-i.com/sp/hikarinosono.html",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -11995,7 +11995,7 @@
       "website": "https://www.mama-hoikuen.com/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "ぶあいだい",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -12094,7 +12094,7 @@
       "website": "https://www.kuonen-kids.jp/sub2.html",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -12193,7 +12193,7 @@
       "website": "https://hoikuen.brest.co.jp/shinyoko/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "またくちはし",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -12292,7 +12292,7 @@
       "website": "https://p-hoiku.com/info/72-2/%E5%90%84%E5%9C%92%E6%83%85%E5%A0%B1_%E5%A6%99%E8%93%AE%E5%AF%BA/",
       "notes": "",
       "nearest_station": "大口駅",
-      "station_kana": "おおぐち",
+      "station_kana": "おおぐち えき",
       "walk_minutes": 14,
       "updated": "2026-02-01",
       "totals": {
@@ -12391,7 +12391,7 @@
       "website": "https://www.city.yokohama.lg.jp/kohoku/kosodate_kyoiku/hoiku/hoikujo/kohoku.html",
       "notes": "",
       "nearest_station": "大口駅",
-      "station_kana": "みょうれんじ",
+      "station_kana": "おおぐち えき",
       "walk_minutes": 18,
       "updated": "2026-02-01",
       "totals": {
@@ -12589,7 +12589,7 @@
       "website": "https://www.kjrnoko.com/",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "しもだまち",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -12688,7 +12688,7 @@
       "website": "https://mocmo.ed.jp/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよしひがしぐち",
+      "station_kana": "ひよしえき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -12787,7 +12787,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよしひがしぐち",
+      "station_kana": "ひよしえき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -12886,7 +12886,7 @@
       "website": "http://www.statice-ns.or.jp/hiyoshi-2",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -12985,7 +12985,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょう",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -13084,7 +13084,7 @@
       "website": "https://www.miraikai.ed.jp/guide/2590.html",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょう",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -13183,7 +13183,7 @@
       "website": "https://www.care-partner.com/place/hiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "ひよし",
+      "station_kana": "ひよしえき",
       "walk_minutes": 3,
       "updated": "2026-02-01",
       "totals": {
@@ -13282,7 +13282,7 @@
       "website": "http://tuliproom.info/hiyoshi/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "みのわまち",
+      "station_kana": "ひよしえき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -13381,7 +13381,7 @@
       "website": "https://kosodate-web.com/ruly/",
       "notes": "",
       "nearest_station": "日吉駅",
-      "station_kana": "みのわまちふねした",
+      "station_kana": "ひよしえき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -13480,7 +13480,7 @@
       "website": "https://tectec-room.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "うえまち［こうほくく］",
+      "station_kana": "つなしま えき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -13579,7 +13579,7 @@
       "website": "http://www.shoka-aijien.or.jp/publics/index/43/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "つなしまにしにちょうめ",
+      "station_kana": "つなしま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -13678,7 +13678,7 @@
       "website": "https://fazer-bon.org/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "べっしょ",
+      "station_kana": "つなしま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -13777,7 +13777,7 @@
       "website": "https://www.care-partner.com/place/tsunashima/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "べっしょ",
+      "station_kana": "つなしま えき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -13876,7 +13876,7 @@
       "website": "http://www.little-scholar.com/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "つなしま",
+      "station_kana": "つなしま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -13975,7 +13975,7 @@
       "website": "http://tensaikids.jp/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 2,
       "updated": "2026-02-01",
       "totals": {
@@ -14074,7 +14074,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -14173,7 +14173,7 @@
       "website": "https://www.gkids.co.jp/facilities/nursery_123.html",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "しんつなしま",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -14272,7 +14272,7 @@
       "website": "http://www.luce.or.jp/",
       "notes": "",
       "nearest_station": "新綱島駅",
-      "station_kana": "つなしまひがししていめ",
+      "station_kana": "しん つなしま えき",
       "walk_minutes": 13,
       "updated": "2026-02-01",
       "totals": {
@@ -14371,7 +14371,7 @@
       "website": "https://qproom.jp/okurayamaen/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -14470,7 +14470,7 @@
       "website": "https://www.care-partner.com/place/okurayama/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -14569,7 +14569,7 @@
       "website": "https://www.occ.ed.jp/kikuna/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 4,
       "updated": "2026-02-01",
       "totals": {
@@ -14668,7 +14668,7 @@
       "website": "http://www.cibi.net/kodomoen/",
       "notes": "",
       "nearest_station": "大倉山駅",
-      "station_kana": "おおくらやま",
+      "station_kana": "おおくらやま えき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -14767,7 +14767,7 @@
       "website": "https://www.senrikai.jp/piccolo/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "またくちはし",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 11,
       "updated": "2026-02-01",
       "totals": {
@@ -14866,7 +14866,7 @@
       "website": "http://www.miraio.net/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 9,
       "updated": "2026-02-01",
       "totals": {
@@ -14965,7 +14965,7 @@
       "website": "https://o-planet.jp/hoiku/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -15064,7 +15064,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "しんよこはま",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -15163,7 +15163,7 @@
       "website": "https://kids-lab.co.jp/kikunaen/?utm_source=google&utm_medium=maps",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 5,
       "updated": "2026-02-01",
       "totals": {
@@ -15262,7 +15262,7 @@
       "website": "http://www.luce.or.jp/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "ふじづか",
+      "station_kana": "きくなえき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -15460,7 +15460,7 @@
       "website": "",
       "notes": "",
       "nearest_station": "高田駅",
-      "station_kana": "たかだしょうぼうまえ",
+      "station_kana": "たかだ えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -15559,7 +15559,7 @@
       "website": "https://www.seikoukai.or.jp/facilities/yokohama/",
       "notes": "",
       "nearest_station": "日吉本町駅",
-      "station_kana": "ひよしほんちょうこうばんいりぐち",
+      "station_kana": "ひよしほんちょう えき",
       "walk_minutes": 6,
       "updated": "2026-02-01",
       "totals": {
@@ -15658,7 +15658,7 @@
       "website": "http://www.shinyoshida-hoikuen.or.jp/",
       "notes": "",
       "nearest_station": "綱島駅",
-      "station_kana": "つなしま",
+      "station_kana": "つなしま えき",
       "walk_minutes": 15,
       "updated": "2026-02-01",
       "totals": {
@@ -15757,7 +15757,7 @@
       "website": "https://takagi-kids.ed.jp/",
       "notes": "",
       "nearest_station": "菊名駅",
-      "station_kana": "きくな",
+      "station_kana": "きくなえき",
       "walk_minutes": 8,
       "updated": "2026-02-01",
       "totals": {
@@ -15856,7 +15856,7 @@
       "website": "https://nippa.byodo.ac.jp/",
       "notes": "",
       "nearest_station": "新羽駅",
-      "station_kana": "おおたけ",
+      "station_kana": "しん はね えき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
@@ -15955,7 +15955,7 @@
       "website": "https://en-shinyokohama.com/",
       "notes": "",
       "nearest_station": "新横浜駅",
-      "station_kana": "きしねこうえん",
+      "station_kana": "しんよこはまえき",
       "walk_minutes": 1,
       "updated": "2026-02-01",
       "totals": {
@@ -16054,7 +16054,7 @@
       "website": "https://yamayuri-kai.jp/nursery_school_info/kishine/",
       "notes": "",
       "nearest_station": "片倉町駅",
-      "station_kana": "さんのうもりこうえんまえ",
+      "station_kana": "かたくらちょう えき",
       "walk_minutes": 10,
       "updated": "2026-02-01",
       "totals": {
