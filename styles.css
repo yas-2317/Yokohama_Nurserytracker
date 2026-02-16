@@ -252,3 +252,17 @@ th, td{
      }
   */
 }
+
+/* index table column widths */
+#tbl .col-name { min-width: 220px; }
+#tbl .col-addr { min-width: 260px; }
+#tbl .col-map  { min-width: 80px;  white-space: nowrap; }
+#tbl .col-sta  { min-width: 120px; white-space: nowrap; }
+#tbl .col-walk { min-width: 70px;  white-space: nowrap; text-align: right; }
+#tbl .col-num  { min-width: 90px;  text-align: right; }
+#tbl .col-delta{ min-width: 110px; text-align: right; }
+
+/* モバイル時：住所列は折り返し、他は詰める */
+@media (max-width: 768px){
+  #tbl .col-addr{ min-width: 220px; white-space: normal; }
+}
