@@ -114,28 +114,29 @@ jobs:
           ls -la data || true
 
       - name: Fix master_facilities.csv (Google)
-        shell: bash
         env:
-          GOOGLE_MAPS_API_KEY: "${{ secrets.GOOGLE_MAPS_API_KEY }}"
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          CITY_FILTER: ${{ inputs.city_filter }}
+          WARD_FILTER: ${{ inputs.ward_filter }}
 
-          CITY_FILTER: "${{ inputs.city_filter }}"
-          WARD_FILTER: "${{ inputs.ward_filter }}"
+          MAX_UPDATES: ${{ inputs.max_updates }}
+          ONLY_BAD_ROWS: ${{ inputs.only_bad_rows }}
+          STRICT_ADDRESS_CHECK: ${{ inputs.strict_address_check }}
+          GOOGLE_API_SLEEP_SEC: ${{ inputs.sleep_sec }}
 
-          MAX_UPDATES: "${{ inputs.max_updates }}"
-          ONLY_BAD_ROWS: "${{ inputs.only_bad_rows }}"
-          STRICT_ADDRESS_CHECK: "${{ inputs.strict_address_check }}"
-          GOOGLE_API_SLEEP_SEC: "${{ inputs.sleep_sec }}"
-
-          OVERWRITE_PHONE: "${{ inputs.overwrite_phone }}"
-          OVERWRITE_WEBSITE: "${{ inputs.overwrite_website }}"
-          OVERWRITE_MAP_URL: "${{ inputs.overwrite_map_url }}"
+          OVERWRITE_PHONE: ${{ inputs.overwrite_phone }}
+          OVERWRITE_WEBSITE: ${{ inputs.overwrite_website }}
+          OVERWRITE_MAP_URL: ${{ inputs.overwrite_map_url }}
 
           FILL_NEAREST_STATION: "1"
-          OVERWRITE_NEAREST_STATION: "${{ inputs.overwrite_station_walk }}"
-          OVERWRITE_WALK_MINUTES: "${{ inputs.overwrite_station_walk }}"
+          OVERWRITE_NEAREST_STATION: ${{ inputs.overwrite_station_walk }}
+          OVERWRITE_WALK_MINUTES: ${{ inputs.overwrite_station_walk }}
 
-          NEARBY_RADIUS_M: "${{ inputs.nearby_radius_m }}"
-          FORCE_REBUILD_STATIONS: "${{ inputs.force_rebuild_stations }}"
+          NEARBY_RADIUS_M: ${{ inputs.nearby_radius_m }}
+
+          # ★追加（初回の全やり直しで必須）
+          FORCE_RECALC_STATION: "1"
+          SANITIZE_BAD_EXISTING_STATION: "1"
         run: |
           set -euxo pipefail
           python -u scripts/fix_master_with_google_places.py
