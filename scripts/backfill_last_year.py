@@ -553,58 +553,50 @@ def main() -> None:
             er = E.get(fid, {})
 
             name = str(ar.get(name_key, "")).strip() if name_key else ""
+        
+        mm = master.get(fid, {})
+        address = (mm.get("address") or "").strip()
+        map_url = (mm.get("map_url") or "").strip() or build_map_url(name, ward, address)
 
-            mm = master.get(fid, {})
-
-            address = (mm.get("address") or "").strip()
-            lat = (mm.get("lat") or "").strip()
-            lng = (mm.get("lng") or "").strip()
-            map_url = (mm.get("map_url") or "").strip() or build_map_url(name, ward, address, lat, lng)
-
-            nearest_station = (mm.get("nearest_station") or "").strip()
-            walk_minutes = (mm.get("walk_minutes") or "").strip()
-            facility_type = (mm.get("facility_type") or "").strip()
-            phone = (mm.get("phone") or "").strip()
-            website = (mm.get("website") or "").strip()
-            notes = (mm.get("notes") or "").strip()
-
-            tot_accept = get_total(ar)
-            tot_wait = get_total(wr) if wr else None
-            tot_enrolled = get_total(er) if er else None
-            cap_est = (tot_enrolled + tot_accept) if (tot_enrolled is not None and tot_accept is not None) else None
-
-            age_groups, ages_0_5 = build_age_groups(ar, wr, er)
-
-            facilities.append({
-                "id": fid,
-                "name": name,
-                "ward": ward,
-                "address": address,
-                "lat": lat,
-                "lng": lng,
-                "map_url": map_url,
-
-                # ★ 追加（一覧4列表示用）
-                "nearest_station": nearest_station,
-                "walk_minutes": (int(walk_minutes) if walk_minutes.isdigit() else walk_minutes),
-
-                # ★ 追加（将来拡張用）
-                "facility_type": facility_type,
-                "phone": phone,
-                "website": website,
-                "notes": notes,
-
-                "updated": m,
-                "totals": {
-                    "accept": tot_accept,
-                    "wait": tot_wait,
-                    "enrolled": tot_enrolled,
-                    "capacity_est": cap_est,
-                    "wait_per_capacity_est": ratio_opt(tot_wait, cap_est),
-                },
-                "age_groups": age_groups,
-                "ages_0_5": ages_0_5,
-            })
+        nearest_station = (mm.get("nearest_station") or "").strip()
+        walk_minutes = to_int(mm.get("walk_minutes"))
+        phone = (mm.get("phone") or "").strip()
+        website = (mm.get("website") or "").strip()
+        notes = (mm.get("notes") or "").strip()
+        facility_type = (mm.get("facility_type") or "").strip()
+        lat = (mm.get("lat") or "").strip()
+        lng = (mm.get("lng") or "").strip()
+        
+        facilities.append({
+          "id": fid,
+          "name": name,
+          "ward": ward,
+        
+          "address": address,
+          "map_url": map_url,
+          "nearest_station": nearest_station,
+          "walk_minutes": walk_minutes,
+        
+          "phone": phone,
+          "website": website,
+          "notes": notes,
+          "facility_type": facility_type,
+          "lat": lat,
+          "lng": lng,
+        
+          "updated": m,
+          "totals": {
+            "accept": tot_accept,
+            "wait": tot_wait,
+            "enrolled": tot_enrolled,
+            "capacity_est": cap_est,
+            "wait_per_capacity_est": ratio_opt(tot_wait, cap_est),
+          },
+          "age_groups": age_groups,
+          "ages_0_5": ages_0_5,
+        })
+        
+        
 
         out_path.write_text(
             json.dumps({"month": m, "ward": (WARD_FILTER or "横浜市"), "facilities": facilities},
