@@ -15,7 +15,7 @@
     <div class="controls">
       <select id="monthSelect"></select>
 
-      <input id="q" placeholder="園名/駅名で検索（例：日吉 / べねっせ / しんよこ）" />
+      <input id="q" placeholder="園名/駅名で検索（例：日吉 / ひよし / べねっせ / しんよこ）" />
 
       <select id="sort">
         <option value="wait0_desc">0歳 入所待ち 多い順</option>
@@ -25,7 +25,6 @@
         <option value="wait_desc">合計入所待ち 多い順</option>
         <option value="accept_desc">合計受入可能 多い順</option>
 
-        <!-- ★追加：駅×徒歩 -->
         <option value="station_walk_asc">駅（あいうえお）×徒歩（短い順）</option>
         <option value="walk_asc">徒歩（短い順）</option>
 
@@ -50,7 +49,6 @@
         <tr>
           <th style="min-width:240px;">園名</th>
 
-          <!-- ★ 4列に分割 -->
           <th style="min-width:260px;">住所</th>
           <th style="min-width:120px;">地図</th>
           <th style="min-width:140px;">最寄り駅</th>
@@ -81,10 +79,10 @@
 let showAgeCols = true;
 
 /* ============================
-   Search helpers (hiragana support)
+   Search helpers (hiragana/kanji both)
    ============================ */
 
-// カタカナ→ひらがな（濁点/半濁点もそのまま動く）
+// カタカナ→ひらがな（濁点/半濁点含めて自然に変換）
 function kataToHira(s){
   if(!s) return "";
   return String(s).replace(/[\u30A1-\u30F6]/g, ch => {
@@ -93,7 +91,6 @@ function kataToHira(s){
 }
 
 function normalizeForSearch(s){
-  // 空白除去 + 小文字化 + かな統一（カタカナ→ひらがな）
   if(s == null) return "";
   const x = String(s)
     .toLowerCase()
@@ -102,23 +99,24 @@ function normalizeForSearch(s){
   return kataToHira(x);
 }
 
-// 施設の検索対象文字列を作る（園名 + 最寄り駅）
 function facilitySearchBlob(f){
+  // raw: name/station, kana: name_kana/station_kana（ひらがな想定）
   const name = safeStr(f.name);
-  const st = safeStr(f.nearest_station || "");
-  return normalizeForSearch(name + " " + st);
+  const st   = safeStr(f.nearest_station || "");
+  const nk   = safeStr(f.name_kana || "");
+  const sk   = safeStr(f.station_kana || "");
+  return normalizeForSearch(name + " " + st + " " + nk + " " + sk);
 }
 
-function queryMatchFacility(qNorm, f){
-  if(!qNorm) return true;
+function queryMatchFacility(qRaw, qNorm, f){
+  if(!qRaw) return true;
 
-  // 1) raw（漢字など）はそのまま includes で取る
-  const qRaw = String(document.getElementById('q').value || "").replace(/\s+/g, "").replace(/　/g, "");
+  // 1) raw検索（漢字・そのまま）
   const rawBlob = (safeStr(f.name) + " " + safeStr(f.nearest_station || "")).replace(/\s+/g, "").replace(/　/g, "");
+  const qRaw2 = String(qRaw).replace(/\s+/g, "").replace(/　/g, "");
+  if(qRaw2 && rawBlob.includes(qRaw2)) return true;
 
-  if(qRaw && rawBlob.includes(qRaw)) return true;
-
-  // 2) かな正規化（ひらがな入力でカタカナ表記にヒット）
+  // 2) normalized検索（ひらがな入力で name_kana/station_kana に当てる）
   const blobNorm = facilitySearchBlob(f);
   return blobNorm.includes(qNorm);
 }
@@ -136,10 +134,8 @@ function setAgeColsVisible(v){
 }
 
 function getGroups(f){
-  // 新スキーマ優先：age_groups（0,1,2,3-5）
   if(f.age_groups) return f.age_groups;
 
-  // 旧スキーマ互換：ages（0〜5）から3-5を合算して作る
   const ages = f.ages || f.ages_0_5 || {};
   function v(k, field){ return ages[k]?.[field]; }
   function sum3(field){
@@ -161,7 +157,8 @@ function rowHTML(f, prevF){
   const addr = safeStr(f.address || '');
   const map = safeStr(f.map_url || '');
   const st  = safeStr(f.nearest_station || '');
-  const wm  = (f.walk_minutes == null || f.walk_minutes === "") ? "" : String(f.walk_minutes);
+  const wmN = (f.walk_minutes == null || f.walk_minutes === "") ? null : Number(f.walk_minutes);
+  const wm  = (Number.isFinite(wmN) ? wmN : null);
 
   const mapLink = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map</a>` : '';
 
@@ -169,7 +166,6 @@ function rowHTML(f, prevF){
   function acc(k){ return fmt(g?.[k]?.accept); }
   function wai(k){ return fmt(g?.[k]?.wait); }
 
-  // 前月比（施設単位）
   const dWait = prevF ? (Number(f.totals?.wait||0) - Number(prevF.totals?.wait||0)) : null;
   const dAcc  = prevF ? (Number(f.totals?.accept||0) - Number(prevF.totals?.accept||0)) : null;
   const sign = (n)=> (n==null ? "—" : (n>0 ? `+${n}` : `${n}`));
@@ -183,7 +179,7 @@ function rowHTML(f, prevF){
     <td>${addr}</td>
     <td>${mapLink}</td>
     <td>${st}</td>
-    <td>${wm ? (wm + "分") : ""}</td>
+    <td>${wm==null ? "" : (wm + "分")}</td>
 
     <td>${fmt(f.totals?.accept)}</td>
     <td>${fmt(f.totals?.wait)}</td>
@@ -207,13 +203,10 @@ function sortFacilities(arr, mode){
     return Number(v ?? 0);
   }
 
-  function stationName(f){
-    return safeStr(f.nearest_station || "");
-  }
+  function stationName(f){ return safeStr(f.nearest_station || ""); }
   function walkMin(f){
     const v = f.walk_minutes;
     const n = (v == null || v === "") ? null : Number(v);
-    // 値が無いものは最後へ
     return (Number.isFinite(n) ? n : 999999);
   }
 
@@ -230,7 +223,6 @@ function sortFacilities(arr, mode){
   } else if(mode==='wait35_desc'){
     a.sort((x,y)=>gwait(y,"3-5")-gwait(x,"3-5"));
   } else if(mode==='station_walk_asc'){
-    // ★追加：駅名（昇順）→徒歩（昇順）→園名（昇順）
     a.sort((x,y)=>{
       const sx = stationName(x);
       const sy = stationName(y);
@@ -241,7 +233,6 @@ function sortFacilities(arr, mode){
       return safeStr(x.name).localeCompare(safeStr(y.name),'ja');
     });
   } else if(mode==='walk_asc'){
-    // ★追加：徒歩（昇順）→駅名→園名
     a.sort((x,y)=>{
       const c1 = walkMin(x) - walkMin(y);
       if(c1 !== 0) return c1;
@@ -252,33 +243,29 @@ function sortFacilities(arr, mode){
   } else if(mode==='name_asc'){
     a.sort((x,y)=>safeStr(x.name).localeCompare(safeStr(y.name),'ja'));
   }
-
   return a;
 }
 
 async function main(){
   const months = await loadJSON('data/months.json');
-  const ms = (months.months||[]).slice().sort(); // ISO日付なので sort で昇順
+  const ms = (months.months||[]).slice().sort();
   const sel = document.getElementById('monthSelect');
   sel.innerHTML = ms.map(m=>`<option value="${m}">${m}</option>`).join('');
 
-  // 最新月をデフォルト
   sel.value = ms.length ? ms[ms.length-1] : '';
 
   setAgeColsVisible(true);
 
   async function render(){
     const month = sel.value;
-    const allMonths = ms;
-    const idx = allMonths.indexOf(month);
-    const prevMonth = (idx > 0) ? allMonths[idx - 1] : null;
+    const idx = ms.indexOf(month);
+    const prevMonth = (idx > 0) ? ms[idx - 1] : null;
 
     const data = await loadJSON(`data/${month}.json`);
     const prevData = prevMonth ? await loadJSON(`data/${prevMonth}.json`) : null;
 
     document.getElementById('monthLabel').textContent = prevMonth ? `${month}（前月：${prevMonth}）` : month;
 
-    // 前月施設をIDで引けるように
     const prevMap = new Map();
     if(prevData && prevData.facilities){
       for(const pf of prevData.facilities){
@@ -314,10 +301,8 @@ async function main(){
     const sort = document.getElementById('sort').value;
 
     let arr = data.facilities||[];
-
-    // ★検索：漢字/ひらがな（カナ）両対応
     if(qRaw){
-      arr = arr.filter(f => queryMatchFacility(qNorm, f));
+      arr = arr.filter(f => queryMatchFacility(qRaw, qNorm, f));
     }
 
     arr = sortFacilities(arr, sort);
