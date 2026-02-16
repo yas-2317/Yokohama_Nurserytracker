@@ -11,12 +11,9 @@
   <div class="container">
     <h1>横浜市港北区：保育園ごとの「受入可能数」「入所待ち人数」（年齢別）</h1>
     <div class="sub">データ時点：<span id="monthLabel">-</span> / 施設数：<span id="countLabel">-</span></div>
-
     <div class="controls">
       <select id="monthSelect"></select>
-
-      <input id="q" placeholder="園名/駅名で検索（例：日吉 / ひよし / べねっせ / しんよこ）" />
-
+      <input id="q" placeholder="園名/駅で検索（例：日吉 / ひよし / しんよこはま）" />
       <select id="sort">
         <option value="wait0_desc">0歳 入所待ち 多い順</option>
         <option value="wait1_desc">1歳 入所待ち 多い順</option>
@@ -24,13 +21,9 @@
         <option value="wait35_desc">3〜5歳 入所待ち 多い順</option>
         <option value="wait_desc">合計入所待ち 多い順</option>
         <option value="accept_desc">合計受入可能 多い順</option>
-
-        <option value="station_walk_asc">駅（あいうえお）×徒歩（短い順）</option>
-        <option value="walk_asc">徒歩（短い順）</option>
-
+        <option value="station_walk_asc">駅×徒歩（昇順）</option>
         <option value="name_asc">園名（あいうえお）</option>
       </select>
-
       <button id="toggleCols">年齢別列：非表示</button>
       <span class="badge">※「入所待ち人数」は園ごとの申込件数（重複計上あり）</span>
     </div>
@@ -40,7 +33,9 @@
 <main class="container">
   <div class="card">
     <div class="kpi" id="kpi"></div>
-    <div class="small">住所・地図・最寄り駅・徒歩は <code>data/master_facilities.csv</code> を参照します（未入力なら空欄）。</div>
+    <div class="small">
+      住所・駅・徒歩は <code>data/master_facilities.csv</code> を参照（name_kana / station_kana を持たせると「ひよし→日吉」検索が可能）。
+    </div>
   </div>
 
   <div class="card tablewrap">
@@ -48,21 +43,20 @@
       <thead>
         <tr>
           <th style="min-width:240px;">園名</th>
-
-          <th style="min-width:260px;">住所</th>
+          <th style="min-width:220px;">住所</th>
           <th style="min-width:120px;">地図</th>
-          <th style="min-width:140px;">最寄り駅</th>
+          <th style="min-width:150px;">最寄り駅</th>
           <th style="min-width:90px;">徒歩</th>
 
-          <th>受入可能（合計）</th>
-          <th>入所待ち（合計）</th>
-          <th>前月比 入所待ち</th>
-          <th>前月比 受入可能</th>
+          <th style="min-width:110px;">受入可能（合計）</th>
+          <th style="min-width:110px;">入所待ち（合計）</th>
+          <th style="min-width:120px;">前月比 入所待ち</th>
+          <th style="min-width:120px;">前月比 受入可能</th>
 
-          <th class="agecol">0歳 受入</th><th class="agecol">0歳 待ち</th>
-          <th class="agecol">1歳 受入</th><th class="agecol">1歳 待ち</th>
-          <th class="agecol">2歳 受入</th><th class="agecol">2歳 待ち</th>
-          <th class="agecol">3〜5歳 受入</th><th class="agecol">3〜5歳 待ち</th>
+          <th class="agecol" style="min-width:90px;">0歳 受入</th><th class="agecol" style="min-width:90px;">0歳 待ち</th>
+          <th class="agecol" style="min-width:90px;">1歳 受入</th><th class="agecol" style="min-width:90px;">1歳 待ち</th>
+          <th class="agecol" style="min-width:90px;">2歳 受入</th><th class="agecol" style="min-width:90px;">2歳 待ち</th>
+          <th class="agecol" style="min-width:110px;">3〜5歳 受入</th><th class="agecol" style="min-width:110px;">3〜5歳 待ち</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -77,53 +71,6 @@
 <script src="common.js"></script>
 <script>
 let showAgeCols = true;
-
-/* ============================
-   Search helpers (hiragana/kanji both)
-   ============================ */
-
-// カタカナ→ひらがな（濁点/半濁点含めて自然に変換）
-function kataToHira(s){
-  if(!s) return "";
-  return String(s).replace(/[\u30A1-\u30F6]/g, ch => {
-    return String.fromCharCode(ch.charCodeAt(0) - 0x60);
-  });
-}
-
-function normalizeForSearch(s){
-  if(s == null) return "";
-  const x = String(s)
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/　/g, "");
-  return kataToHira(x);
-}
-
-function facilitySearchBlob(f){
-  // raw: name/station, kana: name_kana/station_kana（ひらがな想定）
-  const name = safeStr(f.name);
-  const st   = safeStr(f.nearest_station || "");
-  const nk   = safeStr(f.name_kana || "");
-  const sk   = safeStr(f.station_kana || "");
-  return normalizeForSearch(name + " " + st + " " + nk + " " + sk);
-}
-
-function queryMatchFacility(qRaw, qNorm, f){
-  if(!qRaw) return true;
-
-  // 1) raw検索（漢字・そのまま）
-  const rawBlob = (safeStr(f.name) + " " + safeStr(f.nearest_station || "")).replace(/\s+/g, "").replace(/　/g, "");
-  const qRaw2 = String(qRaw).replace(/\s+/g, "").replace(/　/g, "");
-  if(qRaw2 && rawBlob.includes(qRaw2)) return true;
-
-  // 2) normalized検索（ひらがな入力で name_kana/station_kana に当てる）
-  const blobNorm = facilitySearchBlob(f);
-  return blobNorm.includes(qNorm);
-}
-
-/* ============================
-   Table helpers
-   ============================ */
 
 function setAgeColsVisible(v){
   showAgeCols = v;
@@ -153,14 +100,20 @@ function getGroups(f){
   };
 }
 
-function rowHTML(f, prevF){
-  const addr = safeStr(f.address || '');
-  const map = safeStr(f.map_url || '');
-  const st  = safeStr(f.nearest_station || '');
-  const wmN = (f.walk_minutes == null || f.walk_minutes === "") ? null : Number(f.walk_minutes);
-  const wm  = (Number.isFinite(wmN) ? wmN : null);
+function signDelta(n){
+  if(n==null) return `<span class="delta none">—</span>`;
+  if(n>0) return `<span class="delta plus">+${n}</span>`;
+  if(n<0) return `<span class="delta minus">${n}</span>`;
+  return `<span class="delta zero">0</span>`;
+}
 
-  const mapLink = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map</a>` : '';
+function rowHTML(f, prevF){
+  const addr = safeStr(f.address||'');
+  const map = safeStr(f.map_url||'');
+  const mapLink = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map</a>` : '—';
+
+  const station = safeStr(f.nearest_station||'');
+  const walk = (f.walk_minutes==null ? '—' : `${Number(f.walk_minutes)}分`);
 
   const g = getGroups(f);
   function acc(k){ return fmt(g?.[k]?.accept); }
@@ -168,23 +121,21 @@ function rowHTML(f, prevF){
 
   const dWait = prevF ? (Number(f.totals?.wait||0) - Number(prevF.totals?.wait||0)) : null;
   const dAcc  = prevF ? (Number(f.totals?.accept||0) - Number(prevF.totals?.accept||0)) : null;
-  const sign = (n)=> (n==null ? "—" : (n>0 ? `+${n}` : `${n}`));
 
   return `<tr>
     <td>
       <a href="facility.html?id=${encodeURIComponent(f.id)}">${safeStr(f.name)}</a>
       <div class="small">施設番号：${safeStr(f.id)}</div>
     </td>
-
-    <td>${addr}</td>
+    <td>${addr || '—'}</td>
     <td>${mapLink}</td>
-    <td>${st}</td>
-    <td>${wm==null ? "" : (wm + "分")}</td>
+    <td>${station || '—'}</td>
+    <td>${walk}</td>
 
     <td>${fmt(f.totals?.accept)}</td>
     <td>${fmt(f.totals?.wait)}</td>
-    <td>${sign(dWait)}</td>
-    <td>${sign(dAcc)}</td>
+    <td>${signDelta(dWait)}</td>
+    <td>${signDelta(dAcc)}</td>
 
     <td class="agecol">${acc('0')}</td><td class="agecol">${wai('0')}</td>
     <td class="agecol">${acc('1')}</td><td class="agecol">${wai('1')}</td>
@@ -194,20 +145,13 @@ function rowHTML(f, prevF){
 }
 
 function sortFacilities(arr, mode){
-  const a = [...arr];
+  const a=[...arr];
 
   function groups(f){ return getGroups(f); }
   function gwait(f, key){
     const g = groups(f);
     const v = g?.[key]?.wait;
     return Number(v ?? 0);
-  }
-
-  function stationName(f){ return safeStr(f.nearest_station || ""); }
-  function walkMin(f){
-    const v = f.walk_minutes;
-    const n = (v == null || v === "") ? null : Number(v);
-    return (Number.isFinite(n) ? n : 999999);
   }
 
   if(mode==='wait_desc'){
@@ -224,20 +168,12 @@ function sortFacilities(arr, mode){
     a.sort((x,y)=>gwait(y,"3-5")-gwait(x,"3-5"));
   } else if(mode==='station_walk_asc'){
     a.sort((x,y)=>{
-      const sx = stationName(x);
-      const sy = stationName(y);
-      const c1 = sx.localeCompare(sy,'ja');
-      if(c1 !== 0) return c1;
-      const c2 = walkMin(x) - walkMin(y);
-      if(c2 !== 0) return c2;
-      return safeStr(x.name).localeCompare(safeStr(y.name),'ja');
-    });
-  } else if(mode==='walk_asc'){
-    a.sort((x,y)=>{
-      const c1 = walkMin(x) - walkMin(y);
-      if(c1 !== 0) return c1;
-      const c2 = stationName(x).localeCompare(stationName(y),'ja');
-      if(c2 !== 0) return c2;
+      const sx = pickStationKey(x);
+      const sy = pickStationKey(y);
+      if(sx !== sy) return sx.localeCompare(sy, 'ja');
+      const wx = (x.walk_minutes==null ? 9999 : Number(x.walk_minutes));
+      const wy = (y.walk_minutes==null ? 9999 : Number(y.walk_minutes));
+      if(wx !== wy) return wx - wy;
       return safeStr(x.name).localeCompare(safeStr(y.name),'ja');
     });
   } else if(mode==='name_asc'){
@@ -246,12 +182,22 @@ function sortFacilities(arr, mode){
   return a;
 }
 
+function buildHaystack(f){
+  // 漢字/かな両対応：name + name_kana + station + station_kana
+  const s = [
+    safeStr(f.name),
+    safeStr(f.name_kana),
+    safeStr(f.nearest_station),
+    safeStr(f.station_kana),
+  ].join(" ");
+  return normalizeForSearch(s);
+}
+
 async function main(){
   const months = await loadJSON('data/months.json');
-  const ms = (months.months||[]).slice().sort();
+  const ms = (months.months||[]).slice().sort(); // ISO日付なので sort で昇順
   const sel = document.getElementById('monthSelect');
   sel.innerHTML = ms.map(m=>`<option value="${m}">${m}</option>`).join('');
-
   sel.value = ms.length ? ms[ms.length-1] : '';
 
   setAgeColsVisible(true);
@@ -282,27 +228,21 @@ async function main(){
     const dTotWait = (prevTotWait==null) ? null : (totWait - prevTotWait);
     const dTotAcc  = (prevTotAcc==null) ? null : (totAcc - prevTotAcc);
 
-    const sign = (n)=> {
-      if(n==null) return `<span class="delta none">—</span>`;
-      if(n>0) return `<span class="delta plus">+${n}</span>`;
-      if(n<0) return `<span class="delta minus">${n}</span>`;
-      return `<span class="delta zero">0</span>`;
-    };
-
     document.getElementById('countLabel').textContent = (data.facilities||[]).length.toLocaleString('ja-JP');
     document.getElementById('kpi').innerHTML = `
-      <div class="pill">合計 入所待ち：${fmt(totWait)}（前月比 ${sign(dTotWait)}）</div>
-      <div class="pill">合計 受入可能：${fmt(totAcc)}（前月比 ${sign(dTotAcc)}）</div>
+      <div class="pill">合計 入所待ち：${fmt(totWait)}（前月比 ${signDelta(dTotWait)}）</div>
+      <div class="pill">合計 受入可能：${fmt(totAcc)}（前月比 ${signDelta(dTotAcc)}）</div>
       <div class="pill">データ区：港北区</div>
     `;
 
-    const qRaw = document.getElementById('q').value.trim();
-    const qNorm = normalizeForSearch(qRaw);
+    const q = document.getElementById('q').value.trim();
     const sort = document.getElementById('sort').value;
 
     let arr = data.facilities||[];
-    if(qRaw){
-      arr = arr.filter(f => queryMatchFacility(qRaw, qNorm, f));
+
+    if(q){
+      const nq = normalizeForSearch(q);
+      arr = arr.filter(f => buildHaystack(f).includes(nq));
     }
 
     arr = sortFacilities(arr, sort);
