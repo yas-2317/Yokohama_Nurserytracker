@@ -50,8 +50,9 @@ concurrency:
 jobs:
   fix-master:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout (full history)
+      - name: Checkout (full)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -75,18 +76,18 @@ jobs:
         run: |
           set -euxo pipefail
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4
+          pip install requests beautifulsoup4 pykakasi
 
       - name: Ensure scripts exist
         shell: bash
         run: |
           set -euxo pipefail
           test -f scripts/fix_master_with_google_places.py
+          test -f scripts/fill_kana_from_master.py
           test -f scripts/update_from_yokohama.py
           python -V
 
       - name: Fix master_facilities.csv (Google)
-        shell: bash
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           WARD_FILTER: ${{ inputs.ward_filter }}
@@ -100,15 +101,24 @@ jobs:
           FILL_NEAREST_STATION: "1"
           OVERWRITE_NEAREST_STATION: ${{ inputs.overwrite_station_walk }}
           OVERWRITE_WALK_MINUTES: ${{ inputs.overwrite_station_walk }}
+        shell: bash
         run: |
           set -euxo pipefail
           python -u scripts/fix_master_with_google_places.py
           ls -la data || true
 
-      - name: Rebuild latest month JSON (apply master to site data)
-        shell: bash
+      - name: Fill kana columns (no API)
         env:
           WARD_FILTER: ${{ inputs.ward_filter }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python -u scripts/fill_kana_from_master.py
+
+      - name: Rebuild latest month JSON (apply master to site data)
+        env:
+          WARD_FILTER: ${{ inputs.ward_filter }}
+        shell: bash
         run: |
           set -euxo pipefail
           python -u scripts/update_from_yokohama.py
@@ -125,9 +135,8 @@ jobs:
           fi
 
           git add data || true
-          git commit -m "Fix master_facilities + rebuild site data" || true
+          git commit -m "Fix master + fill kana + rebuild site data" || true
 
-          # 直前に他のpushがあっても落ちにくくする
           git fetch origin main
           git rebase origin/main
           git push origin main
