@@ -1,31 +1,30 @@
 /* =========================================
-   Yokohama Nursery Availability - Light gray UI (clean)
+   Yokohama Nursery Availability - Light UI
    - Background: light gray
    - Text: black
    - Links: navy
    - Delta colors kept
-   - ONLY table header sticky (page header not sticky)
-   - Sticky header works on page scroll (no overflow-y container on desktop)
-   - Avoid overlay issues with z-index
-   - Applies to BOTH #tbl (list) and #hist (facility)
+   - Sticky ONLY table header (not page header)
+   - Wide table + horizontal scroll
+   - Mobile friendly
    ========================================= */
 
 * { box-sizing: border-box; }
 
 :root{
-  --bg: #f3f4f6;        /* page bg */
-  --surface: #ffffff;   /* cards/tables */
+  --bg: #f3f4f6;
+  --surface: #ffffff;
   --text: #111111;
   --muted: #555555;
   --border: #e5e7eb;
+
+  --thead-bg: #0b2a6f;    /* navy header */
+  --thead-text: #ffffff;
 
   --row-alt: #fafafa;
 
   --link: #0b2a6f;
   --link-hover: #061a43;
-
-  --thead-bg: #0b2a6f;  /* navy */
-  --thead-text: #ffffff;
 
   --delta-plus: #d11;
   --delta-minus: #06c;
@@ -36,7 +35,6 @@
   --pill-border: #dfe7ff;
 }
 
-/* Base */
 html, body{
   background: var(--bg);
   color: var(--text);
@@ -63,7 +61,7 @@ a:hover, a:focus{
   padding: 0 16px;
 }
 
-/* Page header: NOT sticky */
+/* Page header NOT sticky */
 header{
   padding: 20px 16px;
   border-bottom: 1px solid var(--border);
@@ -98,7 +96,6 @@ input, select, button{
   padding: 10px 12px;
   font-size: 14px;
 }
-
 button{ cursor: pointer; }
 button:hover{ border-color: #cbd5e1; }
 
@@ -113,26 +110,25 @@ button:hover{ border-color: #cbd5e1; }
   color: var(--text);
 }
 
-/* KPI */
+/* KPI pills */
 .kpi{
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
-
 .kpi .pill{
   background: var(--pill-bg);
   border: 1px solid var(--pill-border);
-  color: var(--text);              /* force black */
+  color: var(--text);
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 12px;
 }
 .kpi .pill *:not(.delta){
-  color: var(--text);              /* keep black even when nested */
+  color: var(--text);
 }
 
-/* Badge / small */
+/* Badge / small text */
 .badge{
   display: inline-block;
   padding: 2px 8px;
@@ -154,29 +150,23 @@ button:hover{ border-color: #cbd5e1; }
   font-size: 12px;
 }
 
-/* =========================
-   Tables (list + facility)
-   ========================= */
+/* ===== Tables ===== */
 
-/* Key point:
-   - On desktop, allow page scroll to drive sticky header => NO overflow-y scroll container
-   - Keep horizontal scroll only
-*/
+/* Scroll container for sticky header */
 .tablewrap{
-  overflow-x: auto;                 /* horizontal scroll only */
-  overflow-y: visible;              /* IMPORTANT for sticky-on-page-scroll */
+  overflow: auto; /* both x and y */
   -webkit-overflow-scrolling: touch;
   border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--surface);
-  position: relative;               /* stacking context for z-index */
-  z-index: 0;
+  position: relative;
+  max-height: 72vh; /* allows scrolling with sticky thead */
 }
 
 table{
   width: 100%;
   border-collapse: collapse;
-  min-width: 980px;
+  min-width: 1500px; /* widen to avoid “slightly short” feeling */
   background: var(--surface);
   color: var(--text);
 }
@@ -185,84 +175,58 @@ th, td{
   padding: 10px 10px;
   border-bottom: 1px solid #eef2f7;
   vertical-align: top;
+  font-size: 13px;
 }
 
-/* Sticky header for BOTH tables */
-#tbl thead th,
-#hist thead th{
+/* Sticky thead only */
+#tbl thead th{
   position: sticky;
   top: 0;
-  z-index: 50;                      /* above cells */
+  z-index: 50;
   background: var(--thead-bg);
   color: var(--thead-text);
   text-align: left;
   font-weight: 700;
   font-size: 12px;
   border-bottom: 1px solid rgba(255,255,255,.20);
-  background-clip: padding-box;
   box-shadow: 0 2px 0 rgba(0,0,0,.08);
 }
 
-/* Body cells always under header */
-#tbl td, #hist td{
-  font-size: 13px;
-  color: var(--text);
-  position: relative;
-  z-index: 1;
-}
-
-#tbl tbody tr:nth-child(even),
-#hist tbody tr:nth-child(even){
+#tbl tbody tr:nth-child(even){
   background: var(--row-alt);
 }
+
+/* Column sizing helpers (index.html uses these classes) */
+.col-name{ min-width: 260px; }
+.col-station{ min-width: 160px; }
+.col-walk{ min-width: 90px; }
+.col-num{ min-width: 120px; }
+.col-delta{ min-width: 130px; }
+.col-age{ min-width: 95px; }
+.col-agewide{ min-width: 120px; }
+.col-addr{ min-width: 320px; }
+.col-map{ min-width: 120px; }
+
+.cell-name{ white-space: normal; }
 
 /* Delta */
 .delta{
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: 800;
 }
 .delta.plus  { color: var(--delta-plus); }
 .delta.minus { color: var(--delta-minus); }
 .delta.zero  { color: var(--delta-zero); }
 .delta.none  { color: var(--delta-none); }
 
-/* =========================
-   Mobile
-   ========================= */
+/* ===== Mobile ===== */
 @media (max-width: 768px){
   h1{ font-size: 18px; }
-
   .controls{ gap: 8px; }
   input, select, button{ width: 100%; }
-
   .badge{ width: 100%; }
-
   .kpi{ gap: 8px; }
   .kpi .pill{ width: 100%; }
-
-  /* still horizontal scroll */
-  table{ min-width: 900px; }
-
-  /* If you WANT vertical scroll inside table on mobile only, enable below:
-     (ヘッダー固定を "モバイルだけ確実に" したい場合)
-  */
-  /* .tablewrap{
-       max-height: 65vh;
-       overflow-y: auto;
-     }
-  */
-}
-
-/* index table column widths */
-#tbl .col-name { min-width: 220px; }
-#tbl .col-addr { min-width: 260px; }
-#tbl .col-map  { min-width: 80px;  white-space: nowrap; }
-#tbl .col-sta  { min-width: 120px; white-space: nowrap; }
-#tbl .col-walk { min-width: 70px;  white-space: nowrap; text-align: right; }
-#tbl .col-num  { min-width: 90px;  text-align: right; }
-#tbl .col-delta{ min-width: 110px; text-align: right; }
-
-/* モバイル時：住所列は折り返し、他は詰める */
-@media (max-width: 768px){
-  #tbl .col-addr{ min-width: 220px; white-space: normal; }
+  .tablewrap{ max-height: 70vh; }
+  table{ min-width: 1400px; }
 }
