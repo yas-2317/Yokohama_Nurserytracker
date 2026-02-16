@@ -1,4 +1,4 @@
-name: Fix master (addr/geo/station/walk) + rebuild site data
+name: Fix master + rebuild site data
 
 on:
   workflow_dispatch:
@@ -52,18 +52,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout (full)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Repo debug
+      # ★ここがポイント：変更を作る前に最新へ追従
+      - name: Sync with remote (rebase before edits)
         run: |
           set -euxo pipefail
-          pwd
-          ls -la
-          ls -la scripts || true
-          ls -la data || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -81,8 +82,6 @@ jobs:
           test -f scripts/fix_master_with_google_places.py
           test -f scripts/update_from_yokohama.py
           python -V
-          head -n 3 scripts/fix_master_with_google_places.py
-          head -n 3 scripts/update_from_yokohama.py
 
       - name: Fix master_facilities.csv (Google)
         env:
@@ -103,10 +102,7 @@ jobs:
         run: |
           set -euxo pipefail
           python -u scripts/fix_master_with_google_places.py
-          echo "---- outputs ----"
           ls -la data || true
-          echo "---- sample master_facilities.csv ----"
-          head -n 5 data/master_facilities.csv
 
       - name: Rebuild latest month JSON (apply master to site data)
         env:
@@ -114,17 +110,11 @@ jobs:
         run: |
           set -euxo pipefail
           python -u scripts/update_from_yokohama.py
-          echo "---- after rebuild ----"
           ls -la data || true
 
-      - name: Commit & push changes (rebase-safe)
+      - name: Commit & push changes
         run: |
           set -euxo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # 先にpull --rebaseして衝突/拒否を避ける
-          git pull --rebase origin main
 
           # 変更がなければ成功で終了
           if [ -z "$(git status --porcelain)" ]; then
@@ -132,8 +122,10 @@ jobs:
             exit 0
           fi
 
-          # data 配下をまとめて追加（master/月次json/months/misses含む）
           git add data || true
-
           git commit -m "Fix master_facilities + rebuild site data" || true
+
+          # 直前に誰かがpushしてても落ちにくくする：再fetch→rebase→push
+          git fetch origin main
+          git rebase origin/main
           git push origin main
