@@ -44,11 +44,19 @@ on:
         required: true
         default: "1"
       nearby_radius_m:
-        description: "駅探索半径（m）。拾えないなら 2500 など"
+        description: "駅探索半径（m）。拾えないなら 3000〜4000"
         required: true
         default: "2500"
       force_rebuild_stations:
         description: "駅キャッシュを作り直す（1推奨）"
+        required: true
+        default: "1"
+      force_recalc_station:
+        description: "既存の駅/徒歩があっても再計算して上書き（1で全やり直し）"
+        required: true
+        default: "0"
+      overwrite_station_kana:
+        description: "station_kana を上書き（1推奨：最新化）"
         required: true
         default: "1"
 
@@ -70,7 +78,6 @@ jobs:
           fetch-depth: 0
 
       - name: Sync with remote (rebase before edits)
-        shell: bash
         run: |
           set -euxo pipefail
           git config user.name "github-actions[bot]"
@@ -82,29 +89,26 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-     
+
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 pykakasi openpyxl
-
+          pip install requests pykakasi beautifulsoup4
 
       - name: Ensure scripts exist
-        shell: bash
         run: |
           set -euxo pipefail
           test -f scripts/fix_master_with_google_places.py
           test -f scripts/update_from_yokohama.py
           python -V
-          python -c "import bs4; print('bs4 OK', bs4.__version__)"
-          # ★ pykakasi は __version__ が無いことがあるので、kakasi() が作れるかで確認
-          python -c "from pykakasi import kakasi; k=kakasi(); print('pykakasi OK')"
+          python -c "import requests; print('requests OK')"
+          python -c "import pykakasi; print('pykakasi OK')"
+          python -c "import bs4; print('bs4 OK')"
           ls -la data || true
 
-      - name: Optional wipe station cache
-        shell: bash
+      - name: Optional: wipe station cache
         env:
-          FORCE_REBUILD_STATIONS: "${{ inputs.force_rebuild_stations }}"
+          FORCE_REBUILD_STATIONS: ${{ inputs.force_rebuild_stations }}
         run: |
           set -euxo pipefail
           if [ "${FORCE_REBUILD_STATIONS}" = "1" ]; then
@@ -116,6 +120,7 @@ jobs:
       - name: Fix master_facilities.csv (Google)
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+
           CITY_FILTER: ${{ inputs.city_filter }}
           WARD_FILTER: ${{ inputs.ward_filter }}
 
@@ -133,10 +138,15 @@ jobs:
           OVERWRITE_WALK_MINUTES: ${{ inputs.overwrite_station_walk }}
 
           NEARBY_RADIUS_M: ${{ inputs.nearby_radius_m }}
+          FORCE_REBUILD_STATIONS: ${{ inputs.force_rebuild_stations }}
 
-          # ★追加（初回の全やり直しで必須）
-          FORCE_RECALC_STATION: "1"
-          SANITIZE_BAD_EXISTING_STATION: "1"
+          # ★今回の要点：駅かなを最新化
+          FILL_KANA: "1"
+          OVERWRITE_STATION_KANA: ${{ inputs.overwrite_station_kana }}
+          OVERWRITE_NAME_KANA: "0"
+
+          # ★必要なら駅/徒歩も全部やり直す
+          FORCE_RECALC_STATION: ${{ inputs.force_recalc_station }}
         run: |
           set -euxo pipefail
           python -u scripts/fix_master_with_google_places.py
@@ -149,26 +159,15 @@ jobs:
             echo "no station_misses.csv"
           fi
 
-      - name: Apply master to ALL month JSONs (so site shows address/station)
-        env:
-          APPLY_MASTER_OVERWRITE: "0"
-        run: |
-          set -euxo pipefail
-          test -f scripts/apply_master_to_month_jsons.py
-          python -u scripts/apply_master_to_month_jsons.py
-
-
       - name: Rebuild latest month JSON (apply master to site data)
-        shell: bash
         env:
-          WARD_FILTER: "${{ inputs.ward_filter }}"
+          WARD_FILTER: ${{ inputs.ward_filter }}
         run: |
           set -euxo pipefail
           python -u scripts/update_from_yokohama.py
           ls -la data || true
 
       - name: Commit & push changes
-        shell: bash
         run: |
           set -euxo pipefail
 
