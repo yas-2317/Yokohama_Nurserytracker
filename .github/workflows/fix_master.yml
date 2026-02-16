@@ -1,4 +1,4 @@
-name: Fix master
+name: Fix master + rebuild site data
 
 on:
   workflow_dispatch:
@@ -106,7 +106,7 @@ jobs:
           python -c "import bs4; print('bs4 OK')"
           ls -la data || true
 
-      - name: Optional: wipe station cache
+      - name: "Optional: wipe station cache"
         env:
           FORCE_REBUILD_STATIONS: ${{ inputs.force_rebuild_stations }}
         run: |
