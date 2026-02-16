@@ -23,12 +23,11 @@ STATION_MISSES_CSV = DATA_DIR / "station_misses.csv"
 API_KEY = (os.getenv("GOOGLE_MAPS_API_KEY") or "").strip()
 
 WARD_FILTER = (os.getenv("WARD_FILTER") or "").strip() or None
-MAX_UPDATES = int(os.getenv("MAX_UPDATES", "80"))
+MAX_UPDATES = int(os.getenv("MAX_UPDATES", "999999"))  # デフォルトで全件
+ONLY_BAD_ROWS = (os.getenv("ONLY_BAD_ROWS", "0") == "1")  # 既存値があっても直したいので基本OFF
 
-ONLY_BAD_ROWS = (os.getenv("ONLY_BAD_ROWS", "1") == "1")
 STRICT_ADDRESS_CHECK = (os.getenv("STRICT_ADDRESS_CHECK", "1") == "1")
-
-SLEEP_SEC = float(os.getenv("GOOGLE_API_SLEEP_SEC", "0.15"))
+SLEEP_SEC = float(os.getenv("GOOGLE_API_SLEEP_SEC", "0.12"))
 
 OVERWRITE_PHONE = (os.getenv("OVERWRITE_PHONE", "0") == "1")
 OVERWRITE_WEBSITE = (os.getenv("OVERWRITE_WEBSITE", "0") == "1")
@@ -36,8 +35,14 @@ OVERWRITE_MAP_URL = (os.getenv("OVERWRITE_MAP_URL", "0") == "1")
 
 # station/walk
 FILL_NEAREST_STATION = (os.getenv("FILL_NEAREST_STATION", "1") == "1")
-OVERWRITE_NEAREST_STATION = (os.getenv("OVERWRITE_NEAREST_STATION", "1") == "1")
-OVERWRITE_WALK_MINUTES = (os.getenv("OVERWRITE_WALK_MINUTES", "1") == "1")
+
+FORCE_RECALC_STATION = (os.getenv("FORCE_RECALC_STATION", "0") == "1")  # ★追加：駅/徒歩を全件やり直す
+
+OVERWRITE_NEAREST_STATION = (os.getenv("OVERWRITE_NEAREST_STATION", "1") == "1") or FORCE_RECALC_STATION
+OVERWRITE_WALK_MINUTES = (os.getenv("OVERWRITE_WALK_MINUTES", "1") == "1") or FORCE_RECALC_STATION
+
+STATION_RADIUS_M = int(os.getenv("STATION_RADIUS_M", "2000"))
+STATION_CANDIDATES = int(os.getenv("STATION_CANDIDATES", "8"))  # 近傍から最大何件評価するか
 
 
 def norm(s: Any) -> str:
@@ -77,7 +82,6 @@ def ok_address(addr: str, ward: Optional[str]) -> bool:
         return True
     if not addr:
         return False
-    # 横浜市が入ってる & （WARD_FILTERが指定されてるなら区も入る）をざっくりチェック
     if "横浜市" not in addr:
         return False
     if ward and ward not in addr:
@@ -124,47 +128,47 @@ def place_details(place_id: str) -> Optional[Dict[str, Any]]:
     return (data.get("result") or None)
 
 
-def nearby_station(lat: float, lng: float) -> Optional[Tuple[str, str]]:
+def nearby_stations(lat: float, lng: float) -> List[Tuple[str, str]]:
     """
-    近傍の駅名とplace_idを返す（railway_station / train_station）
+    近傍の駅候補（name, place_id）を返す。複数候補を返す。
     """
-    url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-    loc = f"{lat},{lng}"
-    # 半径は好みで。徒歩圏じゃなくても最寄り駅としてはOKなので1500m
-    data = maps_get(
-        url,
-        {
-            "location": loc,
-            "radius": "1500",
-            "type": "train_station",
-            "language": "ja",
-        },
-    )
-    results = data.get("results") or []
-    if not results:
-        # railway_station を優先したい場合の保険（typeが違うケース）
+    def fetch(place_type: str) -> List[Tuple[str, str]]:
+        url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+        loc = f"{lat},{lng}"
         data = maps_get(
             url,
             {
                 "location": loc,
-                "radius": "1500",
-                "type": "railway_station",
+                "radius": str(STATION_RADIUS_M),
+                "type": place_type,
                 "language": "ja",
             },
         )
-        results = data.get("results") or []
-        if not results:
-            return None
-    top = results[0]
-    return (top.get("name") or "").strip(), (top.get("place_id") or "").strip()
+        out = []
+        for it in (data.get("results") or []):
+            name = (it.get("name") or "").strip()
+            pid = (it.get("place_id") or "").strip()
+            if name and pid:
+                out.append((name, pid))
+        return out
+
+    # まず train_station、無ければ railway_station
+    cands = fetch("train_station")
+    if not cands:
+        cands = fetch("railway_station")
+
+    # 重複除去（place_id基準）
+    seen = set()
+    uniq = []
+    for n, pid in cands:
+        if pid not in seen:
+            seen.add(pid)
+            uniq.append((n, pid))
+
+    return uniq[: max(1, STATION_CANDIDATES)]
 
 
 def walking_minutes(origin_lat: float, origin_lng: float, dest_place_id: str) -> Optional[int]:
-    """
-    Distance Matrixで徒歩分数を取る
-    """
-    if not dest_place_id:
-        return None
     url = "https://maps.googleapis.com/maps/api/distancematrix/json"
     origins = f"{origin_lat},{origin_lng}"
     destinations = f"place_id:{dest_place_id}"
@@ -194,6 +198,30 @@ def walking_minutes(origin_lat: float, origin_lng: float, dest_place_id: str) ->
     return int(round(float(dur) / 60.0))
 
 
+def pick_best_station_by_walk(lat: float, lng: float) -> Optional[Tuple[str, int]]:
+    """
+    複数駅候補から徒歩分が最小の駅を選ぶ
+    """
+    cands = nearby_stations(lat, lng)
+    if not cands:
+        return None
+
+    best_name = None
+    best_min = None
+
+    for name, pid in cands:
+        wm = walking_minutes(lat, lng, pid)
+        if wm is None:
+            continue
+        if best_min is None or wm < best_min:
+            best_min = wm
+            best_name = name
+
+    if best_name is None or best_min is None:
+        return None
+    return best_name, best_min
+
+
 def build_query(name: str, ward: str, address: str) -> str:
     parts = [name]
     if address:
@@ -207,9 +235,8 @@ def build_query(name: str, ward: str, address: str) -> str:
 
 
 def should_update_row(row: Dict[str, str]) -> bool:
-    """
-    ONLY_BAD_ROWS=1 の場合は、埋めたい主要項目が欠けている行だけ更新対象にする
-    """
+    if FORCE_RECALC_STATION:
+        return True
     if not ONLY_BAD_ROWS:
         return True
 
@@ -219,7 +246,6 @@ def should_update_row(row: Dict[str, str]) -> bool:
     st = (row.get("nearest_station") or "").strip()
     wm = (row.get("walk_minutes") or "").strip()
 
-    # 住所が空 or lat/lngが無い or 駅/徒歩が無い → 更新対象
     if addr == "":
         return True
     if lat == "" or lng == "":
@@ -230,9 +256,6 @@ def should_update_row(row: Dict[str, str]) -> bool:
 
 
 def ensure_headers(rows: List[Dict[str, str]]) -> List[str]:
-    """
-    master_facilities.csv のヘッダが足りない場合もあるので、必要列を保証する
-    """
     base = [
         "facility_id",
         "name",
@@ -256,7 +279,7 @@ def ensure_headers(rows: List[Dict[str, str]]) -> List[str]:
 
 
 def read_master() -> List[Dict[str, str]]:
-    if not MASTER_CSV.exists():
+    if not (MASTER_CSV.exists()):
         raise RuntimeError("data/master_facilities.csv が見つかりません")
     with MASTER_CSV.open("r", encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
@@ -274,7 +297,6 @@ def write_master(rows: List[Dict[str, str]], fieldnames: List[str]) -> None:
 
 
 def write_station_misses(misses: List[Dict[str, str]]) -> None:
-    # 0件でも作る（デバッグが楽）
     with STATION_MISSES_CSV.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["facility_id", "name", "ward", "reason"])
         w.writeheader()
@@ -284,7 +306,8 @@ def write_station_misses(misses: List[Dict[str, str]]) -> None:
 
 def main() -> None:
     print("START fix_master_with_google_places.py")
-    print("WARD_FILTER=", WARD_FILTER, "MAX_UPDATES=", MAX_UPDATES, "ONLY_BAD_ROWS=", ONLY_BAD_ROWS)
+    print("WARD_FILTER=", WARD_FILTER, "FORCE_RECALC_STATION=", FORCE_RECALC_STATION)
+    print("STATION_RADIUS_M=", STATION_RADIUS_M, "STATION_CANDIDATES=", STATION_CANDIDATES)
 
     rows = read_master()
     fieldnames = ensure_headers(rows)
@@ -311,17 +334,14 @@ def main() -> None:
         if not should_update_row(r):
             continue
 
-        # 現状値
         addr0 = (r.get("address") or "").strip()
         lat0 = to_float(r.get("lat"))
         lng0 = to_float(r.get("lng"))
-        map0 = (r.get("map_url") or "").strip()
 
-        # 1) Places検索 → details
+        # 1) Places検索 → details（住所・緯度経度などの補正）
         query = build_query(name, ward, addr0)
         top = places_text_search(query)
         if not top:
-            # 施設が拾えない → station missとして記録（lat/lngない場合は駅算出できない）
             station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "place_not_found"})
             continue
 
@@ -331,7 +351,6 @@ def main() -> None:
             station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "place_details_failed"})
             continue
 
-        # detailsから取得
         addr = (det.get("formatted_address") or "").strip()
         loc = (det.get("geometry") or {}).get("location") or {}
         lat = loc.get("lat")
@@ -345,12 +364,9 @@ def main() -> None:
         if not facility_type and types:
             facility_type = ",".join(types)
 
-        # addressの妥当性
         if addr and not ok_address(addr, ward):
-            # 住所が怪しい → 住所は上書きしないが、lat/lngは使える場合がある
             addr = ""
 
-        # 2) 値の反映（上書き条件）
         def set_if(field: str, new_val: str, overwrite: bool) -> int:
             nonlocal r
             cur = (r.get(field) or "").strip()
@@ -365,12 +381,11 @@ def main() -> None:
                     return 1
             return 0
 
-        # address/lat/lng/map_url は基本空欄補完（住所は妥当な時だけ）
+        # address / lat / lng
         if addr:
             updated_cells += set_if("address", addr, overwrite=False)
 
         if lat is not None and lng is not None:
-            # lat/lng は空欄なら補完
             if (r.get("lat") or "").strip() == "":
                 r["lat"] = f"{lat:.7f}"
                 updated_cells += 1
@@ -378,51 +393,31 @@ def main() -> None:
                 r["lng"] = f"{lng:.7f}"
                 updated_cells += 1
 
-        # map_url
+        # map_url / phone / website / type
         if gmap_url:
             updated_cells += set_if("map_url", gmap_url, overwrite=OVERWRITE_MAP_URL)
-        elif map0 == "" and lat is not None and lng is not None:
-            # gmap_urlが取れない場合の保険：座標検索URL
-            coord_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
-            updated_cells += set_if("map_url", coord_url, overwrite=OVERWRITE_MAP_URL)
-
-        # phone / website
         if phone:
             updated_cells += set_if("phone", phone, overwrite=OVERWRITE_PHONE)
         if website:
             updated_cells += set_if("website", website, overwrite=OVERWRITE_WEBSITE)
-
         if facility_type:
             updated_cells += set_if("facility_type", facility_type, overwrite=False)
 
-        # 3) station/walk
-        lat_use = to_float(r.get("lat")) or lat0
-        lng_use = to_float(r.get("lng")) or lng0
-
+        # 2) station/walk を徒歩最短で再計算
         if FILL_NEAREST_STATION:
-            st_cur = (r.get("nearest_station") or "").strip()
-            wm_cur = (r.get("walk_minutes") or "").strip()
+            lat_use = to_float(r.get("lat")) or lat0
+            lng_use = to_float(r.get("lng")) or lng0
 
-            need_station = (st_cur == "") or OVERWRITE_NEAREST_STATION
-            need_walk = (wm_cur == "") or OVERWRITE_WALK_MINUTES
-
-            if (need_station or need_walk):
-                if lat_use is None or lng_use is None:
-                    station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "no_latlng"})
+            if lat_use is None or lng_use is None:
+                station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "no_latlng"})
+            else:
+                best = pick_best_station_by_walk(lat_use, lng_use)
+                if not best:
+                    station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "station_or_walk_failed"})
                 else:
-                    st = nearby_station(lat_use, lng_use)
-                    if not st:
-                        station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "station_not_found"})
-                    else:
-                        st_name, st_pid = st
-                        if st_name:
-                            updated_cells += set_if("nearest_station", st_name, overwrite=OVERWRITE_NEAREST_STATION)
-                        if st_pid:
-                            wm = walking_minutes(lat_use, lng_use, st_pid)
-                            if wm is None:
-                                station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "walk_time_failed"})
-                            else:
-                                updated_cells += set_if("walk_minutes", str(wm), overwrite=OVERWRITE_WALK_MINUTES)
+                    st_name, wm = best
+                    updated_cells += set_if("nearest_station", st_name, overwrite=OVERWRITE_NEAREST_STATION)
+                    updated_cells += set_if("walk_minutes", str(wm), overwrite=OVERWRITE_WALK_MINUTES)
 
         updated_rows += 1
 
