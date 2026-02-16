@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import csv
+import json
+import math
 import os
 import re
 import time
@@ -11,464 +13,551 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
+from pykakasi import kakasi
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-DATA_DIR.mkdir(parents=True, exist_ok=True)
-
-MASTER_CSV = DATA_DIR / "master_facilities.csv"
-STATION_MISSES_CSV = DATA_DIR / "station_misses.csv"
-
-# ---- env ----
+# ========= Config =========
 API_KEY = (os.getenv("GOOGLE_MAPS_API_KEY") or "").strip()
 
-WARD_FILTER = (os.getenv("WARD_FILTER") or "").strip() or None
-MAX_UPDATES = int(os.getenv("MAX_UPDATES", "999999"))  # デフォルト全件
-ONLY_BAD_ROWS = (os.getenv("ONLY_BAD_ROWS", "0") == "1")
+WARD_FILTER = (os.getenv("WARD_FILTER", "港北区") or "").strip() or None
+MAX_UPDATES = int(os.getenv("MAX_UPDATES", "80"))
+ONLY_BAD_ROWS = (os.getenv("ONLY_BAD_ROWS", "1") == "1")
 STRICT_ADDRESS_CHECK = (os.getenv("STRICT_ADDRESS_CHECK", "1") == "1")
-
 SLEEP_SEC = float(os.getenv("GOOGLE_API_SLEEP_SEC", "0.15"))
 
 OVERWRITE_PHONE = (os.getenv("OVERWRITE_PHONE", "0") == "1")
 OVERWRITE_WEBSITE = (os.getenv("OVERWRITE_WEBSITE", "0") == "1")
 OVERWRITE_MAP_URL = (os.getenv("OVERWRITE_MAP_URL", "0") == "1")
 
-# station/walk
 FILL_NEAREST_STATION = (os.getenv("FILL_NEAREST_STATION", "1") == "1")
+OVERWRITE_NEAREST_STATION = (os.getenv("OVERWRITE_NEAREST_STATION", "1") == "1")
+OVERWRITE_WALK_MINUTES = (os.getenv("OVERWRITE_WALK_MINUTES", "1") == "1")
 
-# ★全件やり直し（駅/徒歩）
-FORCE_RECALC_STATION = (os.getenv("FORCE_RECALC_STATION", "0") == "1")
+# 港北区＋周辺（境界で最寄りになりがちな駅も含める）
+KOHOKU_STATIONS = [
+    "新横浜駅", "北新横浜駅", "新羽駅", "高田駅", "日吉本町駅", "日吉駅",
+    "綱島駅", "新綱島駅",
+    "菊名駅", "大倉山駅", "小机駅",
+    # 境界補完（外れ値対策：近いのに港北区外で落ちるケース）
+    "妙蓮寺駅", "白楽駅", "反町駅",  # 神奈川区寄り
+    "武蔵小杉駅", "元住吉駅"         # 日吉・綱島の南側寄り
+]
 
-# 通常は入力 overwrite_station_walk (=1) を workflow から渡す想定
-OVERWRITE_NEAREST_STATION = (os.getenv("OVERWRITE_NEAREST_STATION", "0") == "1") or FORCE_RECALC_STATION
-OVERWRITE_WALK_MINUTES = (os.getenv("OVERWRITE_WALK_MINUTES", "0") == "1") or FORCE_RECALC_STATION
+ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT / "data"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-STATION_RADIUS_M = int(os.getenv("STATION_RADIUS_M", "2000"))
-STATION_CANDIDATES = int(os.getenv("STATION_CANDIDATES", "8"))
+MASTER_CSV = DATA_DIR / "master_facilities.csv"
+CACHE_STATIONS = DATA_DIR / "kohoku_stations_cache.json"
+MISSES_CSV = DATA_DIR / "station_misses.csv"
 
-# 任意：lat/lng の上書き（ズレ対策したいときだけ 1）
-OVERWRITE_LATLNG = (os.getenv("OVERWRITE_LATLNG", "0") == "1")
+PLACES_TEXT = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+PLACES_DETAILS = "https://maps.googleapis.com/maps/api/place/details/json"
+PLACES_NEARBY = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+DIST_MATRIX = "https://maps.googleapis.com/maps/api/distancematrix/json"
+
+# ========= Kana converter =========
+_kks = kakasi()
+_kks.setMode("J", "H")
+_kks.setMode("K", "H")
+_kks.setMode("H", "H")
+_conv = _kks.getConverter()
 
 
-def norm(s: Any) -> str:
-    if s is None:
+def hira(s: Any) -> str:
+    s = "" if s is None else str(s)
+    s = s.strip()
+    if not s:
         return ""
-    x = str(s).replace("　", " ")
-    x = re.sub(r"\s+", " ", x).strip()
-    return x
+    s = _conv.do(s)
+    s = s.replace("　", " ")
+    s = re.sub(r"\s+", "", s)
+    return s
 
 
-def to_float(s: Any) -> Optional[float]:
-    if s is None:
-        return None
-    t = str(s).strip()
-    if t == "":
-        return None
+def safe_str(x: Any) -> str:
+    return "" if x is None else str(x)
+
+
+def to_float(x: Any) -> Optional[float]:
     try:
-        return float(t)
+        if x is None:
+            return None
+        s = str(x).strip()
+        if s == "" or s.lower() == "nan":
+            return None
+        return float(s)
     except Exception:
         return None
 
 
-def ok_address(addr: str, ward: Optional[str]) -> bool:
+def to_int(x: Any) -> Optional[int]:
+    try:
+        if x is None:
+            return None
+        s = str(x).strip()
+        if s == "" or s.lower() == "nan":
+            return None
+        return int(float(s))
+    except Exception:
+        return None
+
+
+def sleep():
+    if SLEEP_SEC > 0:
+        time.sleep(SLEEP_SEC)
+
+
+def google_get(url: str, params: Dict[str, Any]) -> Dict[str, Any]:
+    r = requests.get(url, params=params, timeout=60)
+    r.raise_for_status()
+    return r.json()
+
+
+def ensure_cols(row: Dict[str, str], cols: List[str]) -> None:
+    for c in cols:
+        if c not in row:
+            row[c] = ""
+
+
+def load_csv_rows(path: Path) -> Tuple[List[str], List[Dict[str, str]]]:
+    if not path.exists():
+        raise RuntimeError(f"Not found: {path}")
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        header = reader.fieldnames or []
+        rows = [dict(r) for r in reader]
+    return header, rows
+
+
+def write_csv_rows(path: Path, header: List[str], rows: List[Dict[str, str]]) -> None:
+    with path.open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=header)
+        w.writeheader()
+        for r in rows:
+            w.writerow(r)
+
+
+def station_base(st: str) -> str:
+    st = (st or "").strip()
+    if st.endswith("駅"):
+        st = st[:-1].strip()
+    return st
+
+
+def is_station_name(name: str) -> bool:
+    name = (name or "").strip()
+    if not name:
+        return False
+    # 駅を含み、バス停っぽいものは除外
+    if "バス" in name or "停" in name and ("駅" not in name):
+        return False
+    return ("駅" in name)
+
+
+def is_good_station_candidate(place: Dict[str, Any]) -> bool:
+    name = safe_str(place.get("name")).strip()
+    if not is_station_name(name):
+        return False
+
+    types = place.get("types") or []
+    # bus_station を弾く
+    if "bus_station" in types:
+        return False
+
+    # 駅系タイプを優先（Placesのタイプは揺れるので広めに許可）
+    ok_types = {"train_station", "subway_station", "transit_station", "light_rail_station"}
+    if any(t in ok_types for t in types):
+        return True
+
+    # types が薄い/欠けるケースの保険：nameが「◯◯駅」なら許可
+    if name.endswith("駅"):
+        return True
+
+    return False
+
+
+def haversine_m(lat1, lon1, lat2, lon2) -> float:
+    R = 6371000.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat/2)**2 + math.cos(p1)*math.cos(p2)*math.sin(dlon/2)**2
+    return 2*R*math.asin(math.sqrt(a))
+
+
+def load_station_cache() -> Dict[str, Dict[str, Any]]:
+    if CACHE_STATIONS.exists():
+        try:
+            return json.loads(CACHE_STATIONS.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def save_station_cache(cache: Dict[str, Dict[str, Any]]) -> None:
+    CACHE_STATIONS.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def places_textsearch(query: str) -> Optional[Dict[str, Any]]:
+    if not API_KEY:
+        raise RuntimeError("GOOGLE_MAPS_API_KEY is empty")
+    params = {"query": query, "key": API_KEY, "language": "ja", "region": "jp"}
+    js = google_get(PLACES_TEXT, params)
+    sleep()
+    if js.get("status") != "OK":
+        return None
+    results = js.get("results") or []
+    return results[0] if results else None
+
+
+def places_details(place_id: str) -> Optional[Dict[str, Any]]:
+    if not API_KEY:
+        raise RuntimeError("GOOGLE_MAPS_API_KEY is empty")
+    fields = ",".join([
+        "place_id", "name", "formatted_address", "geometry", "types",
+        "formatted_phone_number", "website", "url"
+    ])
+    params = {"place_id": place_id, "fields": fields, "key": API_KEY, "language": "ja", "region": "jp"}
+    js = google_get(PLACES_DETAILS, params)
+    sleep()
+    if js.get("status") != "OK":
+        return None
+    return js.get("result")
+
+
+def nearby_stations(lat: float, lng: float) -> Optional[Dict[str, Any]]:
+    """
+    まず NearbySearch(rankby=distance) で駅を取りに行く。
+    ダメなら None。
+    """
+    if not API_KEY:
+        raise RuntimeError("GOOGLE_MAPS_API_KEY is empty")
+
+    location = f"{lat},{lng}"
+
+    # typeを段階的に試す（train/subway/transit）
+    for tp in ["train_station", "subway_station", "transit_station"]:
+        params = {
+            "location": location,
+            "rankby": "distance",
+            "type": tp,
+            "keyword": "駅",
+            "key": API_KEY,
+            "language": "ja",
+            "region": "jp",
+        }
+        js = google_get(PLACES_NEARBY, params)
+        sleep()
+        if js.get("status") not in ("OK", "ZERO_RESULTS"):
+            continue
+        results = js.get("results") or []
+        for r in results[:10]:
+            if is_good_station_candidate(r):
+                return r
+
+    return None
+
+
+def station_from_list(lat: float, lng: float) -> Optional[Dict[str, Any]]:
+    """
+    港北区駅リストへフォールバック。
+    1) 駅ごとにplace_id/lat/lngをキャッシュ
+    2) 直線距離で最短候補を選ぶ
+    """
+    cache = load_station_cache()
+    changed = False
+
+    candidates: List[Tuple[float, Dict[str, Any]]] = []
+
+    for st in KOHOKU_STATIONS:
+        if st not in cache:
+            hit = places_textsearch(f"{st} 神奈川県 横浜市")
+            if hit and hit.get("place_id"):
+                det = places_details(hit["place_id"])
+                if det and det.get("geometry", {}).get("location"):
+                    loc = det["geometry"]["location"]
+                    cache[st] = {
+                        "name": det.get("name") or st,
+                        "place_id": det.get("place_id"),
+                        "lat": loc.get("lat"),
+                        "lng": loc.get("lng"),
+                        "types": det.get("types") or [],
+                        "url": det.get("url") or "",
+                    }
+                    changed = True
+            sleep()
+
+        d = cache.get(st)
+        if not d:
+            continue
+        slat = to_float(d.get("lat"))
+        slng = to_float(d.get("lng"))
+        if slat is None or slng is None:
+            continue
+
+        dist = haversine_m(lat, lng, slat, slng)
+        candidates.append((dist, d))
+
+    if changed:
+        save_station_cache(cache)
+
+    if not candidates:
+        return None
+
+    candidates.sort(key=lambda x: x[0])
+    return candidates[0][1]
+
+
+def distance_matrix_walk_minutes(origin_lat: float, origin_lng: float, dest_place_id: str) -> Optional[int]:
+    """
+    徒歩時間（分）をDistance Matrixで取得。
+    取れなければNone。
+    """
+    if not API_KEY:
+        raise RuntimeError("GOOGLE_MAPS_API_KEY is empty")
+
+    params = {
+        "origins": f"{origin_lat},{origin_lng}",
+        "destinations": f"place_id:{dest_place_id}",
+        "mode": "walking",
+        "language": "ja",
+        "region": "jp",
+        "key": API_KEY,
+    }
+    js = google_get(DIST_MATRIX, params)
+    sleep()
+
+    if js.get("status") != "OK":
+        return None
+
+    rows = js.get("rows") or []
+    if not rows:
+        return None
+    els = (rows[0].get("elements") or [])
+    if not els:
+        return None
+    e0 = els[0]
+    if e0.get("status") != "OK":
+        return None
+
+    sec = (e0.get("duration") or {}).get("value")
+    if sec is None:
+        return None
+    return int(math.ceil(float(sec) / 60.0))
+
+
+def should_fix_station(row: Dict[str, str]) -> bool:
+    st = safe_str(row.get("nearest_station")).strip()
+    wm = to_int(row.get("walk_minutes"))
+    if st == "" or not st.endswith("駅"):
+        return True
+    if wm is None or wm <= 0 or wm >= 200:
+        return True
+    return False
+
+
+def should_fix_core(row: Dict[str, str]) -> bool:
+    # 住所 or lat/lng が無いなら優先修正対象
+    addr = safe_str(row.get("address")).strip()
+    lat = to_float(row.get("lat"))
+    lng = to_float(row.get("lng"))
+    return (addr == "" or lat is None or lng is None)
+
+
+def strict_address_ok(addr: str) -> bool:
     if not STRICT_ADDRESS_CHECK:
         return True
     if not addr:
         return False
     if "横浜市" not in addr:
         return False
-    if ward and ward not in addr:
+    if WARD_FILTER and WARD_FILTER not in addr:
         return False
     return True
 
 
-def require_api_key() -> None:
-    if not API_KEY:
-        raise RuntimeError("GOOGLE_MAPS_API_KEY が未設定です（GitHub Secretsに設定してください）")
-
-
-def maps_get(url: str, params: Dict[str, str], timeout: int = 30) -> Dict[str, Any]:
-    require_api_key()
-    p = dict(params)
-    p["key"] = API_KEY
-    r = requests.get(url, params=p, timeout=timeout)
-    r.raise_for_status()
-    data = r.json()
-    status = data.get("status")
-    if status not in ("OK", "ZERO_RESULTS"):
-        raise RuntimeError(f"Google API error: status={status} error_message={data.get('error_message')}")
-    time.sleep(SLEEP_SEC)
-    return data
-
-
-def places_text_search(query: str) -> Optional[Dict[str, Any]]:
-    url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-    data = maps_get(url, {"query": query, "language": "ja", "region": "jp"})
-    results = data.get("results") or []
-    return results[0] if results else None
-
-
-def place_details(place_id: str) -> Optional[Dict[str, Any]]:
-    url = "https://maps.googleapis.com/maps/api/place/details/json"
-    fields = ",".join(
-        [
-            "name",
-            "formatted_address",
-            "geometry/location",
-            "url",
-            "website",
-            "formatted_phone_number",
-            "types",
-        ]
-    )
-    data = maps_get(url, {"place_id": place_id, "fields": fields, "language": "ja"})
-    return (data.get("result") or None)
-
-
-def nearby_stations(lat: float, lng: float) -> List[Tuple[str, str]]:
+def fix_one_row(row: Dict[str, str], misses: List[Dict[str, str]]) -> bool:
     """
-    近傍の駅候補（name, place_id）を返す。駅以外が混ざるのを強く防ぐ。
+    1行を修正。何か変更したら True。
     """
-    # 駅として扱うタイプ（Googleのtypesは揺れる）
-    STATION_TYPES = {
-        "train_station",
-        "subway_station",
-        "transit_station",
-        "light_rail_station",
-    }
+    changed = False
 
-    # 駅じゃないものを弾くキーワード
-    NG_NAME_RE = re.compile(
-        r"(バス|バスターミナル|bus|駅前|出口|出入口|改札|駐輪|駐車|パーキング|parking|レンタカー|タクシー|交番|店|ロータリー)",
-        re.IGNORECASE,
-    )
+    fid = safe_str(row.get("facility_id")).strip()
+    name = safe_str(row.get("name")).strip()
+    ward = safe_str(row.get("ward")).strip()
 
-    def fetch(place_type: str) -> List[Tuple[str, str, List[str]]]:
-        url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-        loc = f"{lat},{lng}"
-        data = maps_get(
-            url,
-            {
-                "location": loc,
-                "radius": str(STATION_RADIUS_M),
-                "type": place_type,
-                "language": "ja",
-            },
-        )
-        out = []
-        for it in (data.get("results") or []):
-            name = (it.get("name") or "").strip()
-            pid = (it.get("place_id") or "").strip()
-            types = it.get("types") or []
-            if name and pid:
-                out.append((name, pid, types))
-        return out
+    # kana（空なら生成）
+    if safe_str(row.get("name_kana")).strip() == "":
+        row["name_kana"] = hira(name)
+        changed = True
 
-    # 優先順：train_station → transit_station → railway_station（保険）
-    cands = fetch("train_station")
-    if not cands:
-        cands = fetch("transit_station")
-    if not cands:
-        cands = fetch("railway_station")
+    # まず園自体のPlacesを引く（住所/緯度経度の安定化）
+    lat = to_float(row.get("lat"))
+    lng = to_float(row.get("lng"))
 
-    # フィルタ：typesが駅系、かつNG語を含まない
-    filtered = []
-    for name, pid, types in cands:
-        tset = set(types)
-        if not (tset & STATION_TYPES):
-            continue
-        if NG_NAME_RE.search(name):
-            continue
-        filtered.append((name, pid))
+    if API_KEY and (should_fix_core(row) or (OVERWRITE_MAP_URL is False and safe_str(row.get("map_url")).strip() == "")):
+        q = f"{name} 横浜市{ward} 保育園"
+        hit = places_textsearch(q)
+        if not hit or not hit.get("place_id"):
+            misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "place_not_found", "query": q})
+            return changed
 
-    # 重複除去（place_id）
-    seen = set()
-    uniq: List[Tuple[str, str]] = []
-    for n, pid in filtered:
-        if pid not in seen:
-            seen.add(pid)
-            uniq.append((n, pid))
+        det = places_details(hit["place_id"])
+        if not det:
+            misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "place_details_failed", "query": q})
+            return changed
 
-    return uniq[: max(1, STATION_CANDIDATES)]
+        addr = safe_str(det.get("formatted_address")).strip()
+        if addr and strict_address_ok(addr):
+            if safe_str(row.get("address")).strip() == "" or safe_str(row.get("address")).strip() != addr:
+                row["address"] = addr
+                changed = True
 
+        loc = (det.get("geometry") or {}).get("location") or {}
+        dlat = loc.get("lat")
+        dlng = loc.get("lng")
+        if dlat is not None and dlng is not None:
+            if safe_str(row.get("lat")).strip() == "" or abs(float(dlat) - (lat or 0.0)) > 1e-9:
+                row["lat"] = str(dlat)
+                changed = True
+            if safe_str(row.get("lng")).strip() == "" or abs(float(dlng) - (lng or 0.0)) > 1e-9:
+                row["lng"] = str(dlng)
+                changed = True
+            lat, lng = float(dlat), float(dlng)
 
-def walking_minutes(origin_lat: float, origin_lng: float, dest_place_id: str) -> Optional[int]:
-    url = "https://maps.googleapis.com/maps/api/distancematrix/json"
-    origins = f"{origin_lat},{origin_lng}"
-    destinations = f"place_id:{dest_place_id}"
-    data = maps_get(
-        url,
-        {
-            "origins": origins,
-            "destinations": destinations,
-            "mode": "walking",
-            "language": "ja",
-            "region": "jp",
-        },
-        timeout=60,
-    )
-    rows = data.get("rows") or []
-    if not rows:
-        return None
-    elems = rows[0].get("elements") or []
-    if not elems:
-        return None
-    el = elems[0]
-    if el.get("status") != "OK":
-        return None
-    dur = el.get("duration", {}).get("value")  # seconds
-    if dur is None:
-        return None
-    return int(round(float(dur) / 60.0))
+        types = det.get("types") or []
+        if types:
+            if safe_str(row.get("facility_type")).strip() == "":
+                row["facility_type"] = ",".join(types)
+                changed = True
 
+        phone = safe_str(det.get("formatted_phone_number")).strip()
+        if phone and (OVERWRITE_PHONE or safe_str(row.get("phone")).strip() == ""):
+            row["phone"] = phone
+            changed = True
 
-def pick_best_station_by_walk(lat: float, lng: float) -> Optional[Tuple[str, int]]:
-    """
-    複数駅候補から徒歩分が最小の駅を選ぶ（最終「駅」判定あり）
-    """
-    cands = nearby_stations(lat, lng)
-    if not cands:
-        return None
+        website = safe_str(det.get("website")).strip()
+        if website and (OVERWRITE_WEBSITE or safe_str(row.get("website")).strip() == ""):
+            row["website"] = website
+            changed = True
 
-    best_name = None
-    best_min = None
+        map_url = safe_str(det.get("url")).strip()
+        if map_url and (OVERWRITE_MAP_URL or safe_str(row.get("map_url")).strip() == ""):
+            row["map_url"] = map_url
+            changed = True
 
-    for name, pid in cands:
-        wm = walking_minutes(lat, lng, pid)
-        if wm is None:
-            continue
-        if best_min is None or wm < best_min:
-            best_min = wm
-            best_name = name
+    # ===== 駅＋徒歩 =====
+    if FILL_NEAREST_STATION and lat is not None and lng is not None:
+        if (not ONLY_BAD_ROWS) or should_fix_station(row) or OVERWRITE_NEAREST_STATION or OVERWRITE_WALK_MINUTES:
+            # 1) Nearbyで駅を探す（駅だけフィルタ）
+            st_place = nearby_stations(lat, lng)
 
-    if best_name is None or best_min is None:
-        return None
+            # 2) ダメなら港北駅リストから距離で当てる
+            if not st_place:
+                st_place = station_from_list(lat, lng)
 
-    # 最終安全策：駅名に「駅」が無ければ採用しない（駅以外混入防止）
-    if "駅" not in best_name:
-        return None
+            if not st_place:
+                misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "station_not_found", "query": f"{name} {ward}"})
+                return changed
 
-    return best_name, best_min
+            st_name = safe_str(st_place.get("name")).strip()
+            st_pid = safe_str(st_place.get("place_id")).strip()
+            # リスト由来のdictは keys が揃ってるが、念のため
+            if st_pid == "":
+                # nearby結果のplace_idが無いケース対策：テキスト検索
+                hit = places_textsearch(f"{st_name} 横浜市")
+                if hit and hit.get("place_id"):
+                    st_pid = hit["place_id"]
 
+            if st_name:
+                if OVERWRITE_NEAREST_STATION or safe_str(row.get("nearest_station")).strip() == "" or should_fix_station(row):
+                    # “◯◯駅(…)" を “◯◯駅” に寄せる
+                    if "駅" in st_name and not st_name.endswith("駅"):
+                        st_name = st_name.split("駅")[0] + "駅"
+                    row["nearest_station"] = st_name
+                    changed = True
 
-def build_query(name: str, ward: str, address: str) -> str:
-    # 住所が微妙なときほど name + 区 + 横浜市 + 保育園 で引けることが多い
-    parts = [name]
-    if address:
-        parts.append(address)
-    if ward:
-        parts.append(f"横浜市{ward}")
-    else:
-        parts.append("横浜市")
-    parts.append("保育園")
-    return " ".join([p for p in parts if p]).strip()
+                # kana（駅名は "駅" を外してひらがな化）
+                base = station_base(st_name)
+                if safe_str(row.get("station_kana")).strip() == "":
+                    row["station_kana"] = hira(base)
+                    changed = True
 
+            if st_pid:
+                wm = distance_matrix_walk_minutes(lat, lng, st_pid)
+                if wm is not None:
+                    if OVERWRITE_WALK_MINUTES or safe_str(row.get("walk_minutes")).strip() == "" or should_fix_station(row):
+                        row["walk_minutes"] = str(wm)
+                        changed = True
 
-def should_update_row(row: Dict[str, str]) -> bool:
-    if FORCE_RECALC_STATION:
-        return True
-    if not ONLY_BAD_ROWS:
-        return True
-
-    addr = (row.get("address") or "").strip()
-    lat = (row.get("lat") or "").strip()
-    lng = (row.get("lng") or "").strip()
-    st = (row.get("nearest_station") or "").strip()
-    wm = (row.get("walk_minutes") or "").strip()
-
-    if addr == "":
-        return True
-    if lat == "" or lng == "":
-        return True
-    if FILL_NEAREST_STATION and (st == "" or wm == ""):
-        return True
-    return False
-
-
-def ensure_headers(rows: List[Dict[str, str]]) -> List[str]:
-    base = [
-        "facility_id",
-        "name",
-        "ward",
-        "address",
-        "lat",
-        "lng",
-        "facility_type",
-        "phone",
-        "website",
-        "notes",
-        "nearest_station",
-        "walk_minutes",
-        "map_url",
-    ]
-    existing = list(rows[0].keys()) if rows else base
-    for k in base:
-        if k not in existing:
-            existing.append(k)
-    return existing
-
-
-def read_master() -> List[Dict[str, str]]:
-    if not MASTER_CSV.exists():
-        raise RuntimeError("data/master_facilities.csv が見つかりません")
-    with MASTER_CSV.open("r", encoding="utf-8-sig", newline="") as f:
-        rows = list(csv.DictReader(f))
-    if not rows:
-        raise RuntimeError("master_facilities.csv が空です")
-    return rows
-
-
-def write_master(rows: List[Dict[str, str]], fieldnames: List[str]) -> None:
-    with MASTER_CSV.open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=fieldnames)
-        w.writeheader()
-        for r in rows:
-            w.writerow({k: (r.get(k, "") if r.get(k, "") is not None else "") for k in fieldnames})
-
-
-def write_station_misses(misses: List[Dict[str, str]]) -> None:
-    with STATION_MISSES_CSV.open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["facility_id", "name", "ward", "reason"])
-        w.writeheader()
-        for r in misses:
-            w.writerow(r)
-
-
-def set_if(row: Dict[str, str], field: str, new_val: str, overwrite: bool) -> int:
-    cur = (row.get(field) or "").strip()
-    if new_val is None:
-        return 0
-    new_val = str(new_val).strip()
-    if new_val == "":
-        return 0
-    if (cur == "") or overwrite:
-        if cur != new_val:
-            row[field] = new_val
-            return 1
-    return 0
+    return changed
 
 
 def main() -> None:
-    print("START fix_master_with_google_places.py")
-    print(
-        "WARD_FILTER=", WARD_FILTER,
-        "MAX_UPDATES=", MAX_UPDATES,
-        "ONLY_BAD_ROWS=", ONLY_BAD_ROWS,
-        "STRICT_ADDRESS_CHECK=", STRICT_ADDRESS_CHECK
-    )
-    print(
-        "FORCE_RECALC_STATION=", FORCE_RECALC_STATION,
-        "STATION_RADIUS_M=", STATION_RADIUS_M,
-        "STATION_CANDIDATES=", STATION_CANDIDATES
-    )
-    print("OVERWRITE_LATLNG=", OVERWRITE_LATLNG)
+    if not API_KEY:
+        raise RuntimeError("GOOGLE_MAPS_API_KEY が未設定です（GitHub Secrets を確認）")
 
-    rows = read_master()
-    fieldnames = ensure_headers(rows)
+    header, rows = load_csv_rows(MASTER_CSV)
 
-    target = WARD_FILTER.strip() if WARD_FILTER else None
+    # 追加列（存在しなければ増やす）
+    need_cols = [
+        "facility_id", "name", "ward",
+        "address", "lat", "lng", "map_url",
+        "facility_type", "phone", "website", "notes",
+        "nearest_station", "walk_minutes",
+        "name_kana", "station_kana",
+    ]
+    for c in need_cols:
+        if c not in header:
+            header.append(c)
 
+    # 修正対象の行を絞る
+    target_idxs: List[int] = []
+    for i, r in enumerate(rows):
+        ensure_cols(r, need_cols)
+
+        if WARD_FILTER and safe_str(r.get("ward")).strip() != WARD_FILTER:
+            continue
+
+        if not ONLY_BAD_ROWS:
+            target_idxs.append(i)
+            continue
+
+        # bad rows only
+        if should_fix_core(r) or should_fix_station(r) or safe_str(r.get("name_kana")).strip() == "" or safe_str(r.get("station_kana")).strip() == "":
+            target_idxs.append(i)
+
+    print(f"rows total={len(rows)} target={len(target_idxs)} ward={WARD_FILTER} only_bad={ONLY_BAD_ROWS} max_updates={MAX_UPDATES}")
+
+    misses: List[Dict[str, str]] = []
+    updated = 0
     updated_cells = 0
-    updated_rows = 0
-    station_misses: List[Dict[str, str]] = []
 
-    for r in rows:
-        if updated_rows >= MAX_UPDATES:
+    for idx in target_idxs:
+        if updated >= MAX_UPDATES:
             break
-
-        fid = (r.get("facility_id") or "").strip()
-        name = (r.get("name") or "").strip()
-        ward = (r.get("ward") or "").strip()
-
-        if not fid or not name:
-            continue
-        if target and target not in ward:
-            continue
-        if not should_update_row(r):
-            continue
-
-        addr0 = (r.get("address") or "").strip()
-
-        # 1) 園の place を引く
-        query = build_query(name, ward, addr0)
-        top = places_text_search(query)
-        if not top:
-            station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "place_not_found"})
-            updated_rows += 1
-            continue
-
-        place_id = (top.get("place_id") or "").strip()
-        det = place_details(place_id) if place_id else None
-        if not det:
-            station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "place_details_failed"})
-            updated_rows += 1
-            continue
-
-        addr = (det.get("formatted_address") or "").strip()
-        loc = (det.get("geometry") or {}).get("location") or {}
-        lat = loc.get("lat")
-        lng = loc.get("lng")
-
-        phone = (det.get("formatted_phone_number") or "").strip()
-        website = (det.get("website") or "").strip()
-        gmap_url = (det.get("url") or "").strip()
-        types = det.get("types") or []
-        facility_type = (r.get("facility_type") or "").strip() or (",".join(types) if types else "")
-
-        if addr and not ok_address(addr, ward):
-            addr = ""  # 不正っぽい住所は採用しない
-
-        # address / lat / lng
-        if addr:
-            updated_cells += set_if(r, "address", addr, overwrite=False)
-
-        if (lat is not None) and (lng is not None):
-            if OVERWRITE_LATLNG:
-                updated_cells += set_if(r, "lat", f"{lat:.7f}", overwrite=True)
-                updated_cells += set_if(r, "lng", f"{lng:.7f}", overwrite=True)
-            else:
-                if (r.get("lat") or "").strip() == "":
-                    r["lat"] = f"{lat:.7f}"
-                    updated_cells += 1
-                if (r.get("lng") or "").strip() == "":
-                    r["lng"] = f"{lng:.7f}"
+        before = dict(rows[idx])
+        changed = fix_one_row(rows[idx], misses)
+        if changed:
+            updated += 1
+            # rough count: how many fields changed
+            for k in header:
+                if safe_str(before.get(k)) != safe_str(rows[idx].get(k)):
                     updated_cells += 1
 
-        # map_url / phone / website / type
-        if gmap_url:
-            updated_cells += set_if(r, "map_url", gmap_url, overwrite=OVERWRITE_MAP_URL)
-        if phone:
-            updated_cells += set_if(r, "phone", phone, overwrite=OVERWRITE_PHONE)
-        if website:
-            updated_cells += set_if(r, "website", website, overwrite=OVERWRITE_WEBSITE)
-        if facility_type:
-            updated_cells += set_if(r, "facility_type", facility_type, overwrite=False)
+    write_csv_rows(MASTER_CSV, header, rows)
 
-        # 2) 最寄り駅/徒歩（駅フィルタ強化＋徒歩最短）
-        if FILL_NEAREST_STATION:
-            lat_use = to_float(r.get("lat"))
-            lng_use = to_float(r.get("lng"))
+    # misses csv
+    if misses:
+        miss_header = ["facility_id", "name", "ward", "reason", "query"]
+        with MISSES_CSV.open("w", encoding="utf-8", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=miss_header)
+            w.writeheader()
+            for m in misses:
+                w.writerow({k: m.get(k, "") for k in miss_header})
+        print(f"misses: {len(misses)} wrote {MISSES_CSV}")
 
-            if lat_use is None or lng_use is None:
-                station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "no_latlng"})
-            else:
-                best = pick_best_station_by_walk(lat_use, lng_use)
-                if not best:
-                    station_misses.append({"facility_id": fid, "name": name, "ward": ward, "reason": "station_or_walk_failed"})
-                else:
-                    st_name, wm = best
-                    updated_cells += set_if(r, "nearest_station", st_name, overwrite=OVERWRITE_NEAREST_STATION)
-                    updated_cells += set_if(r, "walk_minutes", str(wm), overwrite=OVERWRITE_WALK_MINUTES)
-
-        updated_rows += 1
-
-    write_master(rows, fieldnames)
-    write_station_misses(station_misses)
-
-    print("DONE. wrote:", str(MASTER_CSV))
-    print("updated rows:", updated_rows)
-    print("updated cells:", updated_cells)
-    print("station misses:", len(station_misses), "->", str(STATION_MISSES_CSV))
+    print(f"DONE. updated_rows={updated} updated_cells={updated_cells} wrote={MASTER_CSV}")
 
 
 if __name__ == "__main__":
