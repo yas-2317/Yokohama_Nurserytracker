@@ -11,98 +11,112 @@
     .modebar .badge{ margin-left:auto; }
     th.hide-col, td.hide-col { display:none !important; }
 
-    /* ====== ここがポイント：sticky が確実に効く“唯一のスクロール枠” ======
-       - sticky は「スクロールする要素」を基準に固定されるので
-         tablewrap(=overflow) を一段に揃えるのが安定。
-       - styles.css 側の overflow 指定に負けないように強めに指定。 */
-    .tablewrap{
-      overflow: auto !important;
-      -webkit-overflow-scrolling: touch;
-      position: relative;
-      max-width: 100%;
-      max-height: 70vh;
-      border-radius: 12px;
+    /* ====== ヘッダー分離型テーブル（確実に表示される） ====== */
+    .table-shell{
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      overflow: hidden; /* 角丸維持 */
     }
 
-    /* ===== thead が消える系のCSSを確実に打ち消す ===== */
-    #tbl thead { display: table-header-group !important; visibility: visible !important; }
-    #tbl tbody { display: table-row-group !important; }
-    #tbl tr { display: table-row !important; }
-    #tbl th, #tbl td { display: table-cell !important; }
+    /* ヘッダー枠（横スクロールだけ同期。スクロールバーは隠す） */
+    .tablehead-wrap{
+      overflow: auto;
+      scrollbar-width: none;          /* Firefox */
+      -ms-overflow-style: none;       /* IE/Edge legacy */
+      background: var(--thead-bg);
+    }
+    .tablehead-wrap::-webkit-scrollbar{ display:none; } /* Webkit */
 
-    /* sticky が崩れにくい構成 */
-    #tbl{
+    /* 本体枠（縦横スクロール） */
+    .tablebody-wrap{
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      max-height: 70vh;
+      background: var(--surface);
+    }
+
+    /* 2つの table の基本揃え */
+    #tblHead, #tblBody{
       border-collapse: separate;
       border-spacing: 0;
-      width: 100%;
-      background: #fff;
+      width: max-content;
+      min-width: 100%;
+      background: var(--surface);
+      color: var(--text);
+    }
+    #tblHead{ background: transparent; } /* ヘッダー背景は th 側に */
+
+    #tblHead th, #tblBody td{
+      padding: 10px 12px;
+      border-bottom: 1px solid #eef2f7;
+      vertical-align: top;
+      white-space: nowrap;
+      font-size: 13px;
     }
 
-    /* ヘッダー固定（縦スクロールでも固定される） */
-    #tbl thead th{
-      position: sticky !important;
-      top: 0 !important;
-      z-index: 50 !important;         /* ★高めにする（行セルに負けない） */
-      background: #fff !important;
-      box-shadow: 0 2px 0 rgba(0,0,0,.10);
+    /* ヘッダー見た目は styles.css と同等に（確実に） */
+    #tblHead th{
+      background: var(--thead-bg);
+      color: var(--thead-text);
+      text-align: left;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1.2;
+      border-bottom: 1px solid rgba(255,255,255,.15);
     }
 
-    /* 左端（行ヘッダー＝園名列）固定 */
-    #tbl th.col-name,
-    #tbl td.col-name{
-      position: sticky !important;
-      left: 0 !important;
-      background: #fff !important;
-    }
+    /* 交互行 */
+    #tblBody tbody tr:nth-child(even){ background: var(--row-alt); }
 
-    /* 左上（園名ヘッダー）は最前面 */
-    #tbl thead th.col-name{
-      z-index: 60 !important;
-    }
-
-    /* 行ヘッダー（園名列）が他セルに負けない */
-    #tbl td.col-name{
-      z-index: 40 !important;
+    /* 左端固定（園名列）— ヘッダーも本体も */
+    .col-name{
+      position: sticky;
+      left: 0;
+      background: var(--surface);
+      z-index: 5;
       box-shadow: 1px 0 0 rgba(0,0,0,.10);
     }
+    #tblHead th.col-name{
+      background: var(--thead-bg);
+      color: var(--thead-text);
+      z-index: 10;
+      box-shadow: 1px 0 0 rgba(255,255,255,.15);
+    }
 
-    /* 園名列：省略 */
-    #tbl th.col-name{ min-width: 240px; }
-    #tbl td.col-name{
-      min-width: 240px;
+    /* 園名セルの省略（行高を増やさない） */
+    #tblBody td.col-name{
       max-width: 360px;
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* 住所列：PCは1行省略表示 */
+    /* 住所列：PCは1行省略（要望） */
     @media (min-width: 769px){
-      #tbl td.col-addr{
+      #tblBody td.col-addr .cell-ellipsis{
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 360px;
+        display: inline-block;
+        max-width: 520px;
+        vertical-align: top;
       }
     }
 
-    /* スマホ：園名列を細くして “園名以外” が見えるように */
+    /* スマホ：園名列を細くして “園名以外” を見やすく */
     @media (max-width: 768px){
-      #tbl th.col-name{ min-width: 110px; }
-      #tbl td.col-name{ min-width: 90px; max-width: 110px; }
-
-      /* 横スクロール前提（表は維持） */
-      #tbl{ min-width: 720px; }
-
+      .tablebody-wrap{ max-height: 75vh; }
+      #tblHead, #tblBody{ min-width: 720px; }
+      #tblBody td.col-name{ max-width: 110px; }
       .modebar .badge{ width:100%; margin-left:0; }
       .scrollhint{ display:block; margin-top:8px; }
-      .tablewrap{ max-height: 75vh; }
     }
 
     .scrollhint{
       display:none;
       font-size: 12px;
       opacity: .8;
+      padding: 8px 2px 0 2px;
     }
   </style>
 </head>
@@ -156,36 +170,49 @@
     <div class="small"></div>
   </div>
 
-  <div class="card tablewrap">
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th data-col="name" class="col-name">園名</th>
-          <th data-col="station" style="min-width:120px;">最寄り駅</th>
-          <th data-col="walk" style="min-width:80px;">徒歩</th>
+  <div class="card">
+    <div class="table-shell">
+      <!-- ヘッダー（別テーブル） -->
+      <div class="tablehead-wrap" id="headWrap">
+        <table id="tblHead">
+          <colgroup id="colHead"></colgroup>
+          <thead>
+            <tr>
+              <th data-col="name" class="col-name">園名</th>
+              <th data-col="station">最寄り駅</th>
+              <th data-col="walk">徒歩</th>
 
-          <th data-col="accept" style="min-width:90px;">受入（合計）</th>
-          <th data-col="wait" style="min-width:90px;">待ち（合計）</th>
-          <th data-col="dwait" style="min-width:110px;">前月比 待ち</th>
-          <th data-col="dacc" style="min-width:110px;">前月比 受入</th>
+              <th data-col="accept">受入（合計）</th>
+              <th data-col="wait">待ち（合計）</th>
+              <th data-col="dwait">前月比 待ち</th>
+              <th data-col="dacc">前月比 受入</th>
 
-          <th data-col="a0a" class="agecol" style="min-width:80px;">0 受入</th>
-          <th data-col="a0w" class="agecol" style="min-width:80px;">0 待ち</th>
-          <th data-col="a1a" class="agecol" style="min-width:80px;">1 受入</th>
-          <th data-col="a1w" class="agecol" style="min-width:80px;">1 待ち</th>
-          <th data-col="a2a" class="agecol" style="min-width:80px;">2 受入</th>
-          <th data-col="a2w" class="agecol" style="min-width:80px;">2 待ち</th>
-          <th data-col="a35a" class="agecol" style="min-width:90px;">3-5 受入</th>
-          <th data-col="a35w" class="agecol" style="min-width:90px;">3-5 待ち</th>
+              <th data-col="a0a" class="agecol">0 受入</th>
+              <th data-col="a0w" class="agecol">0 待ち</th>
+              <th data-col="a1a" class="agecol">1 受入</th>
+              <th data-col="a1w" class="agecol">1 待ち</th>
+              <th data-col="a2a" class="agecol">2 受入</th>
+              <th data-col="a2w" class="agecol">2 待ち</th>
+              <th data-col="a35a" class="agecol">3-5 受入</th>
+              <th data-col="a35w" class="agecol">3-5 待ち</th>
 
-          <th data-col="addr" style="min-width:320px;">住所</th>
-          <th data-col="map" style="min-width:120px;">地図</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+              <th data-col="addr">住所</th>
+              <th data-col="map">地図</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
 
-    <div class="scrollhint">※ スマホは横にスクロールできます（園名列とヘッダーは固定されます）</div>
+      <!-- 本体（スクロール） -->
+      <div class="tablebody-wrap" id="bodyWrap">
+        <table id="tblBody">
+          <colgroup id="colBody"></colgroup>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="scrollhint">※ スマホは横にスクロールできます（園名列は固定）</div>
   </div>
 
   <div class="footer">
@@ -291,7 +318,7 @@ function rowHTML(f, prevF){
     <td data-col="a35a" class="agecol">${acc('3-5')}</td>
     <td data-col="a35w" class="agecol">${wai('3-5')}</td>
 
-    <td data-col="addr" class="col-addr">${addr || '—'}</td>
+    <td data-col="addr" class="col-addr"><span class="cell-ellipsis">${addr || '—'}</span></td>
     <td data-col="map">${mapLink}</td>
   </tr>`;
 }
@@ -371,7 +398,7 @@ function debounce(fn, ms=250){
   };
 }
 
-/* mobile compact mode */
+/* 表示モード：列の非表示（ヘッダー/本体 両方に適用） */
 const COMPACT_HIDE_COLS = new Set([
   "addr","map",
   "dwait","dacc",
@@ -381,12 +408,14 @@ function isMobile(){ return window.matchMedia && window.matchMedia("(max-width: 
 function applyViewMode(mode){
   const hide = (mode === "compact");
 
-  document.querySelectorAll("#tbl thead th").forEach(th=>{
+  // head
+  document.querySelectorAll("#tblHead thead th").forEach(th=>{
     const c = th.getAttribute("data-col");
     if(!c) return;
     th.classList.toggle("hide-col", hide && COMPACT_HIDE_COLS.has(c));
   });
-  document.querySelectorAll("#tbl tbody td").forEach(td=>{
+  // body
+  document.querySelectorAll("#tblBody tbody td").forEach(td=>{
     const c = td.getAttribute("data-col");
     if(!c) return;
     td.classList.toggle("hide-col", hide && COMPACT_HIDE_COLS.has(c));
@@ -395,7 +424,29 @@ function applyViewMode(mode){
   if(mode === "compact"){ setAgeColsVisible(false); }
 }
 
+/* colgroup でヘッダーと本体の列幅を揃える（重要） */
+const COLS = [
+  "name","station","walk","accept","wait","dwait","dacc",
+  "a0a","a0w","a1a","a1w","a2a","a2w","a35a","a35w",
+  "addr","map"
+];
+function buildCols(){
+  const head = document.getElementById("colHead");
+  const body = document.getElementById("colBody");
+  head.innerHTML = COLS.map(c=>`<col data-col="${c}">`).join("");
+  body.innerHTML = COLS.map(c=>`<col data-col="${c}">`).join("");
+}
+
+/* 横スクロール同期（本体→ヘッダー） */
+function syncScroll(){
+  const headWrap = document.getElementById("headWrap");
+  const bodyWrap = document.getElementById("bodyWrap");
+  headWrap.scrollLeft = bodyWrap.scrollLeft;
+}
+
 async function main(){
+  buildCols();
+
   const months = await loadJSON('data/months.json');
   const ms = (months.months||[]).slice().sort();
 
@@ -424,6 +475,9 @@ async function main(){
 
   if(pView && ["compact","full"].includes(pView)) viewSel.value = pView;
   else viewSel.value = "auto";
+
+  // scroll sync
+  document.getElementById("bodyWrap").addEventListener("scroll", syncScroll, { passive:true });
 
   async function render(){
     const month = monthSel.value;
@@ -483,19 +537,25 @@ async function main(){
     document.getElementById('countLabel').textContent =
       `${arr.length.toLocaleString('ja-JP')} / ${totalCount.toLocaleString('ja-JP')}`;
 
-    const tbody = document.querySelector('#tbl tbody');
+    // render body
+    const tbody = document.querySelector('#tblBody tbody');
     tbody.innerHTML = arr.map(f => rowHTML(f, prevMap.get(String(f.id)))).join('');
 
+    // apply view
     let view = viewSel.value;
     if(view === "auto"){ view = isMobile() ? "compact" : "full"; }
     applyViewMode(view);
 
+    // URL params
     setParam('month', monthSel.value);
     setParam('q', qEl.value.trim());
     setParam('ward', wardSel.value);
     setParam('sort', sortEl.value);
     setParam('age', showAgeCols ? "" : "0");
     setParam('view', (viewSel.value === "auto") ? "" : viewSel.value);
+
+    // scroll sync reset
+    syncScroll();
   }
 
   const renderDebounced = debounce(render, 220);
