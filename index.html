@@ -44,6 +44,9 @@
       min-width: 100%;
       background: var(--surface);
       color: var(--text);
+
+      /* ★幅ズレ防止：レイアウト固定（colgroup の px を必ず尊重） */
+      table-layout: fixed;
     }
     #tblHead{ background: transparent; } /* ヘッダー背景は th 側に */
 
@@ -86,7 +89,6 @@
 
     /* 園名セルの省略（行高を増やさない） */
     #tblBody td.col-name{
-      max-width: 360px;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -107,7 +109,7 @@
     @media (max-width: 768px){
       .tablebody-wrap{ max-height: 75vh; }
       #tblHead, #tblBody{ min-width: 720px; }
-      #tblBody td.col-name{ max-width: 110px; }
+
       .modebar .badge{ width:100%; margin-left:0; }
       .scrollhint{ display:block; margin-top:8px; }
     }
@@ -117,6 +119,12 @@
       font-size: 12px;
       opacity: .8;
       padding: 8px 2px 0 2px;
+    }
+
+    /* ★重要：col 自体を消す（2テーブルの幅ズレ防止の本丸） */
+    #tblHead col.hide-col,
+    #tblBody col.hide-col{
+      display:none !important;
     }
   </style>
 </head>
@@ -398,43 +406,66 @@ function debounce(fn, ms=250){
   };
 }
 
-/* 表示モード：列の非表示（ヘッダー/本体 両方に適用） */
+/* 表示モード：列の非表示（ヘッダー/本体/colgroup 両方に適用） */
 const COMPACT_HIDE_COLS = new Set([
   "addr","map",
   "dwait","dacc",
   "a0a","a0w","a1a","a1w","a2a","a2w","a35a","a35w"
 ]);
 function isMobile(){ return window.matchMedia && window.matchMedia("(max-width: 768px)").matches; }
+
 function applyViewMode(mode){
   const hide = (mode === "compact");
 
-  // head
+  // head th
   document.querySelectorAll("#tblHead thead th").forEach(th=>{
     const c = th.getAttribute("data-col");
     if(!c) return;
     th.classList.toggle("hide-col", hide && COMPACT_HIDE_COLS.has(c));
   });
-  // body
+
+  // body td
   document.querySelectorAll("#tblBody tbody td").forEach(td=>{
     const c = td.getAttribute("data-col");
     if(!c) return;
     td.classList.toggle("hide-col", hide && COMPACT_HIDE_COLS.has(c));
   });
 
+  // ★重要：col も消す（幅ズレの根本対策）
+  document.querySelectorAll("#tblHead col, #tblBody col").forEach(col=>{
+    const c = col.getAttribute("data-col");
+    if(!c) return;
+    col.classList.toggle("hide-col", hide && COMPACT_HIDE_COLS.has(c));
+  });
+
   if(mode === "compact"){ setAgeColsVisible(false); }
 }
 
-/* colgroup でヘッダーと本体の列幅を揃える（重要） */
-const COLS = [
-  "name","station","walk","accept","wait","dwait","dacc",
-  "a0a","a0w","a1a","a1w","a2a","a2w","a35a","a35w",
-  "addr","map"
+/* colgroup：ヘッダーと本体の列幅を px で固定して完全一致させる */
+const COL_DEFS = [
+  { key:"name",  w:260 },
+  { key:"station", w:140 },
+  { key:"walk",  w:80 },
+
+  { key:"accept", w:110 },
+  { key:"wait",   w:110 },
+  { key:"dwait",  w:110 },
+  { key:"dacc",   w:110 },
+
+  { key:"a0a", w:80 }, { key:"a0w", w:80 },
+  { key:"a1a", w:80 }, { key:"a1w", w:80 },
+  { key:"a2a", w:80 }, { key:"a2w", w:80 },
+  { key:"a35a", w:90 }, { key:"a35w", w:90 },
+
+  { key:"addr", w:360 },
+  { key:"map",  w:120 },
 ];
+
 function buildCols(){
   const head = document.getElementById("colHead");
   const body = document.getElementById("colBody");
-  head.innerHTML = COLS.map(c=>`<col data-col="${c}">`).join("");
-  body.innerHTML = COLS.map(c=>`<col data-col="${c}">`).join("");
+  head.innerHTML = COL_DEFS.map(c=>`<col data-col="${c.key}" style="width:${c.w}px">`).join("");
+  body.innerHTML = COL_DEFS.map(c=>`<col data-col="${c.key}" style="width:${c.w}px">`).join("");
 }
 
 /* 横スクロール同期（本体→ヘッダー） */
