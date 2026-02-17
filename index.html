@@ -5,9 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>横浜市 保育園 受入可能数・入所待ち人数（年齢別）</title>
   <link rel="stylesheet" href="styles.css"/>
-</head>
-<body>
 
+  <!-- 追加：スマホで「表は維持しつつ」見やすくする最小CSS -->
+  <style>
+    /* “表は維持”のまま、スマホはコンパクト列にする */
+    .modebar{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+    .modebar .badge{ margin-left:auto; }
+
+    /* 列の表示/非表示（JSが td/th に .hide-col を付けます） */
+    th.hide-col, td.hide-col { display:none !important; }
+
+    /* スマホ時：表は横スクロール前提だが、列を絞ってスクロール量を減らす */
+    @media (max-width: 768px){
+      /* テーブルは残す（非表示にしない） */
+      table{ min-width: 760px; }
+      /* コントロール類は縦積みに寄せる（styles.css と競合してもOKな程度） */
+      .modebar .badge{ width:100%; margin-left:0; }
+    }
+  </style>
+</head>
+
+<body>
 <header>
   <div class="container">
     <h1>横浜市：保育園ごとの「受入可能数」「入所待ち人数」（年齢別）</h1>
@@ -36,6 +54,19 @@
       <button id="toggleCols" type="button">年齢別列：非表示</button>
       <span class="badge">※「入所待ち人数」は園ごとの申込件数（重複計上あり）</span>
     </div>
+
+    <!-- 追加：スマホの一覧性のための “表示モード” -->
+    <div class="modebar">
+      <label class="inline">
+        <span class="small">表示モード</span>
+        <select id="viewMode">
+          <option value="auto">自動（スマホ:コンパクト / PC:詳細）</option>
+          <option value="compact">コンパクト（スマホ向け）</option>
+          <option value="full">詳細（全列）</option>
+        </select>
+      </label>
+      <span class="badge">スマホはコンパクト推奨（列が少なくなります）</span>
+    </div>
   </div>
 </header>
 
@@ -45,31 +76,31 @@
     <div class="small"></div>
   </div>
 
-  <!-- Mobile cards -->
-  <div id="cards" class="cards"></div>
-
-  <!-- Desktop table -->
   <div class="card tablewrap">
     <table id="tbl">
       <thead>
         <tr>
-          <th style="min-width:240px;">園名</th>
-          <th style="min-width:120px;">区</th>
-          <th style="min-width:150px;">最寄り駅</th>
-          <th style="min-width:90px;">徒歩</th>
+          <th data-col="name" style="min-width:240px;">園名</th>
+          <th data-col="ward" style="min-width:120px;">区</th>
+          <th data-col="station" style="min-width:150px;">最寄り駅</th>
+          <th data-col="walk" style="min-width:90px;">徒歩</th>
 
-          <th style="min-width:110px;">受入可能（合計）</th>
-          <th style="min-width:110px;">入所待ち（合計）</th>
-          <th style="min-width:120px;">前月比 入所待ち</th>
-          <th style="min-width:120px;">前月比 受入可能</th>
+          <th data-col="accept" style="min-width:110px;">受入可能（合計）</th>
+          <th data-col="wait" style="min-width:110px;">入所待ち（合計）</th>
+          <th data-col="dwait" style="min-width:120px;">前月比 入所待ち</th>
+          <th data-col="dacc" style="min-width:120px;">前月比 受入可能</th>
 
-          <th class="agecol" style="min-width:90px;">0歳 受入</th><th class="agecol" style="min-width:90px;">0歳 待ち</th>
-          <th class="agecol" style="min-width:90px;">1歳 受入</th><th class="agecol" style="min-width:90px;">1歳 待ち</th>
-          <th class="agecol" style="min-width:90px;">2歳 受入</th><th class="agecol" style="min-width:90px;">2歳 待ち</th>
-          <th class="agecol" style="min-width:110px;">3〜5歳 受入</th><th class="agecol" style="min-width:110px;">3〜5歳 待ち</th>
+          <th data-col="a0a" class="agecol" style="min-width:90px;">0歳 受入</th>
+          <th data-col="a0w" class="agecol" style="min-width:90px;">0歳 待ち</th>
+          <th data-col="a1a" class="agecol" style="min-width:90px;">1歳 受入</th>
+          <th data-col="a1w" class="agecol" style="min-width:90px;">1歳 待ち</th>
+          <th data-col="a2a" class="agecol" style="min-width:90px;">2歳 受入</th>
+          <th data-col="a2w" class="agecol" style="min-width:90px;">2歳 待ち</th>
+          <th data-col="a35a" class="agecol" style="min-width:110px;">3〜5歳 受入</th>
+          <th data-col="a35w" class="agecol" style="min-width:110px;">3〜5歳 待ち</th>
 
-          <th style="min-width:240px;">住所</th>
-          <th style="min-width:120px;">地図</th>
+          <th data-col="addr" style="min-width:240px;">住所</th>
+          <th data-col="map" style="min-width:120px;">地図</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -84,20 +115,9 @@
 <script src="common.js"></script>
 <script>
 /* =========================
-   helpers (index-local)
-   - normalizeForSearch / setParam を同梱して「検索できない」事故を防ぐ
+   index-local helpers
+   - ここで未定義事故を潰す：normalizeForSearch / setParam
    ========================= */
-
-let showAgeCols = true;
-
-function setAgeColsVisible(v){
-  showAgeCols = v;
-  document.querySelectorAll('.agecol').forEach(el=>{
-    el.style.display = v ? '' : 'none';
-  });
-  const btn = document.getElementById('toggleCols');
-  if(btn) btn.textContent = v ? '年齢別列：非表示' : '年齢別列：表示';
-}
 
 // カタカナ→ひらがな
 function kataToHira(s){
@@ -107,28 +127,14 @@ function kataToHira(s){
 function hiraToKata(s){
   return (s||"").replace(/[\u3041-\u3096]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
 }
-
-/**
- * 検索正規化：
- * - 全角スペース→半角
- * - 小文字化
- * - 記号を空白へ
- * - カタカナはひらがなへ
- */
 function normalizeForSearch(s){
   s = safeStr(s);
-  s = s.replace(/　/g, " ");               // 全角スペース
-  s = s.toLowerCase();
-  s = s.replace(/[()\[\]{}「」『』【】・,，.．/／\-ー―_]/g, " ");
-  s = s.replace(/\s+/g, " ").trim();
-  s = kataToHira(s);                        // かな揺れ吸収（カタ→ひら）
+  s = s.replace(/　/g," ").toLowerCase();
+  s = s.replace(/[()\[\]{}「」『』【】・,，.．/／\-ー―_]/g," ");
+  s = s.replace(/\s+/g," ").trim();
+  s = kataToHira(s);
   return s;
 }
-
-/**
- * URLパラメータを更新（履歴は増やさない）
- * 空文字ならパラメータ削除
- */
 function setParam(key, value){
   try{
     const url = new URL(window.location.href);
@@ -143,6 +149,16 @@ function setParam(key, value){
   }
 }
 
+let showAgeCols = true;
+
+function setAgeColsVisible(v){
+  showAgeCols = v;
+  document.querySelectorAll('.agecol').forEach(el=>{
+    el.style.display = v ? '' : 'none';
+  });
+  document.getElementById('toggleCols').textContent = v ? '年齢別列：非表示' : '年齢別列：表示';
+}
+
 function signDelta(n){
   if(n==null) return `<span class="delta none">—</span>`;
   if(n>0) return `<span class="delta plus">+${n}</span>`;
@@ -152,7 +168,6 @@ function signDelta(n){
 
 function getGroups(f){
   if(f.age_groups) return f.age_groups;
-
   const ages = f.ages || f.ages_0_5 || {};
   function v(k, field){ return ages[k]?.[field]; }
   function sum3(field){
@@ -193,91 +208,28 @@ function rowHTML(f, prevF){
   const dAcc  = prevF ? (Number(f.totals?.accept||0) - Number(prevF.totals?.accept||0)) : null;
 
   return `<tr>
-    <td>
+    <td data-col="name">
       <a href="facility.html?id=${encodeURIComponent(f.id)}">${safeStr(f.name)}</a>
       <div class="small">施設番号：${safeStr(f.id)}</div>
     </td>
-    <td>${ward || '—'}</td>
-    <td>${station || '—'}</td>
-    <td>${walk}</td>
 
-    <td>${fmt(f.totals?.accept)}</td>
-    <td>${fmt(f.totals?.wait)}</td>
-    <td>${signDelta(dWait)}</td>
-    <td>${signDelta(dAcc)}</td>
+    <td data-col="ward">${ward || '—'}</td>
+    <td data-col="station">${station || '—'}</td>
+    <td data-col="walk">${walk}</td>
 
-    <td class="agecol">${acc('0')}</td><td class="agecol">${wai('0')}</td>
-    <td class="agecol">${acc('1')}</td><td class="agecol">${wai('1')}</td>
-    <td class="agecol">${acc('2')}</td><td class="agecol">${wai('2')}</td>
-    <td class="agecol">${acc('3-5')}</td><td class="agecol">${wai('3-5')}</td>
+    <td data-col="accept">${fmt(f.totals?.accept)}</td>
+    <td data-col="wait">${fmt(f.totals?.wait)}</td>
+    <td data-col="dwait">${signDelta(dWait)}</td>
+    <td data-col="dacc">${signDelta(dAcc)}</td>
 
-    <td>${addr || '—'}</td>
-    <td>${mapLink}</td>
+    <td data-col="a0a" class="agecol">${acc('0')}</td><td data-col="a0w" class="agecol">${wai('0')}</td>
+    <td data-col="a1a" class="agecol">${acc('1')}</td><td data-col="a1w" class="agecol">${wai('1')}</td>
+    <td data-col="a2a" class="agecol">${acc('2')}</td><td data-col="a2w" class="agecol">${wai('2')}</td>
+    <td data-col="a35a" class="agecol">${acc('3-5')}</td><td data-col="a35w" class="agecol">${wai('3-5')}</td>
+
+    <td data-col="addr">${addr || '—'}</td>
+    <td data-col="map">${mapLink}</td>
   </tr>`;
-}
-
-/* ===== Mobile card view ===== */
-function cardHTML(f, prevF){
-  const ward = safeStr(f.ward||'');
-  const station = safeStr(f.nearest_station||'');
-  const walk = (f.walk_minutes==null || String(f.walk_minutes).trim()==="" ? '' : `${Number(f.walk_minutes)}分`);
-
-  const addr = safeStr(f.address||'');
-  const map = safeStr(f.map_url||'');
-  const mapLink = map ? `<a href="${map}" target="_blank" rel="noopener">地図</a>` : '';
-
-  const dWait = prevF ? (Number(f.totals?.wait||0) - Number(prevF.totals?.wait||0)) : null;
-  const dAcc  = prevF ? (Number(f.totals?.accept||0) - Number(prevF.totals?.accept||0)) : null;
-
-  const g = getGroups(f);
-  function chip(label, a, w){
-    return `<span class="chip-mini">${label} 受入 ${fmt(a)} / 待ち ${fmt(w)}</span>`;
-  }
-
-  const ages = showAgeCols ? `
-    <div class="card-ages">
-      ${chip('0', g?.['0']?.accept, g?.['0']?.wait)}
-      ${chip('1', g?.['1']?.accept, g?.['1']?.wait)}
-      ${chip('2', g?.['2']?.accept, g?.['2']?.wait)}
-      ${chip('3-5', g?.['3-5']?.accept, g?.['3-5']?.wait)}
-    </div>
-  ` : '';
-
-  const stLine = station ? `${station}${walk ? ` / 徒歩 ${walk}` : ''}` : '—';
-
-  return `
-  <div class="card facility-card">
-    <div class="card-top">
-      <div class="card-title">
-        <a class="card-name" href="facility.html?id=${encodeURIComponent(f.id)}">${safeStr(f.name)}</a>
-        <div class="card-sub">区：${ward || '—'} / 施設番号：${safeStr(f.id)}</div>
-      </div>
-      <div class="card-right">
-        <div class="big">${fmt(f.totals?.wait)}</div>
-        <div class="small">待ち（合計） ${signDelta(dWait)}</div>
-      </div>
-    </div>
-
-    <div class="card-mid">
-      <div class="kv">
-        <span class="k">最寄り</span>
-        <span class="v">${stLine}</span>
-      </div>
-      <div class="kv">
-        <span class="k">受入</span>
-        <span class="v">${fmt(f.totals?.accept)} <span class="small">（前月比 ${signDelta(dAcc)}）</span></span>
-      </div>
-    </div>
-
-    ${ages}
-
-    ${(addr || mapLink) ? `
-      <details class="card-details">
-        <summary>住所・地図</summary>
-        <div class="small">${addr || '—'} ${mapLink ? ` / ${mapLink}` : ''}</div>
-      </details>
-    ` : ''}
-  </div>`;
 }
 
 function sortFacilities(arr, mode){
@@ -361,9 +313,52 @@ function debounce(fn, ms=250){
   };
 }
 
+/* =========================
+   Mobile compact mode:
+   - “表は維持”
+   - 列だけ減らす
+   ========================= */
+
+const COMPACT_HIDE_COLS = new Set([
+  "addr","map",      // 住所・地図は重いのでスマホは隠す（必要なら詳細へ）
+  "dwait","dacc",    // 前月比もスマホは隠して一覧性を優先（必要なら full へ）
+  "ward",            // スマホは区列も省略（絞り込みは上のSelectでできる）
+  "a0a","a0w","a1a","a1w","a2a","a2w","a35a","a35w" // 年齢別
+]);
+
+function isMobile(){
+  return window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+}
+
+function applyViewMode(mode){
+  // mode: "compact" | "full"
+  const hide = (mode === "compact");
+
+  // th
+  document.querySelectorAll("#tbl thead th").forEach(th=>{
+    const c = th.getAttribute("data-col");
+    if(!c) return;
+    const shouldHide = hide && COMPACT_HIDE_COLS.has(c);
+    th.classList.toggle("hide-col", shouldHide);
+  });
+
+  // td
+  document.querySelectorAll("#tbl tbody td").forEach(td=>{
+    const c = td.getAttribute("data-col");
+    if(!c) return;
+    const shouldHide = hide && COMPACT_HIDE_COLS.has(c);
+    td.classList.toggle("hide-col", shouldHide);
+  });
+
+  // 年齢列トグルは “full” の時だけ効かせやすいので、compactでは強制OFF
+  if(mode === "compact"){
+    setAgeColsVisible(false);
+  }
+}
+
 async function main(){
   const months = await loadJSON('data/months.json');
-  const ms = (months.months||[]).slice().sort(); // asc
+  const ms = (months.months||[]).slice().sort();
 
   const monthSel = document.getElementById('monthSelect');
   monthSel.innerHTML = ms.map(m=>`<option value="${m}">${m}</option>`).join('');
@@ -373,7 +368,8 @@ async function main(){
   const pQ     = getParam('q');
   const pWard  = getParam('ward');
   const pSort  = getParam('sort');
-  const pAge   = getParam('age'); // "0" => hide age cols
+  const pAge   = getParam('age');   // "0" => hide age cols
+  const pView  = getParam('view');  // "compact" | "full" | ""
 
   monthSel.value = (pMonth && ms.includes(pMonth)) ? pMonth : (ms.length ? ms[ms.length-1] : '');
 
@@ -383,9 +379,15 @@ async function main(){
   const sortEl = document.getElementById('sort');
   if(pSort && Array.from(sortEl.options).some(o=>o.value===pSort)) sortEl.value = pSort;
 
+  // age cols initial
   setAgeColsVisible(pAge === "0" ? false : true);
 
   const wardSel = document.getElementById('wardSelect');
+  const viewSel = document.getElementById('viewMode');
+
+  // view select initial
+  if(pView && ["compact","full"].includes(pView)) viewSel.value = pView;
+  else viewSel.value = "auto";
 
   async function render(){
     const month = monthSel.value;
@@ -446,24 +448,32 @@ async function main(){
 
     arr = sortFacilities(arr, sort);
 
+    // count label: shown/total
     document.getElementById('countLabel').textContent =
       `${arr.length.toLocaleString('ja-JP')} / ${totalCount.toLocaleString('ja-JP')}`;
 
-    // table
+    // render table
     const tbody = document.querySelector('#tbl tbody');
     tbody.innerHTML = arr.map(f => rowHTML(f, prevMap.get(String(f.id)))).join('');
-    setAgeColsVisible(showAgeCols);
 
-    // cards
-    const cards = document.getElementById('cards');
-    cards.innerHTML = arr.map(f => cardHTML(f, prevMap.get(String(f.id)))).join('');
+    // apply view mode (after table is rendered)
+    let view = viewSel.value;
+    if(view === "auto"){
+      view = isMobile() ? "compact" : "full";
+    }
+    applyViewMode(view);
 
     // URL params
     setParam('month', monthSel.value);
     setParam('q', qEl.value.trim());
     setParam('ward', wardSel.value);
     setParam('sort', sortEl.value);
+
+    // age param：showAgeCols を維持（compactでは内部的にOFFされるがURLはユーザー意図を尊重）
     setParam('age', showAgeCols ? "" : "0");
+
+    // view param：auto はパラメータから消す（URLを汚さない）
+    setParam('view', (viewSel.value === "auto") ? "" : viewSel.value);
   }
 
   const renderDebounced = debounce(render, 220);
@@ -473,10 +483,20 @@ async function main(){
   wardSel.addEventListener('change', render);
   qEl.addEventListener('input', renderDebounced);
 
+  viewSel.addEventListener('change', render);
+
   document.getElementById('toggleCols').addEventListener('click', ()=>{
     setAgeColsVisible(!showAgeCols);
-    render();
+    render(); // 即反映
   });
+
+  // 画面幅が変わったら auto の時だけ追従
+  if(window.matchMedia){
+    const mq = window.matchMedia("(max-width: 768px)");
+    mq.addEventListener?.("change", ()=>{
+      if(viewSel.value === "auto") render();
+    });
+  }
 
   await render();
 }
