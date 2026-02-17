@@ -58,6 +58,14 @@ jobs:
           test -f scripts/apply_master_to_all_months.py
           ls -la scripts
 
+      - name: (One-time) Remove FY2024 month json to avoid kohoku-only leftovers
+        if: ${{ inputs.ward_filter == '' }}
+        run: |
+          set -euxo pipefail
+          # FY2024: 2024-04-01 .. 2025-03-01
+          for m in $(seq 4 12); do rm -f "data/2024-$(printf '%02d' $m)-01.json"; done
+          for m in $(seq 1 3);  do rm -f "data/2025-$(printf '%02d' $m)-01.json"; done
+
       - name: Backfill months
         env:
           WARD_FILTER: ${{ inputs.ward_filter }}
