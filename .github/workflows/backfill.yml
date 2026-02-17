@@ -71,7 +71,7 @@ jobs:
           WARD_FILTER: ${{ inputs.ward_filter }}
           MONTHS_BACK: ${{ inputs.months_back }}
           FORCE_BACKFILL: ${{ inputs.force_backfill }}
-          FORCE_BACKFILL: ${{ inputs.force_backfill }}
+          
         run: |
           set -euxo pipefail
           python -u scripts/backfill_last_year.py
