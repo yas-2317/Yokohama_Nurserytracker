@@ -3,61 +3,145 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>園の詳細</title>
-  <link rel="stylesheet" href="styles.css?v=20260215a"/>
+  <title>園詳細</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-<header>
+
+<header class="page-header">
   <div class="container">
-    <div class="topbar">
-      <a class="backlink" href="./">← 一覧に戻る</a>
+    <div class="header-top">
+      <div class="titleblock">
+        <h1 id="facName">園詳細</h1>
+        <div class="sub">
+          施設番号：<span id="facId">-</span>
+          <span class="sep">/</span>
+          最終更新：<span id="latestMonth">-</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <a class="btn-link" href="index.html">← 一覧へ戻る</a>
+      </div>
     </div>
-    <h1 id="title">園の詳細</h1>
-    <div class="sub" id="subtitle">-</div>
   </div>
 </header>
 
 <main class="container">
-  <div class="card" id="basic"></div>
 
-  <div class="card tablewrap">
-    <h2 class="h2">月次履歴</h2>
-    <table id="hist">
-      <thead>
-        <tr>
-          <th style="min-width:130px;">月</th>
-          <th>受入可能（合計）</th>
-          <th>入所待ち（合計）</th>
-          <th class="agecol">0歳 受入</th><th class="agecol">0歳 待ち</th>
-          <th class="agecol">1歳 受入</th><th class="agecol">1歳 待ち</th>
-          <th class="agecol">2歳 受入</th><th class="agecol">2歳 待ち</th>
-          <th class="agecol">3〜5歳 受入</th><th class="agecol">3〜5歳 待ち</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+  <!-- Summary (カード化) -->
+  <div class="card facility-hero">
+    <div class="hero-grid">
+      <div class="hero-main">
+        <div class="hero-lines">
+          <div class="hero-line">
+            <span class="label">住所</span>
+            <span id="facAddr" class="value">—</span>
+            <button id="copyAddr" class="btn-secondary btn-small" type="button">コピー</button>
+          </div>
+
+          <div class="hero-line">
+            <span class="label">地図</span>
+            <span id="facMap" class="value">—</span>
+          </div>
+
+          <div class="hero-line">
+            <span class="label">最寄り</span>
+            <span id="facStation" class="value">—</span>
+            <span class="sep">/</span>
+            <span id="facWalk" class="value">—</span>
+            <a id="sameStationLink" class="btn-link" href="#" style="display:none;">同駅の園を見る</a>
+          </div>
+        </div>
+
+        <div class="hero-metrics">
+          <div class="metric">
+            <div class="metric-title">最新：入所待ち（合計）</div>
+            <div class="metric-value" id="latestWait">-</div>
+            <div class="metric-sub">前月比 <span id="latestWaitDelta">—</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-title">最新：受入可能（合計）</div>
+            <div class="metric-value" id="latestAcc">-</div>
+            <div class="metric-sub">前月比 <span id="latestAccDelta">—</span></div>
+          </div>
+        </div>
+
+        <div class="chips" id="ageChips"></div>
+      </div>
+
+      <!-- Sparkline -->
+      <div class="hero-side">
+        <div class="small">推移（直近）</div>
+        <div class="spark-block">
+          <div class="spark-title">入所待ち（合計）</div>
+          <div id="sparkWait"></div>
+        </div>
+        <div class="spark-block">
+          <div class="spark-title">受入可能（合計）</div>
+          <div id="sparkAcc"></div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Compact history -->
+  <div class="card">
+    <div class="section-head">
+      <div>
+        <div class="section-title">月次推移（コンパクト）</div>
+        <div class="small">月 / 合計（待ち・受入） / 前月比（待ち・受入）</div>
+      </div>
+      <div class="section-actions">
+        <label class="inline">
+          <span class="small">表示件数</span>
+          <select id="limitSel">
+            <option value="12">直近12</option>
+            <option value="24" selected>直近24</option>
+            <option value="60">直近60</option>
+            <option value="999">全部</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="tablewrap tablewrap-tall">
+      <table id="hist">
+        <thead>
+          <tr>
+            <th style="min-width:120px;">月</th>
+            <th class="num" style="min-width:130px;">入所待ち（合計）</th>
+            <th style="min-width:130px;">前月比</th>
+            <th class="num" style="min-width:130px;">受入可能（合計）</th>
+            <th style="min-width:130px;">前月比</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <details class="details">
+      <summary>年齢別の推移を見る（0 / 1 / 2 / 3-5）</summary>
+      <div class="tablewrap tablewrap-tall">
+        <table id="histAge">
+          <thead>
+            <tr>
+              <th style="min-width:120px;">月</th>
+              <th class="num" style="min-width:90px;">0 受入</th><th class="num" style="min-width:90px;">0 待ち</th>
+              <th class="num" style="min-width:90px;">1 受入</th><th class="num" style="min-width:90px;">1 待ち</th>
+              <th class="num" style="min-width:90px;">2 受入</th><th class="num" style="min-width:90px;">2 待ち</th>
+              <th class="num" style="min-width:110px;">3-5 受入</th><th class="num" style="min-width:110px;">3-5 待ち</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+
 </main>
 
 <script src="common.js"></script>
 <script>
-function getParam(key){
-  const u = new URL(location.href);
-  return u.searchParams.get(key);
-}
-function safeStr(x){ return (x==null) ? '' : String(x); }
-function fmt(x){
-  if(x==null || x==='' ) return '—';
-  const n = Number(x);
-  return Number.isFinite(n) ? n.toLocaleString('ja-JP') : String(x);
-}
-async function loadJSON(url){
-  const bust = (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
-  const r = await fetch(url + bust, { cache: 'no-store' });
-  if(!r.ok) throw new Error(`Failed to load ${url}`);
-  return await r.json();
-}
-
 function getGroups(f){
   if(f.age_groups) return f.age_groups;
   const ages = f.ages || f.ages_0_5 || {};
@@ -77,85 +161,210 @@ function getGroups(f){
   };
 }
 
-function histRow(month, f){
-  const g = getGroups(f);
-  function acc(k){ return fmt(g?.[k]?.accept); }
-  function wai(k){ return fmt(g?.[k]?.wait); }
-  return `<tr>
-    <td>${safeStr(month)}</td>
-    <td>${fmt(f.totals?.accept)}</td>
-    <td>${fmt(f.totals?.wait)}</td>
-    <td class="agecol">${acc('0')}</td><td class="agecol">${wai('0')}</td>
-    <td class="agecol">${acc('1')}</td><td class="agecol">${wai('1')}</td>
-    <td class="agecol">${acc('2')}</td><td class="agecol">${wai('2')}</td>
-    <td class="agecol">${acc('3-5')}</td><td class="agecol">${wai('3-5')}</td>
-  </tr>`;
+function signDelta(n){
+  if(n==null) return `<span class="delta none">—</span>`;
+  if(n>0) return `<span class="delta plus">+${n}</span>`;
+  if(n<0) return `<span class="delta minus">${n}</span>`;
+  return `<span class="delta zero">0</span>`;
+}
+
+function makeSparkline(values, {width=260, height=60}={}){
+  // values: number[] (may contain null)
+  const xs = values.map(v => (v==null ? null : Number(v)));
+  const clean = xs.filter(v => v!=null && isFinite(v));
+  if(clean.length < 2){
+    return `<div class="small">—</div>`;
+  }
+  const min = Math.min(...clean);
+  const max = Math.max(...clean);
+  const pad = 6;
+  const w = width, h = height;
+
+  function y(v){
+    if(max===min) return h/2;
+    const t = (v - min) / (max - min);
+    return (h - pad) - t*(h - pad*2);
+  }
+  function x(i){
+    if(xs.length===1) return pad;
+    return pad + i*(w - pad*2)/(xs.length-1);
+  }
+
+  let d = '';
+  let started = false;
+  xs.forEach((v,i)=>{
+    if(v==null || !isFinite(v)) return;
+    const px = x(i), py = y(v);
+    if(!started){
+      d += `M ${px} ${py}`;
+      started = true;
+    } else {
+      d += ` L ${px} ${py}`;
+    }
+  });
+
+  return `
+  <svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="sparkline">
+    <path d="${d}" fill="none" stroke="currentColor" stroke-width="2" />
+  </svg>`;
 }
 
 async function main(){
-  const id = getParam('id');
-  if(!id) throw new Error('idが指定されていません');
-
-  const months = await loadJSON('data/months.json');
-  const ms = (months.months||[]).slice().sort().reverse(); // newest first
-
-  let latest = null;
-  let latestMonth = null;
-
-  const rows = [];
-  for(const m of ms){
-    const d = await loadJSON(`data/${m}.json`);
-    const f = (d.facilities||[]).find(x => String(x.id) === String(id));
-    if(!f) continue;
-    if(!latest){
-      latest = f;
-      latestMonth = m;
-    }
-    rows.push(histRow(m, f));
+  const fid = getParam('id');
+  if(!fid){
+    alert('id が指定されていません');
+    location.href = 'index.html';
+    return;
   }
 
-  if(!latest) throw new Error('対象施設が見つかりませんでした');
+  const monthsObj = await loadJSON('data/months.json');
+  const months = (monthsObj.months||[]).slice().sort(); // asc
 
-  document.getElementById('title').textContent = latest.name;
-  document.title = latest.name + ' | 園の詳細';
-  document.getElementById('subtitle').textContent = `施設番号：${safeStr(latest.id)} / 区：${safeStr(latest.ward)} / 最新：${safeStr(latestMonth)}`;
+  // load all months, pick facility
+  const hist = [];
+  for(const m of months){
+    try{
+      const obj = await loadJSON(`data/${m}.json`);
+      const fac = (obj.facilities||[]).find(x => String(x.id) === String(fid));
+      if(fac){
+        hist.push({month:m, fac});
+      }
+    }catch(e){
+      // ignore missing
+    }
+  }
+  if(hist.length===0){
+    alert('該当施設が見つかりません');
+    location.href = 'index.html';
+    return;
+  }
 
-  const addr = safeStr(latest.address||'');
-  const map = safeStr(latest.map_url||'');
-  const link = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map</a>` : '';
+  // latest & prev
+  const latest = hist[hist.length-1];
+  const prev = hist.length>=2 ? hist[hist.length-2] : null;
 
-  const g = getGroups(latest);
-  const a0 = fmt(g?.["0"]?.accept), w0 = fmt(g?.["0"]?.wait);
-  const a1 = fmt(g?.["1"]?.accept), w1 = fmt(g?.["1"]?.wait);
-  const a2 = fmt(g?.["2"]?.accept), w2 = fmt(g?.["2"]?.wait);
-  const a35 = fmt(g?.["3-5"]?.accept), w35 = fmt(g?.["3-5"]?.wait);
+  const f = latest.fac;
+  const pf = prev ? prev.fac : null;
 
-  document.getElementById('basic').innerHTML = `
-    <div class="kpi">
-      <div class="pill">最新 受入可能（合計）：${fmt(latest.totals?.accept)}</div>
-      <div class="pill">最新 入所待ち（合計）：${fmt(latest.totals?.wait)}</div>
-      <div class="pill">0歳：受入 ${a0} / 待ち ${w0}</div>
-      <div class="pill">1歳：受入 ${a1} / 待ち ${w1}</div>
-      <div class="pill">2歳：受入 ${a2} / 待ち ${w2}</div>
-      <div class="pill">3〜5歳：受入 ${a35} / 待ち ${w35}</div>
-    </div>
-    <div class="detailgrid">
-      <div><b>住所</b><br>${addr || '（未設定）'}</div>
-      <div><b>地図</b><br>${link || '（未設定）'}</div>
-    </div>
+  // title
+  document.title = `${safeStr(f.name)}（園詳細）`;
+  document.getElementById('facName').textContent = safeStr(f.name);
+  document.getElementById('facId').textContent = safeStr(f.id);
+  document.getElementById('latestMonth').textContent = latest.month;
+
+  // address/map/station/walk
+  const addr = safeStr(f.address || '');
+  document.getElementById('facAddr').textContent = addr || '—';
+
+  const map = safeStr(f.map_url || '');
+  document.getElementById('facMap').innerHTML = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map を開く</a>` : '—';
+
+  const st = safeStr(f.nearest_station || '');
+  const wk = toIntOrNull(f.walk_minutes);
+  document.getElementById('facStation').textContent = st || '—';
+  document.getElementById('facWalk').textContent = (wk==null ? '—' : `徒歩 ${wk}分`);
+
+  // same station link
+  const stationQuery = (safeStr(f.station_kana).trim() || safeStr(f.nearest_station).replace(/駅$/,'').trim());
+  if(stationQuery){
+    const url = `index.html?q=${encodeURIComponent(stationQuery)}&view=basic&sort=station_walk_asc`;
+    const a = document.getElementById('sameStationLink');
+    a.href = url;
+    a.style.display = '';
+  }
+
+  // copy address
+  document.getElementById('copyAddr').addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(addr);
+      toast('住所をコピーしました');
+    }catch(e){
+      alert('コピーに失敗しました');
+    }
+  });
+
+  // latest totals & deltas
+  const wait = Number(f.totals?.wait ?? 0);
+  const acc  = Number(f.totals?.accept ?? 0);
+  const dWait = pf ? (Number(f.totals?.wait||0) - Number(pf.totals?.wait||0)) : null;
+  const dAcc  = pf ? (Number(f.totals?.accept||0) - Number(pf.totals?.accept||0)) : null;
+
+  document.getElementById('latestWait').textContent = fmtNum(wait);
+  document.getElementById('latestAcc').textContent  = fmtNum(acc);
+  document.getElementById('latestWaitDelta').innerHTML = signDelta(dWait);
+  document.getElementById('latestAccDelta').innerHTML  = signDelta(dAcc);
+
+  // age chips (latest)
+  const g = getGroups(f);
+  function chip(label, a, w){
+    const aa = fmt(a);
+    const ww = fmt(w);
+    return `<div class="chip"><div class="chip-title">${label}</div><div class="chip-body">受入 ${aa} / 待ち ${ww}</div></div>`;
+  }
+  document.getElementById('ageChips').innerHTML = `
+    ${chip('0歳', g?.['0']?.accept, g?.['0']?.wait)}
+    ${chip('1歳', g?.['1']?.accept, g?.['1']?.wait)}
+    ${chip('2歳', g?.['2']?.accept, g?.['2']?.wait)}
+    ${chip('3〜5歳', g?.['3-5']?.accept, g?.['3-5']?.wait)}
   `;
 
-  document.querySelector('#hist tbody').innerHTML = rows.join('');
+  // sparkline from last N
+  const lastN = hist.slice(Math.max(0, hist.length-24));
+  const waitSeries = lastN.map(x => Number(x.fac.totals?.wait ?? 0));
+  const accSeries  = lastN.map(x => Number(x.fac.totals?.accept ?? 0));
+  document.getElementById('sparkWait').innerHTML = makeSparkline(waitSeries);
+  document.getElementById('sparkAcc').innerHTML  = makeSparkline(accSeries);
+
+  // history tables
+  const limitSel = document.getElementById('limitSel');
+
+  function renderTables(){
+    const lim = Number(limitSel.value || 24);
+    const slice = (lim>=999) ? hist : hist.slice(Math.max(0, hist.length - lim));
+
+    // compact table (with deltas)
+    const rows = [];
+    for(let i=0;i<slice.length;i++){
+      const cur = slice[i];
+      const prevv = (i>0) ? slice[i-1] : null;
+      const cw = Number(cur.fac.totals?.wait ?? 0);
+      const ca = Number(cur.fac.totals?.accept ?? 0);
+      const dw = prevv ? (cw - Number(prevv.fac.totals?.wait ?? 0)) : null;
+      const da = prevv ? (ca - Number(prevv.fac.totals?.accept ?? 0)) : null;
+
+      rows.push(`<tr>
+        <td>${cur.month}</td>
+        <td class="num">${fmtNum(cw)}</td>
+        <td>${signDelta(dw)}</td>
+        <td class="num">${fmtNum(ca)}</td>
+        <td>${signDelta(da)}</td>
+      </tr>`);
+    }
+    document.querySelector('#hist tbody').innerHTML = rows.reverse().join(''); // latest on top
+
+    // age history (latest on top)
+    const rows2 = slice.map(cur=>{
+      const gg = getGroups(cur.fac);
+      function n(v){ return fmt(v); }
+      return `<tr>
+        <td>${cur.month}</td>
+        <td class="num">${n(gg?.['0']?.accept)}</td><td class="num">${n(gg?.['0']?.wait)}</td>
+        <td class="num">${n(gg?.['1']?.accept)}</td><td class="num">${n(gg?.['1']?.wait)}</td>
+        <td class="num">${n(gg?.['2']?.accept)}</td><td class="num">${n(gg?.['2']?.wait)}</td>
+        <td class="num">${n(gg?.['3-5']?.accept)}</td><td class="num">${n(gg?.['3-5']?.wait)}</td>
+      </tr>`;
+    });
+    document.querySelector('#histAge tbody').innerHTML = rows2.reverse().join('');
+  }
+
+  limitSel.addEventListener('change', renderTables);
+  renderTables();
 }
 
-function boot(){
-  main().catch(err=>{
-    alert(err.message);
-    console.error(err);
-  });
-}
-document.addEventListener('DOMContentLoaded', boot);
-window.addEventListener('pageshow', (e)=>{ if(e.persisted) boot(); });
+main().catch(err=>{
+  alert(err.message);
+  console.error(err);
+});
 </script>
 </body>
 </html>
