@@ -487,8 +487,11 @@ async function main(){
   document.getElementById('facWeb').innerHTML =
     web ? `<a href="${web}" target="_blank" rel="noopener">公式サイトを開く</a>` : '—';
 
-  const phone = safeStr(f.phone || "");
-  document.getElementById('facPhone').textContent = phone || '—';
+  const phoneRaw = safeStr(f.phone || "");
+  const phoneJP = formatJPPhone(phoneRaw);
+  document.getElementById('facPhone').innerHTML =
+    phoneJP ? `<a href="${telHref(phoneJP)}">${phoneJP}</a>` : '—';
+
 
   // copy
   const copyBtn = document.getElementById('copyAddr');
