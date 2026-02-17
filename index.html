@@ -41,8 +41,7 @@
 <main class="container">
   <div class="card">
     <div class="kpi" id="kpi"></div>
-    <div class="small">
-          </div>
+    <div class="small"></div>
   </div>
 
   <div class="card tablewrap">
@@ -89,15 +88,6 @@ function setAgeColsVisible(v){
   document.getElementById('toggleCols').textContent = v ? '年齢別列：非表示' : '年齢別列：表示';
 }
 
-function toHira(s){
-  // カタカナ→ひらがな
-  return (s||"").replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
-}
-function toKata(s){
-  // ひらがな→カタカナ
-  return (s||"").replace(/[\u3041-\u3096]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
-}
-
 function signDelta(n){
   if(n==null) return `<span class="delta none">—</span>`;
   if(n>0) return `<span class="delta plus">+${n}</span>`;
@@ -106,10 +96,8 @@ function signDelta(n){
 }
 
 function getGroups(f){
-  // new schema
   if(f.age_groups) return f.age_groups;
 
-  // old schema fallback
   const ages = f.ages || f.ages_0_5 || {};
   function v(k, field){ return ages[k]?.[field]; }
   function sum3(field){
@@ -128,16 +116,16 @@ function getGroups(f){
 }
 
 function stationKey(f){
-  // station_kana があればそれ優先（ひらがなで統一して比較）
+  // station_kana 優先、なければ nearest_station
   const sk = normalizeForSearch(f.station_kana || "");
-  const st = normalizeForSearch(f.nearest_station || "");
-  return sk || st || "んんん";
+  const st = normalizeForSearch((f.nearest_station || "").replace(/駅$/,''));
+  return sk || st || "んんん"; // 不明は最後に寄せる
 }
 
 function rowHTML(f, prevF){
   const ward = safeStr(f.ward||'');
   const station = safeStr(f.nearest_station||'');
-  const walk = (f.walk_minutes==null || f.walk_minutes==="" ? '—' : `${Number(f.walk_minutes)}分`);
+  const walk = (f.walk_minutes==null || String(f.walk_minutes).trim()==="" ? '—' : `${Number(f.walk_minutes)}分`);
 
   const addr = safeStr(f.address||'');
   const map = safeStr(f.map_url||'');
@@ -199,13 +187,22 @@ function sortFacilities(arr, mode){
       const sx = stationKey(x);
       const sy = stationKey(y);
       if(sx !== sy) return sx.localeCompare(sy,'ja');
-      const wx = (x.walk_minutes==null || x.walk_minutes==="" ? 9999 : Number(x.walk_minutes));
-      const wy = (y.walk_minutes==null || y.walk_minutes==="" ? 9999 : Number(y.walk_minutes));
+
+      const wx = (x.walk_minutes==null || String(x.walk_minutes).trim()==="" ? 9999 : Number(x.walk_minutes));
+      const wy = (y.walk_minutes==null || String(y.walk_minutes).trim()==="" ? 9999 : Number(y.walk_minutes));
       if(wx !== wy) return wx - wy;
+
       return safeStr(x.name).localeCompare(safeStr(y.name),'ja');
     });
   } else if(mode==='name_asc'){
-    a.sort((x,y)=>safeStr(x.name).localeCompare(safeStr(y.name),'ja'));
+    // name_kana があるならそれを優先して並べる（より自然）
+    a.sort((x,y)=>{
+      const kx = normalizeForSearch(x.name_kana || x.name || "");
+      const ky = normalizeForSearch(y.name_kana || y.name || "");
+      const d = kx.localeCompare(ky,'ja');
+      if(d!==0) return d;
+      return safeStr(x.name).localeCompare(safeStr(y.name),'ja');
+    });
   }
   return a;
 }
@@ -213,20 +210,23 @@ function sortFacilities(arr, mode){
 function matchQuery(f, q){
   if(!q) return true;
 
+  // 入力を検索用に正規化（common.jsでカナ→ひらがな化済み）
   const q0 = normalizeForSearch(q);
-  const qH = normalizeForSearch(toHira(q0));
-  const qK = normalizeForSearch(toKata(q0));
+
+  // ひらがな/カタカナ揺れ対策（念のため）
+  const qH = normalizeForSearch(toHira(q));
+  const qK = normalizeForSearch(toKata(q));
 
   const name = normalizeForSearch(f.name);
   const nk   = normalizeForSearch(f.name_kana);
-  const st   = normalizeForSearch(f.nearest_station);
+  const st   = normalizeForSearch((f.nearest_station||"").replace(/駅$/,''));
   const sk   = normalizeForSearch(f.station_kana);
 
   return (
     name.includes(q0) ||
-    nk.includes(qH) || nk.includes(qK) ||
+    nk.includes(q0) || nk.includes(qH) || nk.includes(qK) ||
     st.includes(q0) ||
-    sk.includes(qH) || sk.includes(qK)
+    sk.includes(q0) || sk.includes(qH) || sk.includes(qK)
   );
 }
 
@@ -239,17 +239,43 @@ function buildWardOptions(facilities){
   return Array.from(set).sort((a,b)=>a.localeCompare(b,'ja'));
 }
 
+// debounce (search input)
+function debounce(fn, ms=250){
+  let t=null;
+  return (...args)=>{
+    if(t) clearTimeout(t);
+    t=setTimeout(()=>fn(...args), ms);
+  };
+}
+
 async function main(){
   const months = await loadJSON('data/months.json');
-  const ms = (months.months||[]).slice().sort();
-  const sel = document.getElementById('monthSelect');
-  sel.innerHTML = ms.map(m=>`<option value="${m}">${m}</option>`).join('');
-  sel.value = ms.length ? ms[ms.length-1] : '';
+  const ms = (months.months||[]).slice().sort(); // asc
+  const monthSel = document.getElementById('monthSelect');
+  monthSel.innerHTML = ms.map(m=>`<option value="${m}">${m}</option>`).join('');
 
-  setAgeColsVisible(true);
+  // ---- restore state from URL params ----
+  const pMonth = getParam('month');
+  const pQ     = getParam('q');
+  const pWard  = getParam('ward');
+  const pSort  = getParam('sort');
+  const pAge   = getParam('age'); // "0" => hide age cols
+
+  monthSel.value = (pMonth && ms.includes(pMonth)) ? pMonth : (ms.length ? ms[ms.length-1] : '');
+
+  const qEl = document.getElementById('q');
+  if(pQ!=null) qEl.value = pQ;
+
+  const sortEl = document.getElementById('sort');
+  if(pSort && Array.from(sortEl.options).some(o=>o.value===pSort)) sortEl.value = pSort;
+
+  // age cols
+  setAgeColsVisible(pAge === "0" ? false : true);
+
+  const wardSel = document.getElementById('wardSelect');
 
   async function render(){
-    const month = sel.value;
+    const month = monthSel.value;
     const idx = ms.indexOf(month);
     const prevMonth = (idx > 0) ? ms[idx - 1] : null;
 
@@ -265,14 +291,15 @@ async function main(){
       }
     }
 
-    // ward dropdown (depends on selected month)
-    const wardSel = document.getElementById('wardSelect');
+    // ward dropdown（選択中の値は維持）
     const wards = buildWardOptions(data.facilities||[]);
-    const curWard = wardSel.value;
-    wardSel.innerHTML = `<option value="">全区</option>` + wards.map(w=>`<option value="${w}">${w}</option>`).join('');
-    if(wards.includes(curWard)) wardSel.value = curWard;
+    const curWard = (getParam('ward') ?? wardSel.value) || "";
+    wardSel.innerHTML =
+      `<option value="">全区</option>` +
+      wards.map(w=>`<option value="${w}">${w}</option>`).join('');
+    wardSel.value = wards.includes(curWard) ? curWard : "";
 
-    // KPI
+    // KPI（全体は常に “その月の全施設” を対象に）
     const totWait = (data.facilities||[]).reduce((s,f)=>s+Number(f.totals?.wait||0),0);
     const totAcc  = (data.facilities||[]).reduce((s,f)=>s+Number(f.totals?.accept||0),0);
 
@@ -282,7 +309,6 @@ async function main(){
     const dTotWait = (prevTotWait==null) ? null : (totWait - prevTotWait);
     const dTotAcc  = (prevTotAcc==null) ? null : (totAcc - prevTotAcc);
 
-    document.getElementById('countLabel').textContent = (data.facilities||[]).length.toLocaleString('ja-JP');
     document.getElementById('kpi').innerHTML = `
       <div class="pill">合計 入所待ち：${fmt(totWait)}（前月比 ${signDelta(dTotWait)}）</div>
       <div class="pill">合計 受入可能：${fmt(totAcc)}（前月比 ${signDelta(dTotAcc)}）</div>
@@ -290,11 +316,13 @@ async function main(){
     `;
 
     // filter + sort
-    const q = document.getElementById('q').value.trim();
-    const sort = document.getElementById('sort').value;
+    const q = qEl.value.trim();
+    const sort = sortEl.value;
     const wardFilter = wardSel.value;
 
     let arr = data.facilities || [];
+    const totalCount = arr.length;
+
     if(wardFilter){
       arr = arr.filter(f => safeStr(f.ward).trim() === wardFilter);
     }
@@ -304,17 +332,33 @@ async function main(){
 
     arr = sortFacilities(arr, sort);
 
+    // count label: shown/total
+    document.getElementById('countLabel').textContent =
+      `${arr.length.toLocaleString('ja-JP')} / ${totalCount.toLocaleString('ja-JP')}`;
+
+    // render table
     const tbody = document.querySelector('#tbl tbody');
     tbody.innerHTML = arr.map(f => rowHTML(f, prevMap.get(String(f.id)))).join('');
     setAgeColsVisible(showAgeCols);
+
+    // ---- update URL params for share/back ----
+    setParam('month', monthSel.value);
+    setParam('q', qEl.value.trim());
+    setParam('ward', wardSel.value);
+    setParam('sort', sortEl.value);
+    setParam('age', showAgeCols ? "" : "0");
   }
 
-  sel.addEventListener('change', render);
-  document.getElementById('q').addEventListener('input', render);
-  document.getElementById('sort').addEventListener('change', render);
-  document.getElementById('wardSelect').addEventListener('change', render);
+  const renderDebounced = debounce(render, 220);
+
+  monthSel.addEventListener('change', render);
+  sortEl.addEventListener('change', render);
+  wardSel.addEventListener('change', render);
+  qEl.addEventListener('input', renderDebounced);
+
   document.getElementById('toggleCols').addEventListener('click', ()=>{
     setAgeColsVisible(!showAgeCols);
+    render(); // 即反映
   });
 
   await render();
