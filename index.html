@@ -9,20 +9,28 @@
   <style>
     .modebar{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
     .modebar .badge{ margin-left:auto; }
-
     th.hide-col, td.hide-col { display:none !important; }
 
-    /* --- 縦スクロールでもヘッダー固定にするための「スクロール枠」 --- */
+    /* ====== ここがポイント：sticky が確実に効く“唯一のスクロール枠” ======
+       - sticky は「スクロールする要素」を基準に固定されるので
+         tablewrap(=overflow) を一段に揃えるのが安定。
+       - styles.css 側の overflow 指定に負けないように強めに指定。 */
     .tablewrap{
-      overflow:auto;
+      overflow: auto !important;
       -webkit-overflow-scrolling: touch;
-      position: relative;      /* sticky の基準 */
+      position: relative;
       max-width: 100%;
-      max-height: 70vh;        /* 好みで 60〜80vh */
+      max-height: 70vh;
       border-radius: 12px;
     }
 
-    /* sticky が崩れにくい */
+    /* ===== thead が消える系のCSSを確実に打ち消す ===== */
+    #tbl thead { display: table-header-group !important; visibility: visible !important; }
+    #tbl tbody { display: table-row-group !important; }
+    #tbl tr { display: table-row !important; }
+    #tbl th, #tbl td { display: table-cell !important; }
+
+    /* sticky が崩れにくい構成 */
     #tbl{
       border-collapse: separate;
       border-spacing: 0;
@@ -30,41 +38,35 @@
       background: #fff;
     }
 
-    /* ===== thead が消える対策（styles.css の display:none 等を強制上書き） ===== */
-    #tbl thead { display: table-header-group !important; }
-    #tbl tbody { display: table-row-group !important; }
-    #tbl tr    { display: table-row !important; }
-    #tbl th, #tbl td { display: table-cell !important; }
-
     /* ヘッダー固定（縦スクロールでも固定される） */
     #tbl thead th{
       position: sticky !important;
       top: 0 !important;
-      z-index: 10 !important;
+      z-index: 50 !important;         /* ★高めにする（行セルに負けない） */
       background: #fff !important;
-      box-shadow: 0 1px 0 rgba(0,0,0,.08);
+      box-shadow: 0 2px 0 rgba(0,0,0,.10);
     }
 
     /* 左端（行ヘッダー＝園名列）固定 */
     #tbl th.col-name,
     #tbl td.col-name{
-      position: sticky;
-      left: 0;
-      background: #fff;
+      position: sticky !important;
+      left: 0 !important;
+      background: #fff !important;
     }
 
     /* 左上（園名ヘッダー）は最前面 */
     #tbl thead th.col-name{
-      z-index: 20 !important;
+      z-index: 60 !important;
     }
 
-    /* 行ヘッダー（園名列）が “消える/隠れる” 対策 */
+    /* 行ヘッダー（園名列）が他セルに負けない */
     #tbl td.col-name{
-      z-index: 6; /* 他セルに負けない */
-      box-shadow: 1px 0 0 rgba(0,0,0,.08);
+      z-index: 40 !important;
+      box-shadow: 1px 0 0 rgba(0,0,0,.10);
     }
 
-    /* 園名列：基本は1行省略（スマホもPCも） */
+    /* 園名列：省略 */
     #tbl th.col-name{ min-width: 240px; }
     #tbl td.col-name{
       min-width: 240px;
@@ -74,28 +76,26 @@
       text-overflow: ellipsis;
     }
 
-    /* 住所列：PCは1行省略表示に（要望） */
+    /* 住所列：PCは1行省略表示 */
     @media (min-width: 769px){
       #tbl td.col-addr{
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 360px; /* 好みで 300〜520 */
+        max-width: 360px;
       }
     }
 
     /* スマホ：園名列を細くして “園名以外” が見えるように */
     @media (max-width: 768px){
-      #tbl th.col-name{ min-width: 100px; }
-      #tbl td.col-name{ min-width: 80px; max-width: 100px; }
+      #tbl th.col-name{ min-width: 110px; }
+      #tbl td.col-name{ min-width: 90px; max-width: 110px; }
 
       /* 横スクロール前提（表は維持） */
-      #tbl{ min-width: 760px; }
+      #tbl{ min-width: 720px; }
 
       .modebar .badge{ width:100%; margin-left:0; }
       .scrollhint{ display:block; margin-top:8px; }
-
-      /* スマホでは縦高さを少し増やして一覧性UP */
       .tablewrap{ max-height: 75vh; }
     }
 
@@ -160,30 +160,26 @@
     <table id="tbl">
       <thead>
         <tr>
-          <th data-col="name" class="col-name" style="min-width:240px;">園名</th>
-
-          <!-- ★列ズレ防止：theadにも ward を戻す（tbody側と一致させる） -->
-          <th data-col="ward" style="min-width:120px;">区</th>
-
-          <th data-col="station" style="min-width:140px;">最寄り駅</th>
+          <th data-col="name" class="col-name">園名</th>
+          <th data-col="station" style="min-width:120px;">最寄り駅</th>
           <th data-col="walk" style="min-width:80px;">徒歩</th>
 
-          <th data-col="accept" style="min-width:110px;">受入可能（合計）</th>
-          <th data-col="wait" style="min-width:110px;">入所待ち（合計）</th>
-          <th data-col="dwait" style="min-width:120px;">前月比 入所待ち</th>
-          <th data-col="dacc" style="min-width:120px;">前月比 受入可能</th>
+          <th data-col="accept" style="min-width:90px;">受入（合計）</th>
+          <th data-col="wait" style="min-width:90px;">待ち（合計）</th>
+          <th data-col="dwait" style="min-width:110px;">前月比 待ち</th>
+          <th data-col="dacc" style="min-width:110px;">前月比 受入</th>
 
-          <th data-col="a0a" class="agecol" style="min-width:90px;">0歳 受入</th>
-          <th data-col="a0w" class="agecol" style="min-width:90px;">0歳 待ち</th>
-          <th data-col="a1a" class="agecol" style="min-width:90px;">1歳 受入</th>
-          <th data-col="a1w" class="agecol" style="min-width:90px;">1歳 待ち</th>
-          <th data-col="a2a" class="agecol" style="min-width:90px;">2歳 受入</th>
-          <th data-col="a2w" class="agecol" style="min-width:90px;">2歳 待ち</th>
-          <th data-col="a35a" class="agecol" style="min-width:110px;">3〜5歳 受入</th>
-          <th data-col="a35w" class="agecol" style="min-width:110px;">3〜5歳 待ち</th>
+          <th data-col="a0a" class="agecol" style="min-width:80px;">0 受入</th>
+          <th data-col="a0w" class="agecol" style="min-width:80px;">0 待ち</th>
+          <th data-col="a1a" class="agecol" style="min-width:80px;">1 受入</th>
+          <th data-col="a1w" class="agecol" style="min-width:80px;">1 待ち</th>
+          <th data-col="a2a" class="agecol" style="min-width:80px;">2 受入</th>
+          <th data-col="a2w" class="agecol" style="min-width:80px;">2 待ち</th>
+          <th data-col="a35a" class="agecol" style="min-width:90px;">3-5 受入</th>
+          <th data-col="a35w" class="agecol" style="min-width:90px;">3-5 待ち</th>
 
           <th data-col="addr" style="min-width:320px;">住所</th>
-          <th data-col="map" style="min-width:150px;">地図</th>
+          <th data-col="map" style="min-width:120px;">地図</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -258,7 +254,6 @@ function stationKey(f){
 }
 
 function rowHTML(f, prevF){
-  const ward = safeStr(f.ward||'');
   const station = safeStr(f.nearest_station||'');
   const walk = (f.walk_minutes==null || String(f.walk_minutes).trim()==="" ? '—' : `${Number(f.walk_minutes)}分`);
 
@@ -279,7 +274,6 @@ function rowHTML(f, prevF){
       <div class="small">施設番号：${safeStr(f.id)}</div>
     </td>
 
-    <td data-col="ward">${ward || '—'}</td>
     <td data-col="station">${station || '—'}</td>
     <td data-col="walk">${walk}</td>
 
@@ -288,10 +282,14 @@ function rowHTML(f, prevF){
     <td data-col="dwait">${signDelta(dWait)}</td>
     <td data-col="dacc">${signDelta(dAcc)}</td>
 
-    <td data-col="a0a" class="agecol">${acc('0')}</td><td data-col="a0w" class="agecol">${wai('0')}</td>
-    <td data-col="a1a" class="agecol">${acc('1')}</td><td data-col="a1w" class="agecol">${wai('1')}</td>
-    <td data-col="a2a" class="agecol">${acc('2')}</td><td data-col="a2w" class="agecol">${wai('2')}</td>
-    <td data-col="a35a" class="agecol">${acc('3-5')}</td><td data-col="a35w" class="agecol">${wai('3-5')}</td>
+    <td data-col="a0a" class="agecol">${acc('0')}</td>
+    <td data-col="a0w" class="agecol">${wai('0')}</td>
+    <td data-col="a1a" class="agecol">${acc('1')}</td>
+    <td data-col="a1w" class="agecol">${wai('1')}</td>
+    <td data-col="a2a" class="agecol">${acc('2')}</td>
+    <td data-col="a2w" class="agecol">${wai('2')}</td>
+    <td data-col="a35a" class="agecol">${acc('3-5')}</td>
+    <td data-col="a35w" class="agecol">${wai('3-5')}</td>
 
     <td data-col="addr" class="col-addr">${addr || '—'}</td>
     <td data-col="map">${mapLink}</td>
@@ -377,7 +375,6 @@ function debounce(fn, ms=250){
 const COMPACT_HIDE_COLS = new Set([
   "addr","map",
   "dwait","dacc",
-  "ward",
   "a0a","a0w","a1a","a1w","a2a","a2w","a35a","a35w"
 ]);
 function isMobile(){ return window.matchMedia && window.matchMedia("(max-width: 768px)").matches; }
@@ -395,9 +392,7 @@ function applyViewMode(mode){
     td.classList.toggle("hide-col", hide && COMPACT_HIDE_COLS.has(c));
   });
 
-  if(mode === "compact"){
-    setAgeColsVisible(false);
-  }
+  if(mode === "compact"){ setAgeColsVisible(false); }
 }
 
 async function main(){
@@ -448,15 +443,13 @@ async function main(){
       }
     }
 
-    // ward dropdown（“今の選択” を優先して維持。初回だけURLを反映）
     const wards = buildWardOptions(data.facilities||[]);
-    const keepWard = (wardSel.value || (pWard ?? "")) || "";
+    const curWard = (pWard ?? wardSel.value) || "";
     wardSel.innerHTML =
       `<option value="">全区</option>` +
       wards.map(w=>`<option value="${w}">${w}</option>`).join('');
-    wardSel.value = wards.includes(keepWard) ? keepWard : "";
+    wardSel.value = wards.includes(curWard) ? curWard : "";
 
-    // KPI (whole month)
     const totWait = (data.facilities||[]).reduce((s,f)=>s+Number(f.totals?.wait||0),0);
     const totAcc  = (data.facilities||[]).reduce((s,f)=>s+Number(f.totals?.accept||0),0);
 
@@ -472,7 +465,6 @@ async function main(){
       <div class="pill">対象：${safeStr(data.ward||"横浜市")}</div>
     `;
 
-    // filter + sort
     const q = qEl.value.trim();
     const sort = sortEl.value;
     const wardFilter = wardSel.value;
@@ -491,16 +483,13 @@ async function main(){
     document.getElementById('countLabel').textContent =
       `${arr.length.toLocaleString('ja-JP')} / ${totalCount.toLocaleString('ja-JP')}`;
 
-    // render table
     const tbody = document.querySelector('#tbl tbody');
     tbody.innerHTML = arr.map(f => rowHTML(f, prevMap.get(String(f.id)))).join('');
 
-    // apply view mode
     let view = viewSel.value;
     if(view === "auto"){ view = isMobile() ? "compact" : "full"; }
     applyViewMode(view);
 
-    // URL params
     setParam('month', monthSel.value);
     setParam('q', qEl.value.trim());
     setParam('ward', wardSel.value);
