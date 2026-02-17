@@ -6,25 +6,86 @@
   <title>横浜市 保育園 受入可能数・入所待ち人数（年齢別）</title>
   <link rel="stylesheet" href="styles.css"/>
 
-  <!-- スマホで「表は維持しつつ」見やすくする最小CSS -->
+  <!-- 追加：スマホ/PCでの表の見え方調整 + ヘッダー/左端固定 -->
   <style>
+    /* “表は維持”のまま、スマホはコンパクト列にする */
     .modebar{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
     .modebar .badge{ margin-left:auto; }
 
-    /* 列の表示/非表示（JSが th/td に hide-col を付ける） */
+    /* 列の表示/非表示（JSが td/th に .hide-col を付けます） */
     th.hide-col, td.hide-col { display:none !important; }
 
-    /* 表は消さない。スマホ時は「列を絞る」+ 横スクロール量を減らす */
+    /* --- 表スクロール領域 --- */
+    .tablewrap{
+      overflow:auto;             /* 横も縦もスクロール可 */
+      -webkit-overflow-scrolling: touch;
+      position: relative;        /* sticky の基準 */
+      max-width: 100%;
+    }
+
+    /* sticky を安定させるため（collapse だと崩れるブラウザがある） */
+    #tbl{
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+
+    /* ヘッダー固定（上） */
+    #tbl thead th{
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: #fff;          /* ヘッダーが透けないように */
+    }
+
+    /* 左端（園名列）固定 */
+    #tbl th.col-name,
+    #tbl td.col-name{
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      background: #fff;
+    }
+
+    /* 左上（園名ヘッダー）は最前面 */
+    #tbl thead th.col-name{
+      z-index: 6;
+    }
+
+    /* 園名列：PCは広め */
+    #tbl th.col-name{ min-width: 240px; }
+    #tbl td.col-name{
+      min-width: 240px;
+      max-width: 360px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* スマホだけ：園名列を細くして “園名以外” が見えるように */
     @media (max-width: 768px){
-      /* テーブルを絶対に隠さない（念のため） */
-      .tablewrap{ display:block !important; }
-      #tbl{ display:table !important; }
+      #tbl th.col-name{ min-width: 165px; }
+      #tbl td.col-name{
+        min-width: 165px;
+        max-width: 190px;        /* ここが効く：園名が太くなりすぎない */
+      }
 
-      /* 横幅は“最低限”確保（列を絞るので過剰に大きくしない） */
-      table{ min-width: 720px; }
+      /* スマホ時はテーブルが消えないよう保証（横スクロール前提） */
+      #tbl{ min-width: 720px; }
 
-      /* modebar の説明は縦に落とす */
       .modebar .badge{ width:100%; margin-left:0; }
+
+      .scrollhint{
+        display:block;
+        margin-top:8px;
+      }
+    }
+
+    /* 横スクロール案内（スマホのみ表示） */
+    .scrollhint{
+      display:none;
+      font-size: 12px;
+      opacity: .8;
     }
   </style>
 </head>
@@ -59,7 +120,7 @@
       <span class="badge">※「入所待ち人数」は園ごとの申込件数（重複計上あり）</span>
     </div>
 
-    <!-- 表示モード（スマホ:コンパクト / PC:詳細） -->
+    <!-- 追加：スマホの一覧性のための “表示モード” -->
     <div class="modebar">
       <label class="inline">
         <span class="small">表示モード</span>
@@ -84,15 +145,15 @@
     <table id="tbl">
       <thead>
         <tr>
-          <th data-col="name" style="min-width:120px;">園名</th>
-          <th data-col="ward" style="min-width:60px;">区</th>
-          <th data-col="station" style="min-width:90px;">最寄り駅</th>
+          <th data-col="name" class="col-name" style="min-width:240px;">園名</th>
+          <th data-col="ward" style="min-width:120px;">区</th>
+          <th data-col="station" style="min-width:150px;">最寄り駅</th>
           <th data-col="walk" style="min-width:90px;">徒歩</th>
 
-          <th data-col="accept" style="min-width:80px;">受入可能（合計）</th>
-          <th data-col="wait" style="min-width:80px;">入所待ち（合計）</th>
-          <th data-col="dwait" style="min-width:80px;">前月比 入所待ち</th>
-          <th data-col="dacc" style="min-width:80px;">前月比 受入可能</th>
+          <th data-col="accept" style="min-width:110px;">受入可能（合計）</th>
+          <th data-col="wait" style="min-width:110px;">入所待ち（合計）</th>
+          <th data-col="dwait" style="min-width:120px;">前月比 入所待ち</th>
+          <th data-col="dacc" style="min-width:120px;">前月比 受入可能</th>
 
           <th data-col="a0a" class="agecol" style="min-width:90px;">0歳 受入</th>
           <th data-col="a0w" class="agecol" style="min-width:90px;">0歳 待ち</th>
@@ -103,12 +164,14 @@
           <th data-col="a35a" class="agecol" style="min-width:110px;">3〜5歳 受入</th>
           <th data-col="a35w" class="agecol" style="min-width:110px;">3〜5歳 待ち</th>
 
-          <th data-col="addr" style="min-width:240px;">住所</th>
+          <th data-col="addr" style="min-width:320px;">住所</th>
           <th data-col="map" style="min-width:120px;">地図</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
+
+    <div class="scrollhint">※ スマホは横にスクロールできます（園名列とヘッダーは固定されます）</div>
   </div>
 
   <div class="footer">
@@ -118,54 +181,27 @@
 
 <script src="common.js"></script>
 <script>
-/* =========================================================
-   Safety layer:
-   - common.js があってもなくても動くようにする
-   - ここで未定義事故を潰す（normalizeForSearch / setParam など）
-   ========================================================= */
+/* =========================
+   index-local helpers
+   ========================= */
 
-const _safeStr = (typeof safeStr === "function") ? safeStr : (x)=> (x==null ? "" : String(x));
-const _fmt = (typeof fmt === "function") ? fmt : (x)=> (x==null ? "—" : String(x));
-const _loadJSON = (typeof loadJSON === "function")
-  ? loadJSON
-  : async (path)=>{
-      const url = path + (path.includes("?") ? "&" : "?") + "v=" + Date.now();
-      const res = await fetch(url, { cache:"no-store" });
-      if(!res.ok) throw new Error(`Failed to load ${path} (${res.status})`);
-      return await res.json();
-    };
-
+// カタカナ→ひらがな
 function kataToHira(s){
   return (s||"").replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
 }
+// ひらがな→カタカナ
 function hiraToKata(s){
   return (s||"").replace(/[\u3041-\u3096]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
 }
-
-/* common.js に normalizeForSearch があればそれを使う */
-function normalizeForSearchLocal(s){
-  if(typeof normalizeForSearch === "function") return normalizeForSearch(s);
-  s = _safeStr(s);
+function normalizeForSearch(s){
+  s = safeStr(s);
   s = s.replace(/　/g," ").toLowerCase();
-  s = s.replace(/[()\[\]{}「」『』【】・,，.．/／\\\-ー―_]/g," ");
+  s = s.replace(/[()\[\]{}「」『』【】・,，.．/／\-ー―_]/g," ");
   s = s.replace(/\s+/g," ").trim();
   s = kataToHira(s);
   return s;
 }
-
-function getParamLocal(key){
-  if(typeof getParam === "function") return getParam(key);
-  try{
-    const u = new URL(window.location.href);
-    return u.searchParams.get(key);
-  }catch(e){
-    const m = new RegExp("[?&]"+key+"=([^&]+)").exec(window.location.search);
-    return m ? decodeURIComponent(m[1]) : null;
-  }
-}
-
-function setParamLocal(key, value){
-  if(typeof setParam === "function") return setParam(key, value);
+function setParam(key, value){
   try{
     const url = new URL(window.location.href);
     if(value === null || value === undefined || String(value).trim() === ""){
@@ -174,14 +210,8 @@ function setParamLocal(key, value){
       url.searchParams.set(key, String(value));
     }
     history.replaceState(null, "", url.toString());
-  }catch(e){
-    // ignore
-  }
+  }catch(e){}
 }
-
-/* =========================================================
-   App logic
-   ========================================================= */
 
 let showAgeCols = true;
 
@@ -190,8 +220,7 @@ function setAgeColsVisible(v){
   document.querySelectorAll('.agecol').forEach(el=>{
     el.style.display = v ? '' : 'none';
   });
-  const btn = document.getElementById('toggleCols');
-  if(btn) btn.textContent = v ? '年齢別列：非表示' : '年齢別列：表示';
+  document.getElementById('toggleCols').textContent = v ? '年齢別列：非表示' : '年齢別列：表示';
 }
 
 function signDelta(n){
@@ -221,39 +250,39 @@ function getGroups(f){
 }
 
 function stationKey(f){
-  const sk = normalizeForSearchLocal(f.station_kana || "");
-  const st = normalizeForSearchLocal((f.nearest_station || "").replace(/駅$/,''));
+  const sk = normalizeForSearch(f.station_kana || "");
+  const st = normalizeForSearch((f.nearest_station || "").replace(/駅$/,''));
   return sk || st || "んんん";
 }
 
 function rowHTML(f, prevF){
-  const ward = _safeStr(f.ward||'');
-  const station = _safeStr(f.nearest_station||'');
+  const ward = safeStr(f.ward||'');
+  const station = safeStr(f.nearest_station||'');
   const walk = (f.walk_minutes==null || String(f.walk_minutes).trim()==="" ? '—' : `${Number(f.walk_minutes)}分`);
 
-  const addr = _safeStr(f.address||'');
-  const map = _safeStr(f.map_url||'');
+  const addr = safeStr(f.address||'');
+  const map = safeStr(f.map_url||'');
   const mapLink = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map</a>` : '—';
 
   const g = getGroups(f);
-  function acc(k){ return _fmt(g?.[k]?.accept); }
-  function wai(k){ return _fmt(g?.[k]?.wait); }
+  function acc(k){ return fmt(g?.[k]?.accept); }
+  function wai(k){ return fmt(g?.[k]?.wait); }
 
   const dWait = prevF ? (Number(f.totals?.wait||0) - Number(prevF.totals?.wait||0)) : null;
   const dAcc  = prevF ? (Number(f.totals?.accept||0) - Number(prevF.totals?.accept||0)) : null;
 
   return `<tr>
-    <td data-col="name">
-      <a href="facility.html?id=${encodeURIComponent(f.id)}">${_safeStr(f.name)}</a>
-      <div class="small">施設番号：${_safeStr(f.id)}</div>
+    <td data-col="name" class="col-name">
+      <a href="facility.html?id=${encodeURIComponent(f.id)}">${safeStr(f.name)}</a>
+      <div class="small">施設番号：${safeStr(f.id)}</div>
     </td>
 
     <td data-col="ward">${ward || '—'}</td>
     <td data-col="station">${station || '—'}</td>
     <td data-col="walk">${walk}</td>
 
-    <td data-col="accept">${_fmt(f.totals?.accept)}</td>
-    <td data-col="wait">${_fmt(f.totals?.wait)}</td>
+    <td data-col="accept">${fmt(f.totals?.accept)}</td>
+    <td data-col="wait">${fmt(f.totals?.wait)}</td>
     <td data-col="dwait">${signDelta(dWait)}</td>
     <td data-col="dacc">${signDelta(dAcc)}</td>
 
@@ -297,15 +326,15 @@ function sortFacilities(arr, mode){
       const wy = (y.walk_minutes==null || String(y.walk_minutes).trim()==="" ? 9999 : Number(y.walk_minutes));
       if(wx !== wy) return wx - wy;
 
-      return _safeStr(x.name).localeCompare(_safeStr(y.name),'ja');
+      return safeStr(x.name).localeCompare(safeStr(y.name),'ja');
     });
   } else if(mode==='name_asc'){
     a.sort((x,y)=>{
-      const kx = normalizeForSearchLocal(x.name_kana || x.name || "");
-      const ky = normalizeForSearchLocal(y.name_kana || y.name || "");
+      const kx = normalizeForSearch(x.name_kana || x.name || "");
+      const ky = normalizeForSearch(y.name_kana || y.name || "");
       const d = kx.localeCompare(ky,'ja');
       if(d!==0) return d;
-      return _safeStr(x.name).localeCompare(_safeStr(y.name),'ja');
+      return safeStr(x.name).localeCompare(safeStr(y.name),'ja');
     });
   }
   return a;
@@ -314,14 +343,14 @@ function sortFacilities(arr, mode){
 function matchQuery(f, q){
   if(!q) return true;
 
-  const q0 = normalizeForSearchLocal(q);
-  const qH = normalizeForSearchLocal(kataToHira(q));
-  const qK = normalizeForSearchLocal(hiraToKata(q));
+  const q0 = normalizeForSearch(q);
+  const qH = normalizeForSearch(kataToHira(q));
+  const qK = normalizeForSearch(hiraToKata(q));
 
-  const name = normalizeForSearchLocal(f.name);
-  const nk   = normalizeForSearchLocal(f.name_kana);
-  const st   = normalizeForSearchLocal((f.nearest_station||"").replace(/駅$/,''));
-  const sk   = normalizeForSearchLocal(f.station_kana);
+  const name = normalizeForSearch(f.name);
+  const nk   = normalizeForSearch(f.name_kana);
+  const st   = normalizeForSearch((f.nearest_station||"").replace(/駅$/,''));
+  const sk   = normalizeForSearch(f.station_kana);
 
   return (
     name.includes(q0) ||
@@ -334,7 +363,7 @@ function matchQuery(f, q){
 function buildWardOptions(facilities){
   const set = new Set();
   for(const f of facilities){
-    const w = _safeStr(f.ward).trim();
+    const w = safeStr(f.ward).trim();
     if(w) set.add(w);
   }
   return Array.from(set).sort((a,b)=>a.localeCompare(b,'ja'));
@@ -349,72 +378,54 @@ function debounce(fn, ms=250){
 }
 
 /* =========================
-   PC/スマホで表示を分ける（列を絞る）
+   Mobile compact mode:
    ========================= */
-
-/**
- * スマホcompactで隠す列（必要なら後で調整）
- * - 住所/地図：重い & 横幅を取りやすい
- * - 前月比：一覧性優先
- * - 区：絞り込みは上のSelectでできるので省略可
- * - 年齢別：別トグルで制御（compactでは強制オフ）
- */
 const COMPACT_HIDE_COLS = new Set([
   "addr","map",
+  "dwait","dacc",
   "ward",
   "a0a","a0w","a1a","a1w","a2a","a2w","a35a","a35w"
 ]);
 
 function isMobile(){
-  return window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
+  return window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
 }
 
-function applyViewModeToTable(mode){
-  // mode: "compact" | "full"
+function applyViewMode(mode){
   const hide = (mode === "compact");
 
-  // thead
-  document.querySelectorAll("#tbl thead th[data-col]").forEach(th=>{
+  document.querySelectorAll("#tbl thead th").forEach(th=>{
     const c = th.getAttribute("data-col");
+    if(!c) return;
     const shouldHide = hide && COMPACT_HIDE_COLS.has(c);
     th.classList.toggle("hide-col", shouldHide);
   });
 
-  // tbody
-  document.querySelectorAll("#tbl tbody td[data-col]").forEach(td=>{
+  document.querySelectorAll("#tbl tbody td").forEach(td=>{
     const c = td.getAttribute("data-col");
+    if(!c) return;
     const shouldHide = hide && COMPACT_HIDE_COLS.has(c);
     td.classList.toggle("hide-col", shouldHide);
   });
 
-  // compact は年齢列を強制非表示（一覧性を優先）
   if(mode === "compact"){
     setAgeColsVisible(false);
   }
 }
 
-function currentEffectiveMode(viewSelValue){
-  // viewSel: auto / compact / full
-  if(viewSelValue === "compact") return "compact";
-  if(viewSelValue === "full") return "full";
-  // auto
-  return isMobile() ? "compact" : "full";
-}
-
 async function main(){
-  const months = await _loadJSON('data/months.json');
+  const months = await loadJSON('data/months.json');
   const ms = (months.months||[]).slice().sort();
 
   const monthSel = document.getElementById('monthSelect');
   monthSel.innerHTML = ms.map(m=>`<option value="${m}">${m}</option>`).join('');
 
-  // restore from URL
-  const pMonth = getParamLocal('month');
-  const pQ     = getParamLocal('q');
-  const pWard  = getParamLocal('ward');
-  const pSort  = getParamLocal('sort');
-  const pAge   = getParamLocal('age');   // "0" => hide age cols
-  const pView  = getParamLocal('view');  // "compact" | "full" | ""
+  const pMonth = getParam('month');
+  const pQ     = getParam('q');
+  const pWard  = getParam('ward');
+  const pSort  = getParam('sort');
+  const pAge   = getParam('age');
+  const pView  = getParam('view');
 
   monthSel.value = (pMonth && ms.includes(pMonth)) ? pMonth : (ms.length ? ms[ms.length-1] : '');
 
@@ -429,7 +440,6 @@ async function main(){
   const wardSel = document.getElementById('wardSelect');
   const viewSel = document.getElementById('viewMode');
 
-  // view initial
   if(pView && ["compact","full"].includes(pView)) viewSel.value = pView;
   else viewSel.value = "auto";
 
@@ -438,8 +448,8 @@ async function main(){
     const idx = ms.indexOf(month);
     const prevMonth = (idx > 0) ? ms[idx - 1] : null;
 
-    const data = await _loadJSON(`data/${month}.json`);
-    const prevData = prevMonth ? await _loadJSON(`data/${prevMonth}.json`) : null;
+    const data = await loadJSON(`data/${month}.json`);
+    const prevData = prevMonth ? await loadJSON(`data/${prevMonth}.json`) : null;
 
     document.getElementById('monthLabel').textContent =
       prevMonth ? `${month}（前月：${prevMonth}）` : month;
@@ -451,7 +461,6 @@ async function main(){
       }
     }
 
-    // ward dropdown
     const wards = buildWardOptions(data.facilities||[]);
     const curWard = (pWard ?? wardSel.value) || "";
     wardSel.innerHTML =
@@ -459,7 +468,6 @@ async function main(){
       wards.map(w=>`<option value="${w}">${w}</option>`).join('');
     wardSel.value = wards.includes(curWard) ? curWard : "";
 
-    // KPI (whole month)
     const totWait = (data.facilities||[]).reduce((s,f)=>s+Number(f.totals?.wait||0),0);
     const totAcc  = (data.facilities||[]).reduce((s,f)=>s+Number(f.totals?.accept||0),0);
 
@@ -470,12 +478,11 @@ async function main(){
     const dTotAcc  = (prevTotAcc==null) ? null : (totAcc - prevTotAcc);
 
     document.getElementById('kpi').innerHTML = `
-      <div class="pill">合計 入所待ち：${_fmt(totWait)}（前月比 ${signDelta(dTotWait)}）</div>
-      <div class="pill">合計 受入可能：${_fmt(totAcc)}（前月比 ${signDelta(dTotAcc)}）</div>
-      <div class="pill">対象：${_safeStr(data.ward||"横浜市")}</div>
+      <div class="pill">合計 入所待ち：${fmt(totWait)}（前月比 ${signDelta(dTotWait)}）</div>
+      <div class="pill">合計 受入可能：${fmt(totAcc)}（前月比 ${signDelta(dTotAcc)}）</div>
+      <div class="pill">対象：${safeStr(data.ward||"横浜市")}</div>
     `;
 
-    // filter + sort
     const q = qEl.value.trim();
     const sort = sortEl.value;
     const wardFilter = wardSel.value;
@@ -484,7 +491,7 @@ async function main(){
     const totalCount = arr.length;
 
     if(wardFilter){
-      arr = arr.filter(f => _safeStr(f.ward).trim() === wardFilter);
+      arr = arr.filter(f => safeStr(f.ward).trim() === wardFilter);
     }
     if(q){
       arr = arr.filter(f => matchQuery(f, q));
@@ -495,25 +502,22 @@ async function main(){
     document.getElementById('countLabel').textContent =
       `${arr.length.toLocaleString('ja-JP')} / ${totalCount.toLocaleString('ja-JP')}`;
 
-    // render rows
     const tbody = document.querySelector('#tbl tbody');
     tbody.innerHTML = arr.map(f => rowHTML(f, prevMap.get(String(f.id)))).join('');
 
-    // apply mode AFTER render (important)
-    const eff = currentEffectiveMode(viewSel.value);
-    applyViewModeToTable(eff);
+    // apply view mode (after table is rendered)
+    let view = viewSel.value;
+    if(view === "auto"){
+      view = isMobile() ? "compact" : "full";
+    }
+    applyViewMode(view);
 
-    // URL params
-    setParamLocal('month', monthSel.value);
-    setParamLocal('q', qEl.value.trim());
-    setParamLocal('ward', wardSel.value);
-    setParamLocal('sort', sortEl.value);
-
-    // 年齢列トグル状態を URL に反映（ユーザー意図）
-    setParamLocal('age', showAgeCols ? "" : "0");
-
-    // view param（autoは消す）
-    setParamLocal('view', (viewSel.value === "auto") ? "" : viewSel.value);
+    setParam('month', monthSel.value);
+    setParam('q', qEl.value.trim());
+    setParam('ward', wardSel.value);
+    setParam('sort', sortEl.value);
+    setParam('age', showAgeCols ? "" : "0");
+    setParam('view', (viewSel.value === "auto") ? "" : viewSel.value);
   }
 
   const renderDebounced = debounce(render, 220);
@@ -530,7 +534,6 @@ async function main(){
     render();
   });
 
-  // 画面幅変更：auto の時だけ追従（横→縦回転対応）
   if(window.matchMedia){
     const mq = window.matchMedia("(max-width: 768px)");
     mq.addEventListener?.("change", ()=>{
