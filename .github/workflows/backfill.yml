@@ -8,9 +8,9 @@ on:
         required: false
         default: ""
       months_back:
-        description: "何か月分さかのぼるか（例：24）"
+        description: "何か月分さかのぼるか（例：36）"
         required: true
-        default: "24"
+        default: "36"
       force_backfill:
         description: "既存JSONがあっても上書きする（1:する / 0:しない）"
         required: true
@@ -38,19 +38,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # ★重要：rebase する前に「作業ツリーが汚れていたら退避」して確実に止まらないようにする
-      - name: Pre-rebase safety (stash if dirty)
-        run: |
-          set -euxo pipefail
-          if [ -n "$(git status --porcelain)" ]; then
-            git stash push -u -m "pre-rebase safety stash"
-          fi
-
-      - name: Sync with remote (rebase)
+      - name: Sync with remote (rebase with autostash)
         run: |
           set -euxo pipefail
           git fetch origin main
-          git rebase origin/main
+          git pull --rebase --autostash origin main
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -75,8 +67,14 @@ jobs:
         run: |
           set -euxo pipefail
           # FY2024: 2024-04-01 .. 2025-03-01
-          for m in $(seq 4 12); do rm -f "data/2024-$(printf '%02d' $m)-01.json"; done
-          for m in $(seq 1 3);  do rm -f "data/2025-$(printf '%02d' $m)-01.json"; done
+          for m in $(seq 4 12); do
+            f="data/2024-$(printf '%02d' $m)-01.json"
+            if [ -f "$f" ]; then git rm -f "$f"; fi
+          done
+          for m in $(seq 1 3); do
+            f="data/2025-$(printf '%02d' $m)-01.json"
+            if [ -f "$f" ]; then git rm -f "$f"; fi
+          done
 
       - name: Backfill months
         env:
@@ -97,20 +95,16 @@ jobs:
         run: |
           set -euxo pipefail
 
-          # ここでリモート追従（この時点では「未ステージ差分がある」前提なので rebase しない）
-          git fetch origin main
+          # 追加/更新/削除を全部拾う（ここが重要）
+          git add -A data
 
           if [ -z "$(git status --porcelain)" ]; then
             echo "No changes."
             exit 0
           fi
 
-          # ★削除も含めて data をまるごとステージ
-          git add -A data
-
           git commit -m "Backfill months + apply master to all months" || true
 
-          # commit 後なら rebase 可能（作業ツリーはクリーン）
-          git rebase origin/main
-
+          git fetch origin main
+          git pull --rebase --autostash origin main
           git push origin main
