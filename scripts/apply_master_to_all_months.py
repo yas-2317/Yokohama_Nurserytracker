@@ -7,18 +7,29 @@ import csv
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 MASTER_CSV = DATA_DIR / "master_facilities.csv"
 MONTHS_JSON = DATA_DIR / "months.json"
 
+# 空欄なら全域に適用（推奨）
 WARD_FILTER = (os.getenv("WARD_FILTER", "") or "").strip() or None
 
 
 def safe(x: Any) -> str:
     return "" if x is None else str(x)
+
+
+def as_int_str(x: Any) -> Optional[str]:
+    s = safe(x).strip()
+    if s == "" or s.lower() == "null" or s == "-":
+        return None
+    try:
+        return str(int(float(s)))
+    except Exception:
+        return None
 
 
 def load_master() -> Dict[str, Dict[str, str]]:
@@ -33,30 +44,37 @@ def load_master() -> Dict[str, Dict[str, str]]:
     return out
 
 
-def load_months() -> List[str]:
+def load_months_from_months_json() -> List[str]:
     if not MONTHS_JSON.exists():
-        raise RuntimeError("data/months.json が見つかりません")
-    obj = json.loads(MONTHS_JSON.read_text(encoding="utf-8"))
-    ms = obj.get("months") or []
-    return [safe(m).strip() for m in ms if safe(m).strip()]
-
-
-def as_int_str(x: str) -> Optional[str]:
-    s = safe(x).strip()
-    if s == "" or s.lower() == "null" or s == "-":
-        return None
+        return []
     try:
-        return str(int(float(s)))
+        obj = json.loads(MONTHS_JSON.read_text(encoding="utf-8"))
+        ms = obj.get("months") or []
+        return [safe(m).strip() for m in ms if safe(m).strip()]
     except Exception:
-        return None
+        return []
+
+
+def scan_months_from_files() -> List[str]:
+    # data/ の YYYY-MM-01.json を拾う（months.json が欠けてても回す）
+    ms: List[str] = []
+    for p in DATA_DIR.glob("*.json"):
+        name = p.name
+        if name == "months.json":
+            continue
+        # 2026-02-01.json の形だけ拾う
+        if len(name) == len("2026-02-01.json") and name[4] == "-" and name[7] == "-" and name.endswith(".json"):
+            ms.append(name.replace(".json", ""))
+    return sorted(set(ms))
+
+
+def in_scope_ward(ward: str) -> bool:
+    if not WARD_FILTER:
+        return True
+    return WARD_FILTER in (ward or "")
 
 
 def apply_master_to_facility(f: Dict[str, Any], m: Dict[str, str]) -> int:
-    """
-    f: month json facility object
-    m: master row
-    returns: number of fields updated
-    """
     updated = 0
 
     mapping = {
@@ -82,8 +100,7 @@ def apply_master_to_facility(f: Dict[str, Any], m: Dict[str, str]) -> int:
             f[jkey] = mv
             updated += 1
 
-    # walk_minutes: normalize to int-string
-    wm = as_int_str(safe(m.get("walk_minutes")))
+    wm = as_int_str(m.get("walk_minutes"))
     if wm is not None:
         cur = safe(f.get("walk_minutes")).strip()
         if cur != wm:
@@ -95,11 +112,25 @@ def apply_master_to_facility(f: Dict[str, Any], m: Dict[str, str]) -> int:
 
 def main() -> None:
     master = load_master()
-    months = load_months()
+
+    # months.json + フォールバック（ファイル走査）
+    months_a = load_months_from_months_json()
+    months_b = scan_months_from_files()
+    months = sorted(set(months_a) | set(months_b))
+
+    if not months:
+        raise RuntimeError("対象月が見つかりません（data/months.json か data/*.json を確認）")
 
     total_files = 0
     total_facilities = 0
     total_updates = 0
+    changed_files: List[str] = []
+
+    print("APPLY master → month JSONs")
+    print("  months(from months.json):", len(months_a))
+    print("  months(from file scan):", len(months_b))
+    print("  months(total unique):", len(months))
+    print("  ward_filter:", WARD_FILTER if WARD_FILTER else "(none/all)")
 
     for month in months:
         p = DATA_DIR / f"{month}.json"
@@ -108,7 +139,6 @@ def main() -> None:
 
         obj = json.loads(p.read_text(encoding="utf-8"))
         facs = obj.get("facilities") or []
-
         if not isinstance(facs, list):
             continue
 
@@ -119,9 +149,13 @@ def main() -> None:
         for f in facs:
             if not isinstance(f, dict):
                 continue
+
             fid = safe(f.get("id")).strip()
             ward = safe(f.get("ward")).strip()
-            if WARD_FILTER and WARD_FILTER not in ward:
+
+            if not fid:
+                continue
+            if not in_scope_ward(ward):
                 continue
 
             m = master.get(fid)
@@ -136,17 +170,21 @@ def main() -> None:
 
         if changed:
             p.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
+            changed_files.append(month)
 
         total_files += 1
         total_facilities += file_fac_count
         total_updates += file_updates
 
-        print(f"[{month}] facilities={file_fac_count} updates={file_updates} changed={changed}")
+        print(f"[{month}] scanned={file_fac_count} updates={file_updates} changed={changed}")
 
-    print("DONE")
-    print("  files:", total_files)
+    print("DONE apply_master_to_all_months.py")
+    print("  files_seen:", total_files)
     print("  facilities_scanned:", total_facilities)
     print("  updated_cells:", total_updates)
+    print("  changed_months:", len(changed_files))
+    if changed_files:
+        print("  changed_months_list:", ", ".join(changed_files[:30]) + (" ..." if len(changed_files) > 30 else ""))
 
 
 if __name__ == "__main__":
