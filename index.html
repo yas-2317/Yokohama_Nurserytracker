@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
+
 <header>
   <div class="container">
     <h1>横浜市：保育園ごとの「受入可能数」「入所待ち人数」（年齢別）</h1>
@@ -32,7 +33,7 @@
         <option value="name_asc">園名（あいうえお）</option>
       </select>
 
-      <button id="toggleCols">年齢別列：非表示</button>
+      <button id="toggleCols" type="button">年齢別列：非表示</button>
       <span class="badge">※「入所待ち人数」は園ごとの申込件数（重複計上あり）</span>
     </div>
   </div>
@@ -44,6 +45,10 @@
     <div class="small"></div>
   </div>
 
+  <!-- Mobile cards -->
+  <div id="cards" class="cards"></div>
+
+  <!-- Desktop table -->
   <div class="card tablewrap">
     <table id="tbl">
       <thead>
@@ -78,6 +83,11 @@
 
 <script src="common.js"></script>
 <script>
+/* =========================
+   helpers (index-local)
+   - normalizeForSearch / setParam を同梱して「検索できない」事故を防ぐ
+   ========================= */
+
 let showAgeCols = true;
 
 function setAgeColsVisible(v){
@@ -85,7 +95,52 @@ function setAgeColsVisible(v){
   document.querySelectorAll('.agecol').forEach(el=>{
     el.style.display = v ? '' : 'none';
   });
-  document.getElementById('toggleCols').textContent = v ? '年齢別列：非表示' : '年齢別列：表示';
+  const btn = document.getElementById('toggleCols');
+  if(btn) btn.textContent = v ? '年齢別列：非表示' : '年齢別列：表示';
+}
+
+// カタカナ→ひらがな
+function kataToHira(s){
+  return (s||"").replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+}
+// ひらがな→カタカナ
+function hiraToKata(s){
+  return (s||"").replace(/[\u3041-\u3096]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
+}
+
+/**
+ * 検索正規化：
+ * - 全角スペース→半角
+ * - 小文字化
+ * - 記号を空白へ
+ * - カタカナはひらがなへ
+ */
+function normalizeForSearch(s){
+  s = safeStr(s);
+  s = s.replace(/　/g, " ");               // 全角スペース
+  s = s.toLowerCase();
+  s = s.replace(/[()\[\]{}「」『』【】・,，.．/／\-ー―_]/g, " ");
+  s = s.replace(/\s+/g, " ").trim();
+  s = kataToHira(s);                        // かな揺れ吸収（カタ→ひら）
+  return s;
+}
+
+/**
+ * URLパラメータを更新（履歴は増やさない）
+ * 空文字ならパラメータ削除
+ */
+function setParam(key, value){
+  try{
+    const url = new URL(window.location.href);
+    if(value === null || value === undefined || String(value).trim() === ""){
+      url.searchParams.delete(key);
+    }else{
+      url.searchParams.set(key, String(value));
+    }
+    history.replaceState(null, "", url.toString());
+  }catch(e){
+    // ignore
+  }
 }
 
 function signDelta(n){
@@ -116,10 +171,9 @@ function getGroups(f){
 }
 
 function stationKey(f){
-  // station_kana 優先、なければ nearest_station
   const sk = normalizeForSearch(f.station_kana || "");
   const st = normalizeForSearch((f.nearest_station || "").replace(/駅$/,''));
-  return sk || st || "んんん"; // 不明は最後に寄せる
+  return sk || st || "んんん";
 }
 
 function rowHTML(f, prevF){
@@ -162,6 +216,70 @@ function rowHTML(f, prevF){
   </tr>`;
 }
 
+/* ===== Mobile card view ===== */
+function cardHTML(f, prevF){
+  const ward = safeStr(f.ward||'');
+  const station = safeStr(f.nearest_station||'');
+  const walk = (f.walk_minutes==null || String(f.walk_minutes).trim()==="" ? '' : `${Number(f.walk_minutes)}分`);
+
+  const addr = safeStr(f.address||'');
+  const map = safeStr(f.map_url||'');
+  const mapLink = map ? `<a href="${map}" target="_blank" rel="noopener">地図</a>` : '';
+
+  const dWait = prevF ? (Number(f.totals?.wait||0) - Number(prevF.totals?.wait||0)) : null;
+  const dAcc  = prevF ? (Number(f.totals?.accept||0) - Number(prevF.totals?.accept||0)) : null;
+
+  const g = getGroups(f);
+  function chip(label, a, w){
+    return `<span class="chip-mini">${label} 受入 ${fmt(a)} / 待ち ${fmt(w)}</span>`;
+  }
+
+  const ages = showAgeCols ? `
+    <div class="card-ages">
+      ${chip('0', g?.['0']?.accept, g?.['0']?.wait)}
+      ${chip('1', g?.['1']?.accept, g?.['1']?.wait)}
+      ${chip('2', g?.['2']?.accept, g?.['2']?.wait)}
+      ${chip('3-5', g?.['3-5']?.accept, g?.['3-5']?.wait)}
+    </div>
+  ` : '';
+
+  const stLine = station ? `${station}${walk ? ` / 徒歩 ${walk}` : ''}` : '—';
+
+  return `
+  <div class="card facility-card">
+    <div class="card-top">
+      <div class="card-title">
+        <a class="card-name" href="facility.html?id=${encodeURIComponent(f.id)}">${safeStr(f.name)}</a>
+        <div class="card-sub">区：${ward || '—'} / 施設番号：${safeStr(f.id)}</div>
+      </div>
+      <div class="card-right">
+        <div class="big">${fmt(f.totals?.wait)}</div>
+        <div class="small">待ち（合計） ${signDelta(dWait)}</div>
+      </div>
+    </div>
+
+    <div class="card-mid">
+      <div class="kv">
+        <span class="k">最寄り</span>
+        <span class="v">${stLine}</span>
+      </div>
+      <div class="kv">
+        <span class="k">受入</span>
+        <span class="v">${fmt(f.totals?.accept)} <span class="small">（前月比 ${signDelta(dAcc)}）</span></span>
+      </div>
+    </div>
+
+    ${ages}
+
+    ${(addr || mapLink) ? `
+      <details class="card-details">
+        <summary>住所・地図</summary>
+        <div class="small">${addr || '—'} ${mapLink ? ` / ${mapLink}` : ''}</div>
+      </details>
+    ` : ''}
+  </div>`;
+}
+
 function sortFacilities(arr, mode){
   const a=[...arr];
 
@@ -195,7 +313,6 @@ function sortFacilities(arr, mode){
       return safeStr(x.name).localeCompare(safeStr(y.name),'ja');
     });
   } else if(mode==='name_asc'){
-    // name_kana があるならそれを優先して並べる（より自然）
     a.sort((x,y)=>{
       const kx = normalizeForSearch(x.name_kana || x.name || "");
       const ky = normalizeForSearch(y.name_kana || y.name || "");
@@ -210,12 +327,9 @@ function sortFacilities(arr, mode){
 function matchQuery(f, q){
   if(!q) return true;
 
-  // 入力を検索用に正規化（common.jsでカナ→ひらがな化済み）
   const q0 = normalizeForSearch(q);
-
-  // ひらがな/カタカナ揺れ対策（念のため）
-  const qH = normalizeForSearch(toHira(q));
-  const qK = normalizeForSearch(toKata(q));
+  const qH = normalizeForSearch(kataToHira(q));
+  const qK = normalizeForSearch(hiraToKata(q));
 
   const name = normalizeForSearch(f.name);
   const nk   = normalizeForSearch(f.name_kana);
@@ -239,7 +353,6 @@ function buildWardOptions(facilities){
   return Array.from(set).sort((a,b)=>a.localeCompare(b,'ja'));
 }
 
-// debounce (search input)
 function debounce(fn, ms=250){
   let t=null;
   return (...args)=>{
@@ -251,10 +364,11 @@ function debounce(fn, ms=250){
 async function main(){
   const months = await loadJSON('data/months.json');
   const ms = (months.months||[]).slice().sort(); // asc
+
   const monthSel = document.getElementById('monthSelect');
   monthSel.innerHTML = ms.map(m=>`<option value="${m}">${m}</option>`).join('');
 
-  // ---- restore state from URL params ----
+  // restore from URL
   const pMonth = getParam('month');
   const pQ     = getParam('q');
   const pWard  = getParam('ward');
@@ -269,7 +383,6 @@ async function main(){
   const sortEl = document.getElementById('sort');
   if(pSort && Array.from(sortEl.options).some(o=>o.value===pSort)) sortEl.value = pSort;
 
-  // age cols
   setAgeColsVisible(pAge === "0" ? false : true);
 
   const wardSel = document.getElementById('wardSelect');
@@ -282,7 +395,8 @@ async function main(){
     const data = await loadJSON(`data/${month}.json`);
     const prevData = prevMonth ? await loadJSON(`data/${prevMonth}.json`) : null;
 
-    document.getElementById('monthLabel').textContent = prevMonth ? `${month}（前月：${prevMonth}）` : month;
+    document.getElementById('monthLabel').textContent =
+      prevMonth ? `${month}（前月：${prevMonth}）` : month;
 
     const prevMap = new Map();
     if(prevData && prevData.facilities){
@@ -291,15 +405,15 @@ async function main(){
       }
     }
 
-    // ward dropdown（選択中の値は維持）
+    // ward dropdown
     const wards = buildWardOptions(data.facilities||[]);
-    const curWard = (getParam('ward') ?? wardSel.value) || "";
+    const curWard = (pWard ?? wardSel.value) || "";
     wardSel.innerHTML =
       `<option value="">全区</option>` +
       wards.map(w=>`<option value="${w}">${w}</option>`).join('');
     wardSel.value = wards.includes(curWard) ? curWard : "";
 
-    // KPI（全体は常に “その月の全施設” を対象に）
+    // KPI (whole month)
     const totWait = (data.facilities||[]).reduce((s,f)=>s+Number(f.totals?.wait||0),0);
     const totAcc  = (data.facilities||[]).reduce((s,f)=>s+Number(f.totals?.accept||0),0);
 
@@ -332,16 +446,19 @@ async function main(){
 
     arr = sortFacilities(arr, sort);
 
-    // count label: shown/total
     document.getElementById('countLabel').textContent =
       `${arr.length.toLocaleString('ja-JP')} / ${totalCount.toLocaleString('ja-JP')}`;
 
-    // render table
+    // table
     const tbody = document.querySelector('#tbl tbody');
     tbody.innerHTML = arr.map(f => rowHTML(f, prevMap.get(String(f.id)))).join('');
     setAgeColsVisible(showAgeCols);
 
-    // ---- update URL params for share/back ----
+    // cards
+    const cards = document.getElementById('cards');
+    cards.innerHTML = arr.map(f => cardHTML(f, prevMap.get(String(f.id)))).join('');
+
+    // URL params
     setParam('month', monthSel.value);
     setParam('q', qEl.value.trim());
     setParam('ward', wardSel.value);
@@ -358,7 +475,7 @@ async function main(){
 
   document.getElementById('toggleCols').addEventListener('click', ()=>{
     setAgeColsVisible(!showAgeCols);
-    render(); // 即反映
+    render();
   });
 
   await render();
