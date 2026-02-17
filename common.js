@@ -43,3 +43,13 @@ function getParam(key){
     return "";
   }
 }
+// ---- compat: toIntOrNull ----
+function toIntOrNull(x){
+  if (x === null || x === undefined) return null;
+  const s = String(x).trim();
+  if (s === "" || s.toLowerCase() === "null" || s === "-") return null;
+  const n = Number(s);
+  if (!Number.isFinite(n)) return null;
+  return Math.trunc(n);
+}
+window.toIntOrNull = toIntOrNull;
