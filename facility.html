@@ -5,7 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>園詳細</title>
   <link rel="stylesheet" href="styles.css"/>
+
+  <!-- 崩れ対策（facility側だけで完結させる最小CSS） -->
+  <style>
+    /* 画面幅が狭い時に崩れやすい部分を抑える */
+    .facility-hero .hero-grid{
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 900px){
+      .facility-hero .hero-grid{ grid-template-columns: 1fr; }
+    }
+
+    .hero-lines{ display:flex; flex-direction:column; gap:10px; }
+    .hero-line{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .hero-line .label{
+      min-width:72px;
+      opacity:.8;
+      white-space:nowrap;
+    }
+    .hero-line .value{
+      flex:1;
+      min-width:200px;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+    .hero-line .sep{ opacity:.6; }
+
+    /* ボタンが横に押し出して崩れるのを防ぐ */
+    .btn-secondary.btn-small{
+      white-space:nowrap;
+    }
+
+    /* Sparklineが狭いときに潰れないように */
+    .spark svg{ max-width:100%; height:auto; }
+
+    /* テーブルは必ずスクロールできるように（見切れ防止） */
+    .tablewrap{ overflow:auto; }
+    table{ border-collapse:collapse; width:100%; }
+    thead th{
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--card-bg, #fff);
+    }
+    /* stickyヘッダが透ける環境向け */
+    thead th::after{
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:-1px;
+      height:1px;
+      background: rgba(0,0,0,.08);
+    }
+
+    /* 長いURLがレイアウトを壊さないように */
+    a{ overflow-wrap:anywhere; }
+  </style>
 </head>
+
 <body>
 
 <header class="page-header">
@@ -20,7 +84,7 @@
         </div>
       </div>
       <div class="header-right">
-        <a class="btn-link" id="backLink" href="index.html">← 一覧へ戻る</a>
+        <a class="btn-link" href="index.html">← 一覧へ戻る</a>
       </div>
     </div>
   </div>
@@ -28,7 +92,7 @@
 
 <main class="container">
 
-  <!-- Summary (カード化) -->
+  <!-- Summary -->
   <div class="card facility-hero">
     <div class="hero-grid">
       <div class="hero-main">
@@ -52,10 +116,16 @@
             <a id="sameStationLink" class="btn-link" href="#" style="display:none;">同駅の園を見る</a>
           </div>
 
-          <!-- ★追加：園の公式サイト -->
+          <!-- 追加：園HP -->
           <div class="hero-line">
-            <span class="label">公式</span>
+            <span class="label">園HP</span>
             <span id="facWeb" class="value">—</span>
+          </div>
+
+          <!-- 任意：電話 -->
+          <div class="hero-line">
+            <span class="label">電話</span>
+            <span id="facPhone" class="value">—</span>
           </div>
         </div>
 
@@ -148,6 +218,29 @@
 
 <script src="common.js"></script>
 <script>
+/* ===== safety helpers ===== */
+function toast(msg){
+  // common.js に toast が無くても落ちないようにする
+  try{
+    const el = document.createElement('div');
+    el.textContent = msg;
+    el.style.position = 'fixed';
+    el.style.left = '50%';
+    el.style.bottom = '18px';
+    el.style.transform = 'translateX(-50%)';
+    el.style.background = 'rgba(0,0,0,.75)';
+    el.style.color = '#fff';
+    el.style.padding = '10px 12px';
+    el.style.borderRadius = '10px';
+    el.style.fontSize = '13px';
+    el.style.zIndex = 9999;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 1400);
+  }catch(e){
+    // ignore
+  }
+}
+
 function getGroups(f){
   if(f.age_groups) return f.age_groups;
   const ages = f.ages || f.ages_0_5 || {};
@@ -214,60 +307,13 @@ function makeSparkline(values, {width=260, height=60}={}){
   </svg>`;
 }
 
-// index の状態を保持して URL を作る（存在するものだけ引き継ぐ）
-function carryIndexState(baseUrl){
-  const u = new URL(window.location.href);
-  const keys = ["month","q","ward","sort","age"];
-  const params = new URLSearchParams();
-  for(const k of keys){
-    const v = u.searchParams.get(k);
-    if(v!=null && String(v).trim()!==""){
-      params.set(k, v);
-    }
-  }
-  const qs = params.toString();
-  return qs ? `${baseUrl}?${qs}` : baseUrl;
-}
-
-function buildIndexURLWithOverrides(overrides={}){
-  const u = new URL(window.location.href);
-  const keys = ["month","q","ward","sort","age"];
-  const params = new URLSearchParams();
-  for(const k of keys){
-    const v = u.searchParams.get(k);
-    if(v!=null && String(v).trim()!==""){
-      params.set(k, v);
-    }
-  }
-  for(const [k,v] of Object.entries(overrides)){
-    if(v==null || String(v).trim()===""){
-      params.delete(k);
-    }else{
-      params.set(k, String(v));
-    }
-  }
-  const qs = params.toString();
-  return qs ? `index.html?${qs}` : "index.html";
-}
-
-function normalizeWebsiteUrl(url){
-  const s = safeStr(url).trim();
-  if(!s) return "";
-  if(/^https?:\/\//i.test(s)) return s;
-  // たまに "www.xxx" 等だけ入ることがあるので補正
-  return "https://" + s;
-}
-
 async function main(){
   const fid = getParam('id');
   if(!fid){
     alert('id が指定されていません');
-    location.href = buildIndexURLWithOverrides({});
+    location.href = 'index.html';
     return;
   }
-
-  // ★一覧へ戻るリンク（index の状態を保持）
-  document.getElementById('backLink').href = buildIndexURLWithOverrides({});
 
   const monthsObj = await loadJSON('data/months.json');
   const months = (monthsObj.months||[]).slice().sort(); // asc
@@ -282,16 +328,15 @@ async function main(){
         hist.push({month:m, fac});
       }
     }catch(e){
-      // ignore missing
+      // ignore
     }
   }
   if(hist.length===0){
     alert('該当施設が見つかりません');
-    location.href = buildIndexURLWithOverrides({});
+    location.href = 'index.html';
     return;
   }
 
-  // latest & prev
   const latest = hist[hist.length-1];
   const prev = hist.length>=2 ? hist[hist.length-2] : null;
 
@@ -304,65 +349,50 @@ async function main(){
   document.getElementById('facId').textContent = safeStr(f.id);
   document.getElementById('latestMonth').textContent = latest.month;
 
-  // address/map/station/walk
+  // address / map
   const addr = safeStr(f.address || '');
   document.getElementById('facAddr').textContent = addr || '—';
 
   const map = safeStr(f.map_url || '');
-  document.getElementById('facMap').innerHTML = map ? `<a href="${map}" target="_blank" rel="noopener">Google Map を開く</a>` : '—';
+  document.getElementById('facMap').innerHTML =
+    map ? `<a href="${map}" target="_blank" rel="noopener">Google Map を開く</a>` : '—';
 
+  // station / walk
   const st = safeStr(f.nearest_station || '');
   const wk = toIntOrNull(f.walk_minutes);
   document.getElementById('facStation').textContent = st || '—';
   document.getElementById('facWalk').textContent = (wk==null ? '—' : `徒歩 ${wk}分`);
 
-  // ★追加：公式サイト
-  const web = normalizeWebsiteUrl(f.website || "");
-  document.getElementById('facWeb').innerHTML = web
-    ? `<a href="${web}" target="_blank" rel="noopener">園の公式サイトを開く</a>`
-    : '—';
-
-  // same station link（index状態保持 + 駅検索に上書き）
+  // same station link
   const stationQuery = (safeStr(f.station_kana).trim() || safeStr(f.nearest_station).replace(/駅$/,'').trim());
   if(stationQuery){
-    const url = buildIndexURLWithOverrides({
-      q: stationQuery,
-      sort: "station_walk_asc",
-    });
+    const url = `index.html?q=${encodeURIComponent(stationQuery)}&sort=station_walk_asc`;
     const a = document.getElementById('sameStationLink');
     a.href = url;
     a.style.display = '';
   }
 
-  // copy address（toast無しでも落ちない）
+  // website / phone
+  const web = safeStr(f.website || "");
+  document.getElementById('facWeb').innerHTML =
+    web ? `<a href="${web}" target="_blank" rel="noopener">公式サイトを開く</a>` : '—';
+
+  const phone = safeStr(f.phone || "");
+  document.getElementById('facPhone').textContent = phone || '—';
+
+  // copy address (落ちないようにガード)
   const copyBtn = document.getElementById('copyAddr');
-  copyBtn.addEventListener('click', async ()=>{
-    if(!addr){
-      alert('住所がありません');
-      return;
-    }
-    try{
-      await navigator.clipboard.writeText(addr);
-      const old = copyBtn.textContent;
-      copyBtn.textContent = 'コピーしました';
-      setTimeout(()=>{ copyBtn.textContent = old; }, 1200);
-    }catch(e){
-      // clipboard不可環境のフォールバック
+  if(copyBtn){
+    copyBtn.addEventListener('click', async ()=>{
       try{
-        const ta = document.createElement('textarea');
-        ta.value = addr;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        const old = copyBtn.textContent;
-        copyBtn.textContent = 'コピーしました';
-        setTimeout(()=>{ copyBtn.textContent = old; }, 1200);
-      }catch(e2){
+        if(!addr) return;
+        await navigator.clipboard.writeText(addr);
+        toast('住所をコピーしました');
+      }catch(e){
         alert('コピーに失敗しました');
       }
-    }
-  });
+    });
+  }
 
   // latest totals & deltas
   const wait = Number(f.totals?.wait ?? 0);
@@ -375,7 +405,7 @@ async function main(){
   document.getElementById('latestWaitDelta').innerHTML = signDelta(dWait);
   document.getElementById('latestAccDelta').innerHTML  = signDelta(dAcc);
 
-  // age chips (latest)
+  // age chips
   const g = getGroups(f);
   function chip(label, a, w){
     const aa = fmt(a);
@@ -389,7 +419,7 @@ async function main(){
     ${chip('3〜5歳', g?.['3-5']?.accept, g?.['3-5']?.wait)}
   `;
 
-  // sparkline from last N
+  // sparkline
   const lastN = hist.slice(Math.max(0, hist.length-24));
   const waitSeries = lastN.map(x => Number(x.fac.totals?.wait ?? 0));
   const accSeries  = lastN.map(x => Number(x.fac.totals?.accept ?? 0));
@@ -403,7 +433,7 @@ async function main(){
     const lim = Number(limitSel.value || 24);
     const slice = (lim>=999) ? hist : hist.slice(Math.max(0, hist.length - lim));
 
-    // compact table (with deltas)
+    // compact table
     const rows = [];
     for(let i=0;i<slice.length;i++){
       const cur = slice[i];
@@ -421,9 +451,9 @@ async function main(){
         <td>${signDelta(da)}</td>
       </tr>`);
     }
-    document.querySelector('#hist tbody').innerHTML = rows.reverse().join(''); // latest on top
+    document.querySelector('#hist tbody').innerHTML = rows.reverse().join('');
 
-    // age history (latest on top)
+    // age history
     const rows2 = slice.map(cur=>{
       const gg = getGroups(cur.fac);
       function n(v){ return fmt(v); }
