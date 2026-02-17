@@ -32,15 +32,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Git identity
+      - name: Sync with remote (rebase)
         run: |
           set -euxo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Sync with remote (rebase)
-        run: |
-          set -euxo pipefail
           git fetch origin main
           git rebase origin/main
 
@@ -62,20 +58,26 @@ jobs:
           test -f scripts/apply_master_to_all_months.py
           ls -la scripts
 
+      - name: (One-time) Remove FY2024 month json to avoid kohoku-only leftovers
+        if: ${{ inputs.ward_filter == '' }}
+        run: |
+          set -euxo pipefail
+          # FY2024: 2024-04-01 .. 2025-03-01
+          for m in $(seq 4 12); do rm -f "data/2024-$(printf '%02d' $m)-01.json"; done
+          for m in $(seq 1 3);  do rm -f "data/2025-$(printf '%02d' $m)-01.json"; done
+
       - name: Backfill months
         env:
           WARD_FILTER: ${{ inputs.ward_filter }}
           MONTHS_BACK: ${{ inputs.months_back }}
           FORCE_BACKFILL: ${{ inputs.force_backfill }}
-          APPLY_MASTER: "1"
+          FORCE_BACKFILL: ${{ inputs.force_backfill }}
         run: |
           set -euxo pipefail
           python -u scripts/backfill_last_year.py
           ls -la data || true
 
       - name: Apply master (incl kana) to ALL month JSON
-        env:
-          WARD_FILTER: ${{ inputs.ward_filter }}
         run: |
           set -euxo pipefail
           python -u scripts/apply_master_to_all_months.py
@@ -89,11 +91,10 @@ jobs:
             exit 0
           fi
 
-          # ★削除も含めてステージ
-          git add -A data
-
+          # ★削除も含めて data/ を丸ごとステージする
+          git add -A data || true
           git commit -m "Backfill months + apply master to all months" || true
 
-          git fetch origin main
-          git rebase origin/main
+          # ★コミット後は clean なので rebase 安全
+          git pull --rebase origin main
           git push origin main
