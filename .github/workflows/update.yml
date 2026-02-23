@@ -59,8 +59,8 @@ jobs:
           WARD_FILTER: ${{ inputs.ward_filter }}
         run: |
           set -euxo pipefail
-          if [ -f scripts/apply_master_to_months.py ]; then
-            python -u scripts/apply_master_to_months.py
+          if [ -f scripts/apply_master_to_all_months.py ]; then
+            python -u scripts/apply_master_to_all_months.py
           fi
 
       - name: Commit & push
