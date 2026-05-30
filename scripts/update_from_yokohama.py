@@ -10,6 +10,7 @@ import re
 from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -159,47 +160,90 @@ def read_csv_from_url(url: str) -> List[Dict[str, str]]:
     return list(csv.DictReader(data_lines, fieldnames=header))
 
 
+def classify_csv_resource(title: str, url: str) -> Optional[str]:
+    text = norm(f"{title} {url}")
+    if "受入" in text or "入所可能" in text:
+        return "accept"
+    if "入所待ち" in text or "待ち人数" in text:
+        return "wait"
+    if "入所児童" in text or "児童数" in text:
+        return "enrolled"
+    if "0926_" in url:
+        return "accept"
+    if "0929_" in url:
+        return "wait"
+    if "0923_" in url:
+        return "enrolled"
+    return None
+
+
+def collect_csv_candidates(dataset_html: str) -> List[Dict[str, str]]:
+    soup = BeautifulSoup(dataset_html, "html.parser")
+    candidates: List[Dict[str, str]] = []
+
+    for a in soup.select("a[href]"):
+        href = urljoin(DATASET_PAGE, a.get("href", ""))
+        title = a.get_text(" ", strip=True)
+        if href.endswith(".csv"):
+            candidates.append({"title": title, "url": href})
+
+    for url in re.findall(r"https?://[^\s\"']+\.csv", dataset_html):
+        candidates.append({"title": "", "url": url})
+
+    resource_hrefs = []
+    for a in soup.select("a[href]"):
+        href = urljoin(DATASET_PAGE, a.get("href", ""))
+        if "/resource/" in href and href not in resource_hrefs:
+            resource_hrefs.append(href)
+
+    for href in resource_hrefs:
+        try:
+            resource_html = requests.get(href, timeout=30).text
+        except Exception as e:
+            print(f"WARN: resource page read failed: {href} ({e})")
+            continue
+        resource_soup = BeautifulSoup(resource_html, "html.parser")
+        resource_titles = resource_soup.find_all("h1")
+        title = resource_titles[-1].get_text(" ", strip=True) if resource_titles else ""
+        for a in resource_soup.select("a[href]"):
+            url = urljoin(href, a.get("href", ""))
+            if url.endswith(".csv"):
+                candidates.append({"title": title or a.get_text(" ", strip=True), "url": url})
+        for url in re.findall(r"https?://[^\s\"']+\.csv", resource_html):
+            candidates.append({"title": title, "url": url})
+
+    unique: List[Dict[str, str]] = []
+    seen: Dict[str, int] = {}
+    for item in candidates:
+        url = item["url"]
+        if url in seen:
+            old_title = unique[seen[url]]["title"]
+            if len(item["title"]) > len(old_title):
+                unique[seen[url]]["title"] = item["title"]
+            continue
+        seen[url] = len(unique)
+        unique.append(item)
+    return unique
+
+
 def scrape_csv_urls() -> Dict[str, str]:
     """
     accept(受入可能数) / wait(入所待ち人数) は必須
     enrolled(入所児童数) は見つかれば使う
     """
-    html = requests.get(DATASET_PAGE, timeout=30).text
-    soup = BeautifulSoup(html, "html.parser")
-
-    links = [a.get("href", "") for a in soup.select("a[href]") if a.get("href", "").endswith(".csv")]
-    if not links:
-        links = re.findall(r"https?://[^\s\"']+\.csv", html)
-    links = list(dict.fromkeys(links))
-
+    r = requests.get(DATASET_PAGE, timeout=30)
+    r.raise_for_status()
+    candidates = collect_csv_candidates(r.text)
     best: Dict[str, str] = {}
 
-    for url in links:
-        if "0926_" in url:
-            best["accept"] = url
-        elif "0929_" in url:
-            best["wait"] = url
-        elif "0923_" in url:
-            best["enrolled"] = url
-
-    if "accept" not in best:
-        for url in links:
-            if ("受入" in url) or ("入所可能" in url):
-                best["accept"] = url
-                break
-    if "wait" not in best:
-        for url in links:
-            if "待ち" in url:
-                best["wait"] = url
-                break
-    if "enrolled" not in best:
-        for url in links:
-            if ("入所児童" in url) or ("児童" in url):
-                best["enrolled"] = url
-                break
+    for item in candidates:
+        kind = classify_csv_resource(item["title"], item["url"])
+        if kind and kind not in best:
+            best[kind] = item["url"]
 
     if "accept" not in best or "wait" not in best:
-        raise RuntimeError("CSVリンク抽出に失敗（ページ仕様変更の可能性）")
+        found = [f"{item['title']} -> {item['url']}" for item in candidates]
+        raise RuntimeError(f"CSVリンク抽出に失敗（ページ仕様変更の可能性） found={found}")
 
     print("CSV URLs:", best)
     return best
